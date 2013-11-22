@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "less": "1.x.x",
+    "underscore": "*",
     "q": "*",
     "wrench": "1.x.x"
   }

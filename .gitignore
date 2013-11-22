@@ -10,7 +10,7 @@ node_modules
 /app/visual/css/*
 
 # node-webkit runtimes
-/nw/macos/node-webkit.app/*
+/nw/osx/node-webkit.app/*
 /nw/windows/*
 
 # 7zip (command line version)
