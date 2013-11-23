@@ -4,6 +4,9 @@ node_modules
 .komodotools
 *.komodoproject
 
+._.DS_Store
+.DS_Store
+
 *.log
 
 # compiled css

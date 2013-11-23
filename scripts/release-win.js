@@ -28,6 +28,8 @@ utils.cleanFolder(workingPath);
 // Building app folder
 //-----------------------------------------------
 
+console.log('Building app...');
+
 wrench.mkdirSyncRecursive(pathUtil.resolve(appDestination, '..'));
 wrench.copyDirSyncRecursive(appSource, appDestination);
 
@@ -43,9 +45,12 @@ utils.setProductionValues(appDestination, platform);
 // Creating ZIP file
 //-----------------------------------------------
 
+console.log('Packing to ZIP archive...');
+
 var packageName = 'Sputnik-v' + version + '.zip';
 var releaseFinalPath = releasePath + '/' + packageName;
 
+// removing previous package file if exists
 if (fs.existsSync(releaseFinalPath)) {
     fs.unlinkSync(releaseFinalPath);
 }
@@ -59,11 +64,14 @@ function (error, stdout, stderr) {
         return;
     }
     
-    // update release manifest file
-    utils.updateJson(releasePath + '/manifest.json', {
-        version: version,
-        windowsPackage: packageName,
-    });
-    
     console.log('Done!');
+});
+
+//-----------------------------------------------
+// Update release manifest file
+//-----------------------------------------------
+
+utils.updateJson(releasePath + '/manifest.json', {
+    version: version,
+    windowsPackage: packageName,
 });

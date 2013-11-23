@@ -29,6 +29,8 @@ utils.cleanFolder(workingPath);
 // Building app folder
 //-----------------------------------------------
 
+console.log('Building app...');
+
 // copy node-webkit.app
 wrench.copyDirSyncRecursive(runtimeSource, runtimeDestination);
 
@@ -52,9 +54,12 @@ utils.setProductionValues(appDestination, platform);
 // Creating DMG file
 //-----------------------------------------------
 
+console.log('Creating DMG image...');
+
 var packageName = 'Sputnik-v' + version + '.dmg';
 var releaseFinalPath = releasePath + '/' + packageName;
 
+// removing previous package file if exists
 if (fs.existsSync(releaseFinalPath)) {
     fs.unlinkSync(releaseFinalPath);
 }
@@ -79,14 +84,14 @@ childProcess.exec("appdmg " + dmgConfigPath + " " + releaseFinalPath, function (
         return;
     }
     
-    // update release manifest file
-    utils.updateJson(releasePath + '/manifest.json', {
-        version: version,
-        osxPackage: packageName,
-    });
-    
-    // remove working dir
-    //wrench.rmdirSyncRecursive(workingPath);
-    
     console.log('Done!');
+});
+
+//-----------------------------------------------
+// Update release manifest file
+//-----------------------------------------------
+
+utils.updateJson(releasePath + '/manifest.json', {
+    version: version,
+    osxPackage: packageName,
 });

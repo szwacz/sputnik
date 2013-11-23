@@ -1,6 +1,6 @@
 "use strict";
 
-var _ = require('underscore');
+var deepmerge = require('deepmerge');
 var fs = require('fs');
 var wrench = require('wrench');
 
@@ -9,12 +9,12 @@ var wrench = require('wrench');
  * If file doesn't exist will create it.
  */
 function updateJson(path, properties) {
-    var json = {};
+    var obj = {};
     if (fs.existsSync(path)) {
-        json = JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }));
+        obj = JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }));
     }
-    _.extend(json, properties);
-    fs.writeFileSync(path, JSON.stringify(json, null, 4));
+    obj = deepmerge(obj, properties);
+    fs.writeFileSync(path, JSON.stringify(obj, null, 4));
 }
 
 function copyFile(from, to) {
