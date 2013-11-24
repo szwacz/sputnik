@@ -15,9 +15,12 @@ node_modules
 # node-webkit runtimes
 /nw/osx/node-webkit.app/*
 /nw/windows/*
+/nw/linux/*
 
 # 7zip (command line version)
 /scripts/7zip/*
+# makeself (https://github.com/megastep/makeself)
+/scripts/makeself/*
 
 # temporaty folder used for testing
 /spec/temp
