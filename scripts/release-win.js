@@ -1,3 +1,9 @@
+/**
+ * Script to build and package for Windows platform.
+ * External dependencies:
+ * 7zip command line version
+ */
+
 'use strict';
 
 var utils = require('./utils');
@@ -12,8 +18,10 @@ var projectPath = pathUtil.resolve(__dirname, '..');
 var releasePath = pathUtil.resolve(projectPath, '..', 'release');
 var workingPath = pathUtil.resolve(releasePath, 'windows');
 
+var buildPath = workingPath + '/Sputnik';
+
 var runtimeSource = projectPath + '/nw/windows';
-var runtimeDestination = workingPath + '/Sputnik/app';
+var runtimeDestination = buildPath + '/app';
 var appSource = projectPath + '/app';
 var appDestination = runtimeDestination;
 
@@ -30,7 +38,7 @@ utils.cleanFolder(workingPath);
 
 console.log('Building app...');
 
-wrench.mkdirSyncRecursive(pathUtil.resolve(appDestination, '..'));
+wrench.mkdirSyncRecursive(buildPath);
 wrench.copyDirSyncRecursive(appSource, appDestination);
 
 utils.copyFile(runtimeSource + '/nw.exe', runtimeDestination + '/sputnik.exe');
@@ -56,7 +64,7 @@ if (fs.existsSync(releaseFinalPath)) {
 }
 
 childProcess.execFile(__dirname + "/7zip/7za.exe",
-    ["a", releaseFinalPath, workingPath ],
+    ["a", releaseFinalPath, buildPath],
     { cwd: workingPath },
 function (error, stdout, stderr) {
     if (error) {
