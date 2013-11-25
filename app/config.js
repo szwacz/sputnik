@@ -1,6 +1,6 @@
 'use strict';
 
-function initSputnikConfig() {
+function initSputnikConfig(userDataPath, currentDataModelVersion) {
     
     var fs = require('fs');
     var gui = require('nw.gui');
@@ -14,19 +14,8 @@ function initSputnikConfig() {
     
     var appConf = JSON.parse(fs.readFileSync('./appConfig.json'));
     
-    var dataHomeFolder = appConf.dataHomeFolder;
-    if (appConf.targetPlatform === 'macos') {
-        dataHomeFolder = gui.App.dataPath;
-    } else {
-        dataHomeFolder = '../data';
-    }
-    
-    if (!fs.existsSync(dataHomeFolder)) {
-        fs.mkdirSync(dataHomeFolder);
-    }
-    
     var userConf = {};
-    var userConfPath = dataHomeFolder + '/config.json';
+    var userConfPath = userDataPath + '/config.json';
     if (fs.existsSync(userConfPath)) {
         userConf = JSON.parse(fs.readFileSync(userConfPath));
     }
@@ -38,11 +27,10 @@ function initSputnikConfig() {
     
     // default values
     
-    if (!userConf.guid && localStorage.guid) {
-        // legacy from v0.9.0
-        // guid was stored in localStorage
-        setUserConfProperty('guid', localStorage.guid);
+    if (!userConf.dataModelVersion || userConf.dataModelVersion !== currentDataModelVersion) {
+        setUserConfProperty('dataModelVersion', currentDataModelVersion);
     }
+    
     if (!userConf.guid) {
         setUserConfProperty('guid', generateGuid());
     }
@@ -64,7 +52,7 @@ function initSputnikConfig() {
             return gui.App.manifest.version;
         },
         get dataHomeFolder() {
-            return dataHomeFolder;
+            return userDataPath;
         },
         
         get targetPlatform() {

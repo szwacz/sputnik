@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.factory('feedsService', function ($rootScope, feedsStorage, opml) {
+function feedsService($rootScope, feedsStorage, opml, config) {
     
     var Q = require('q');
     
@@ -82,7 +82,10 @@ sputnik.factory('feedsService', function ($rootScope, feedsStorage, opml) {
                 }
             },
             get favicon() {
-                return feedModel.favicon;
+                if (!feedModel.favicon) {
+                    return null;
+                }
+                return config.dataHomeFolder + '/favicons/' + feedModel.favicon;
             },
             set favicon(value) {
                 if (feedModel.favicon !== value) {
@@ -280,4 +283,4 @@ sputnik.factory('feedsService', function ($rootScope, feedsStorage, opml) {
             return totalUnreadCount;
         },
     };
-});
+}

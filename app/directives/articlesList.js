@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.directive('articlesList', function ($sanitize, $rootScope) {
+function articlesListDirective($sanitize, $rootScope) {
     
     var organizer = require('./helpers/articlesOrganizer');
     var fs = require('fs');
@@ -178,4 +178,4 @@ sputnik.directive('articlesList', function ($sanitize, $rootScope) {
             render();
         }
     };
-});
+}

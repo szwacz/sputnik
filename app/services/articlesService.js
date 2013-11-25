@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.factory('articlesService', function ($rootScope, articlesStorage, feedsService) {
+function articlesService($rootScope, articlesStorage, feedsService) {
     
     var Q = require('q');
     
@@ -218,4 +218,4 @@ sputnik.factory('articlesService', function ($rootScope, articlesStorage, feedsS
         },
         addTag: addTag,
     };
-});
+}

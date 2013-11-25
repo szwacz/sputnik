@@ -23,7 +23,7 @@ function OrganizeCtrl($scope, feedsService) {
 // Helper directives
 //---------------------------------------------------------
 
-sputnik.directive('organizeCategory', function () {
+function organizeCategoryDirective() {
     return {
         restrict: 'E',
         replace: true,
@@ -46,9 +46,9 @@ sputnik.directive('organizeCategory', function () {
             };
         }
     };
-});
+}
 
-sputnik.directive('organizeFeed', function () {
+function organizeFeedDirective() {
     return {
         restrict: 'E',
         replace: true,
@@ -71,4 +71,4 @@ sputnik.directive('organizeFeed', function () {
             };
         }
     };
-});
+}

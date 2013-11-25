@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.directive('dropdown', function () {
+function dropdownDirective() {
     return {
         restrict: 'C',
         link: function ($scope, $element) {
@@ -24,4 +24,4 @@ sputnik.directive('dropdown', function () {
             });
         }
     };
-});
+}

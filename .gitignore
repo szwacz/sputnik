@@ -26,4 +26,4 @@ node_modules
 /spec/temp
 
 # data folder for testing
-/data
+/userdata

@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.directive('pickTagMenu', function ($rootScope) {
+function pickTagMenuDirective($rootScope) {
     return {
         restrict: 'E',
         replace: true,
@@ -68,4 +68,4 @@ sputnik.directive('pickTagMenu', function ($rootScope) {
             
         }
     };
-});
+}

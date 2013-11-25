@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.factory('updateService', function (config, $http) {
+function updateService(config, $http) {
     
     var Q = require('q');
     
@@ -55,4 +55,4 @@ sputnik.factory('updateService', function (config, $http) {
         isNewerVersion: isNewerVersion
     };
     
-});
+}

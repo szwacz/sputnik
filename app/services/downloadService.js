@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.factory('downloadService', function (net, feedParser, config, feedsService, articlesService, feedsWaitingRoom) {
+function downloadService(net, feedParser, config, feedsService, articlesService, feedsWaitingRoom) {
     
     var Q = require('q');
     
@@ -306,4 +306,4 @@ sputnik.factory('downloadService', function (net, feedParser, config, feedsServi
         calculateAverageActivity: calculateAverageActivity,
         getActivityBaskets: getActivityBaskets
     };
-});
+}

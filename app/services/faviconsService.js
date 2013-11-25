@@ -1,6 +1,6 @@
 'use strict';
 
-sputnik.factory('faviconsService', function (config, net, $rootScope) {
+function faviconsService(config, net, $rootScope) {
     
     var cheerio = require('cheerio');
     var urlUtil = require('url');
@@ -111,7 +111,7 @@ sputnik.factory('faviconsService', function (config, net, $rootScope) {
             var filename = crypto.createHash('md5').update(feed.url).digest('hex') + '.' + result.format;
             var filePath = storeDir + '/' + filename;
             fs.writeFile(filePath, result.faviconBytes, function (err) {
-                feed.favicon = filePath;
+                feed.favicon = filename;
                 $rootScope.$broadcast('faviconUpdated');
                 deferred.resolve();
             });
@@ -143,4 +143,4 @@ sputnik.factory('faviconsService', function (config, net, $rootScope) {
         deleteFaviconIfHas: deleteFaviconIfHas,
     };
     
-});
+}
