@@ -59,7 +59,7 @@ var dataManager = function (callback) {
      * - smarter favicons paths stored in feeds.json
      */
     upgradeFrom[0] = function (callback) {
-        console.log('update from 0 to 1')
+        
         var pathUtil = require('path');
         var qRename = Q.denodeify(fs.rename);
         
@@ -85,10 +85,9 @@ var dataManager = function (callback) {
             qRename('..\\data', '..\\userdata')
             .then(function () {
                 fixFavicons('..\\userdata\\feeds.json');
-                console.log('DONE!!!')
                 callback();
             }, function (e) {
-                console.log(e)
+                console.log(e);
             });
             
         } else {
@@ -107,10 +106,10 @@ var dataManager = function (callback) {
             .then(function () {
                 return qRename(currPath + '/articles.nedb', newPath + '/articles.nedb');
             })
-            .then(function () {
+            .fin(function () {
                 return qRename(currPath + '/feeds-waiting-room', newPath + '/feeds-waiting-room');
             })
-            .then(function () {
+            .fin(function () {
                 // favicons dir might not exist
                 return qRename(currPath + '/favicons', newPath + '/favicons');
             })
@@ -158,8 +157,12 @@ var dataManager = function (callback) {
     }
     
     if (currentDataModelVersion < appDataModelVersion) {
+        // data model is obsolete, needs upgrade
         upgradeDataModel(function () {
-            callback(userDataPath, currentDataModelVersion);
+            setTimeout(function () {
+                // don't know why this timeout is needed but without it angular won't start
+                callback(userDataPath, currentDataModelVersion);
+            }, 1);
         });
     } else {
         // data model already up to date
@@ -170,6 +173,7 @@ var dataManager = function (callback) {
         }
         
         setTimeout(function () {
+            // don't know why this timeout is needed but without it angular won't start
             callback(userDataPath, currentDataModelVersion);
         }, 1);
     }
