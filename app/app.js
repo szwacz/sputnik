@@ -123,6 +123,7 @@ var windowStateManager = (function () {
             dumpWindowState();
         }
         
+        $('html').addClass('window-ready');
         setTimeout(function () {
             win.show();
         }, 300);
