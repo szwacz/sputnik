@@ -75,9 +75,11 @@ function AppCtrl($scope, $location, config, feedsService, articlesService, favic
     // App about to close
     //-----------------------------------------------------
     
+    windowStateManager.show();
+    
     win.on('close', function () {
-        this.hide(); // pretend to be closed already
         windowStateManager.save();
+        windowStateManager.hide();
         this.close(true);
     });
     
