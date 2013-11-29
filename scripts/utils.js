@@ -28,8 +28,8 @@ function copyFile(from, to) {
 function cleanFolder(path) {
     if (fs.existsSync(path)) {
         wrench.rmdirSyncRecursive(path);
-    }
-    fs.mkdirSync(path);
+    } 
+    wrench.mkdirSyncRecursive(path);
 }
 
 module.exports.updateJson = updateJson;
