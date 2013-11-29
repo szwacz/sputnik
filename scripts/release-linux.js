@@ -12,7 +12,7 @@ var pathUtil = require('path');
 var wrench = require('wrench');
 var childProcess = require('child_process');
 
-var platform = 'windows';
+var platform = 'linux';
 
 var projectPath = pathUtil.resolve(__dirname, '..');
 var releasePath = pathUtil.resolve(projectPath, '..', 'release');
