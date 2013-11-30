@@ -45,7 +45,7 @@ function normalizeEncoding(bodyBuf) {
     
     var xmlDeclaration = body.match(/^<\?xml .*\?>/);
     if (xmlDeclaration) {
-        var encodingDeclaration = xmlDeclaration[0].match(/encoding=("|').*("|')/);
+        var encodingDeclaration = xmlDeclaration[0].match(/encoding=("|').*?("|')/);
         if (encodingDeclaration) {
             encoding = encodingDeclaration[0].substring(10, encodingDeclaration[0].length - 1);
         }
