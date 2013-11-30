@@ -19,7 +19,7 @@
     "cheerio": "0.12.2",
     "feedparser": "0.16.x",
     "iconv-lite": "0.2.x",
-    "nedb": "0.8.x",
+    "nedb": "0.8.13",
     "q": "0.9.x",
     "request": "2.x.x",
     "xmlbuilder": "0.4.x",
