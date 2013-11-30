@@ -37,6 +37,7 @@ describe('feedsService', function () {
         $provide.value('feedsStorage', fst);
         
         $provide.value('opml', require('../app/helpers/opml'));
+        $provide.value('config', { dataHomeFolder: '/userdata' });
     }));
     
     it('can import and export OPML', inject(function (feedsService) {
@@ -145,7 +146,7 @@ describe('feedsService', function () {
         
         expect(feed.favicon).toBeUndefined();
         feed.favicon = 'fav';
-        expect(feed.favicon).toBe('fav');
+        expect(feed.favicon).toBe('/userdata/favicons/fav');
         
         expect(feed.category).toBe('ą First Category');
         feed.category = 'wtf?';

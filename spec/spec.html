@@ -29,15 +29,27 @@
     </script>
     
     <script src="../app/services/feedsService.js"></script>
+    <script>
+        sputnik.factory('feedsService', feedsService);
+    </script>
     <script src="./services/feedsService.spec.js"></script>
     
     <script src="../app/services/articlesService.js"></script>
+    <script>
+        sputnik.factory('articlesService', articlesService);
+    </script>
     <script src="./services/articlesService.spec.js"></script>
     
     <script src="../app/services/downloadService.js"></script>
+    <script>
+        sputnik.factory('downloadService', downloadService);
+    </script>
     <script src="./services/downloadService.spec.js"></script>
     
     <script src="../app/services/updateService.js"></script>
+    <script>
+        sputnik.factory('updateService', updateService);
+    </script>
     <script src="./services/updateService.spec.js"></script>
     
     <!-- integration tests -->
@@ -71,7 +83,7 @@
             function execJasmine() {
                 jasmineEnv.execute();
             }
-        })();
+        }());
     </script>
     
 </head>

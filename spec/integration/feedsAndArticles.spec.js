@@ -51,6 +51,7 @@ describe('integration: feedsService and articlesService', function () {
         $provide.value('feedsStorage', fst);
         $provide.value('articlesStorage', articlesStorage.make());
         $provide.value('opml', {});
+        $provide.value('config', {});
     }));
     
     it('article has reference to its feed', inject(function (feedsService, articlesService) {

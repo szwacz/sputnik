@@ -83,7 +83,7 @@ function feedsService($rootScope, feedsStorage, opml, config) {
             },
             get favicon() {
                 if (!feedModel.favicon) {
-                    return null;
+                    return undefined;
                 }
                 return config.dataHomeFolder + '/favicons/' + feedModel.favicon;
             },
