@@ -159,10 +159,10 @@ var dataManager = function (callback) {
     if (currentDataModelVersion < appDataModelVersion) {
         // data model is obsolete, needs upgrade
         upgradeDataModel(function () {
-            //setTimeout(function () {
+            setTimeout(function () {
                 // don't know why this timeout is needed but without it angular won't start
                 callback(userDataPath, currentDataModelVersion);
-            //}, 1);
+            }, 1);
         });
     } else {
         // data model already up to date
@@ -172,9 +172,9 @@ var dataManager = function (callback) {
             fs.mkdirSync(userDataPath);
         }
         
-        //setTimeout(function () {
+        setTimeout(function () {
             // don't know why this timeout is needed but without it angular won't start
             callback(userDataPath, currentDataModelVersion);
-        //}, 1);
+        }, 1);
     }
 };
