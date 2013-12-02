@@ -28,8 +28,12 @@ function initApp(userDataPath, currentDataModelVersion) {
         
         $provide.value('feedsWaitingRoom', require('./helpers/feedsWaitingRoom').init(config.dataHomeFolder + '/feeds-waiting-room'));
         
+        var gui = require('nw.gui');
+        var net = require('./helpers/net');
+        net.proxyDiscoveryFunc(gui.App.getProxyForURL);
+        $provide.value('net', net);
+        
         $provide.value('opml', require('./helpers/opml'));
-        $provide.value('net', require('./helpers/net'));
         $provide.value('feedParser', require('./helpers/feedParser'));
         
         // Configuring routes

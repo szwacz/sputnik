@@ -4,6 +4,12 @@ var Q = require('q');
 var request = require('request');
 var zlib = require('zlib');
 
+var proxyFunc;
+
+exports.proxyDiscoveryFunc = function (func) {
+    proxyFunc = func;
+};
+
 exports.getUrl = function (url, options) {
     var deferred = Q.defer();
     
@@ -18,6 +24,19 @@ exports.getUrl = function (url, options) {
     
     if (!options.timeout) {
         options.timeout = 20000;
+    }
+    
+    if (proxyFunc) {
+        // returns PAC file format
+        var proxy = proxyFunc(url);
+        if (proxy.substring(0, 5) === 'PROXY') {
+            var endIndex = proxy.indexOf(';');
+            if (endIndex === -1) {
+                endIndex = proxy.length;
+            }
+            proxy = proxy.substring(6, endIndex);
+            options.proxy = 'http://' + proxy;
+        }
     }
     
     request(options, function (err, response, body) {
