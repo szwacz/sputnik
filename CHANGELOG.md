@@ -1,3 +1,10 @@
+1.0.3 (2013-12-03)
+-------------------
+* Build for Linux available
+* Data folders have the same structure across all platforms
+* Fix: articles data loss not possible if system crashed or process killed during startup
+* Fix: application works behind proxy
+
 1.0.2 (2013-11-15)
 -------------------
 * Fix: application works better on sluggish internet connection
