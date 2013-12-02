@@ -146,7 +146,8 @@ describe('feedsService', function () {
         
         expect(feed.favicon).toBeUndefined();
         feed.favicon = 'fav';
-        expect(feed.favicon).toBe('/userdata/favicons/fav');
+        expect(feed.favicon).toBe('fav');
+        expect(feed.faviconUrl).toBe('/userdata/favicons/fav');
         
         expect(feed.category).toBe('ą First Category');
         feed.category = 'wtf?';

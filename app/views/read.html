@@ -64,8 +64,8 @@
                             ng-click="selectCategory(feed)"
                             ng-class="{'feeds-tree__category--selected': selectedCategory == feed}"
                             class="feeds-tree__category  feeds-tree__category--minor">
-                            <div ng-hide="feed.favicon != undefined" class="feeds-tree__icon  feeds-tree__icon--none"/>
-                            <img ng-show="feed.favicon != undefined" ng-src="{{feed.favicon}}" class="feeds-tree__icon"/>
+                            <div ng-hide="feed.faviconUrl != undefined" class="feeds-tree__icon  feeds-tree__icon--none"/>
+                            <img ng-show="feed.faviconUrl != undefined" ng-src="{{feed.faviconUrl}}" class="feeds-tree__icon"/>
                             <span class="feeds-tree__category-name">{{feed.title}}</span>
                             <span ng-show="feed.unreadArticlesCount > 0" class="feeds-tree__count">{{feed.unreadArticlesCount}}</span>
                         </h2>
@@ -75,8 +75,8 @@
                         ng-click="selectCategory(item)"
                         ng-class="{'feeds-tree__category--selected': selectedCategory == item, 'feeds-tree__category-last-minor': $last == true}"
                         class="feeds-tree__category  feeds-tree__category--minor">
-                        <div ng-hide="item.favicon != undefined" class="feeds-tree__icon  feeds-tree__icon--none"/>
-                        <img ng-show="item.favicon != undefined" ng-src="{{item.favicon}}" class="feeds-tree__icon"/>
+                        <div ng-hide="item.faviconUrl != undefined" class="feeds-tree__icon  feeds-tree__icon--none"/>
+                        <img ng-show="item.faviconUrl != undefined" ng-src="{{item.faviconUrl}}" class="feeds-tree__icon"/>
                         <span class="feeds-tree__category-name">{{item.title}}</span>
                         <span ng-show="item.unreadArticlesCount > 0" class="feeds-tree__count">{{item.unreadArticlesCount}}</span>
                     </h2>

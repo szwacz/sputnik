@@ -1,14 +1,25 @@
+/**
+ * Favicons manager.
+ * Scouts for sites' favicons and saves them locally.
+ */
+
 'use strict';
 
-function faviconsService(config, net, $rootScope) {
+function faviconsService(config, $http, $rootScope, $q) {
     
     var cheerio = require('cheerio');
     var urlUtil = require('url');
-    var Q = require('q');
+    var pathUtil = require('path');
     var crypto = require('crypto');
     var fs = require('fs');
     
-    var storeDir = config.dataHomeFolder + '/favicons';
+    var storeDir = pathUtil.join(config.dataHomeFolder, 'favicons');
+    
+    fs.exists(storeDir, function (exists) {
+        if (!exists) {
+            fs.mkdir(storeDir);
+        }
+    });
     
     function findFaviconInHtml(siteUrl, body) {
         var dom = cheerio.load(body);
@@ -42,86 +53,103 @@ function faviconsService(config, net, $rootScope) {
     }
     
     function getFavicon(url) {
-        var deferred = Q.defer();
+        var def = $q.defer();
         
-        net.getUrl(url)
-        .then(function (buf) {
-            var imageType = discoverImageType(buf);
-            if (imageType) {
-                deferred.resolve({
-                    faviconBytes: buf,
-                    format: imageType
-                });
-            } else {
-                deferred.reject();
-            }
-        }, deferred.reject);
+        if (url) {
+            
+            $http.get(url, { responseType: 'arraybuffer' })
+            .then(function (response) {
+                if (response.data) {
+                    var buf = new Buffer(new Uint8Array(response.data));
+                    var imageType = discoverImageType(buf);
+                    if (imageType) {
+                        def.resolve({
+                            faviconBytes: buf,
+                            format: imageType
+                        });
+                    } else {
+                        def.reject();
+                    }
+                } else {
+                    def.reject();
+                }
+            }, def.reject);
+            
+        } else {
+            def.reject();
+        }
         
-        return deferred.promise;
+        return def.promise;
     }
     
     function blindTryFaviconUrls(siteUrl) {
-        var deferred = Q.defer();
+        var def = $q.defer();
+        
         var url = urlUtil.parse(siteUrl);
         // first try with full url
-        var testUrl = urlUtil.resolve(url.href, '/favicon.ico');
-        getFavicon(testUrl).then(deferred.resolve, function () {
+        getFavicon(urlUtil.resolve(url.href, '/favicon.ico'))
+        .then(def.resolve, function () {
             // second try in root folder of a domain
-            testUrl = urlUtil.resolve(url.protocol + '//' + url.host, '/favicon.ico');
-            getFavicon(testUrl).then(deferred.resolve, deferred.reject);
-        });
-        return deferred.promise;
+            return getFavicon(urlUtil.resolve(url.protocol + '//' + url.host, '/favicon.ico'));
+        })
+        .then(def.resolve, def.reject);
+        
+        return def.promise;
     }
     
     function getFaviconForSite(siteUrl) {
-        var deferred = Q.defer();
-        net.getUrl(siteUrl)
-        .then(function (body) {
-            body = body.toString();
-            var faviconUrl = findFaviconInHtml(siteUrl, body);
-            if (faviconUrl) {
-                getFavicon(faviconUrl)
-                .then(deferred.resolve, function () {
-                    blindTryFaviconUrls(siteUrl)
-                    .then(deferred.resolve, deferred.reject);
-                });
-            } else {
-                blindTryFaviconUrls(siteUrl)
-                .then(deferred.resolve, deferred.reject);
-            }
-        });
-        return deferred.promise;
+        var def = $q.defer();
+        
+        // get site's HTML
+        $http.get(siteUrl)
+        .then(function (response) {
+            // look for favicon in this HTML
+            return getFavicon(findFaviconInHtml(siteUrl, response.data))
+        })
+        .then(def.resolve, function () {
+            // if favicon not found this way, try the old way
+            // (default url where favicon should be stored)
+            return blindTryFaviconUrls(siteUrl);
+        })
+        .then(def.resolve, def.reject);
+        
+        return def.promise;
     }
     
     function deleteFaviconIfHas(feed) {
         if (feed.favicon) {
-            fs.unlink(feed.favicon, function (err) {});
+            fs.unlink(pathUtil.join(storeDir, feed.favicon), function (err) {});
             feed.favicon = undefined;
         }
     }
     
     function updateOne(feed) {
-        var deferred = Q.defer();
+        var def = $q.defer();
         
         getFaviconForSite(feed.siteUrl)
         .then(function (result) {
-            if (!fs.existsSync(storeDir)) {
-                fs.mkdirSync(storeDir);
+            // create unique filename for this file
+            var md5 = crypto.createHash('md5').update(feed.url).update(result.faviconBytes).digest('hex');
+            var filename = md5 + '.' + result.format;
+            if (filename !== feed.favicon) {
+                // old favicon has different name, so delete it
+                deleteFaviconIfHas(feed);
+                var filePath = pathUtil.join(storeDir, filename);
+                fs.writeFile(filePath, result.faviconBytes, function (err) {
+                    feed.favicon = filename;
+                    $rootScope.$broadcast('faviconUpdated');
+                    def.resolve();
+                });
+            } else {
+                def.resolve();
             }
-            var filename = crypto.createHash('md5').update(feed.url).digest('hex') + '.' + result.format;
-            var filePath = storeDir + '/' + filename;
-            fs.writeFile(filePath, result.faviconBytes, function (err) {
-                feed.favicon = filename;
-                $rootScope.$broadcast('faviconUpdated');
-                deferred.resolve();
-            });
         }, function () {
             // apparently there was favicon, but not anymore
             deleteFaviconIfHas(feed);
-            deferred.resolve();
+            def.resolve();
         });
         
-        return deferred.promise;
+        return def.promise;
     }
     
     function updateMany(feeds) {
@@ -137,7 +165,6 @@ function faviconsService(config, net, $rootScope) {
     }
     
     return  {
-        getFaviconForSite: getFaviconForSite,
         updateOne: updateOne,
         updateMany: updateMany,
         deleteFaviconIfHas: deleteFaviconIfHas,

@@ -42,8 +42,8 @@ function articlesListDirective($sanitize, $rootScope) {
     
     function getFeedInfoHtml(article) {
         var feedInfo = '';
-        if (article.feed.favicon) {
-            feedInfo += '<img src="' + article.feed.favicon + '" class="article__feed-icon"/>';
+        if (article.feed.faviconUrl) {
+            feedInfo += '<img src="' + article.feed.faviconUrl + '" class="article__feed-icon"/>';
         } else {
             feedInfo += '<div class="article__feed-icon  article__feed-icon--none"></div>';
         }

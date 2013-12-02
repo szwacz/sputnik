@@ -82,15 +82,18 @@ function feedsService($rootScope, feedsStorage, opml, config) {
                 }
             },
             get favicon() {
-                if (!feedModel.favicon) {
-                    return undefined;
-                }
-                return config.dataHomeFolder + '/favicons/' + feedModel.favicon;
+                return feedModel.favicon;
             },
             set favicon(value) {
                 if (feedModel.favicon !== value) {
                     feedsStorage.setFeedValue(feedModel.url, 'favicon', value);
                 }
+            },
+            get faviconUrl() {
+                if (!feedModel.favicon) {
+                    return undefined;
+                }
+                return config.dataHomeFolder + '/favicons/' + feedModel.favicon;
             },
             
             get category() {

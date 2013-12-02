@@ -1,6 +1,6 @@
 <div class="organize__feed  layout-justify  table-row">
-    <div ng-hide="feed.favicon != undefined" class="organize__feed-icon  organize__feed-icon--none"/>
-    <img ng-show="feed.favicon != undefined" ng-src="{{feed.favicon}}" class="organize__feed-icon"/>
+    <div ng-hide="feed.faviconUrl != undefined" class="organize__feed-icon  organize__feed-icon--none"/>
+    <img ng-show="feed.faviconUrl != undefined" ng-src="{{feed.faviconUrl}}" class="organize__feed-icon"/>
     <span class="organize__feed-title">{{feed.title}}</span>
     <a class="button2" ng-click="showChangeCategory = !showChangeCategory">
         <span ng-hide="showChangeCategory">move to</span>
