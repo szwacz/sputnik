@@ -1,3 +1,8 @@
+/**
+ * Handles feeds objects. Decorates raw stored feed objects with stuff to work within app.
+ * Manages categories and feeds tree.
+ */
+
 'use strict';
 
 function feedsService($rootScope, feedsStorage, opml, config) {
@@ -17,6 +22,10 @@ function feedsService($rootScope, feedsStorage, opml, config) {
         return a.localeCompare(b);
     }
     
+    /**
+     * Used to sort main tree list. Sorts categories first and feeds last,
+     * and alphabetically those groups inside.
+     */
     function treeSort(a, b) {
         if (a.type === 'category' && b.type === 'feed') {
             return -1;

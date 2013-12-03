@@ -1,3 +1,9 @@
+/**
+ * Manages user-specyfic settings, and exposes environment variables to other code.
+ * - reads from file app/appConfig.json
+ * - reads and writes to file userdata/config.json
+ */
+
 'use strict';
 
 function initSputnikConfig(userDataPath, currentDataModelVersion) {
@@ -32,6 +38,7 @@ function initSputnikConfig(userDataPath, currentDataModelVersion) {
     }
     
     if (!userConf.guid) {
+        // guid is unique ID of this app instance
         setUserConfProperty('guid', generateGuid());
     }
     

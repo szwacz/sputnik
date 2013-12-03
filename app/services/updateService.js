@@ -1,3 +1,7 @@
+/**
+ * Checks if there is newer version of this app available.
+ */
+
 'use strict';
 
 function updateService(config, $http) {
@@ -38,6 +42,7 @@ function updateService(config, $http) {
     function checkUpdates() {
         var deferred = Q.defer();
         
+        // get file with simple JSON structure containing the newest available version
         $http.get(config.checkUpdatesUrl)
         .success(function (updatesData) {
             if (isNewerVersion(updatesData.version)) {
@@ -45,7 +50,8 @@ function updateService(config, $http) {
             } else {
                 deferred.reject();
             }
-        });
+        })
+        .error(deferred.reject);
         
         return deferred.promise;
     }

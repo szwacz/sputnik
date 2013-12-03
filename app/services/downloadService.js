@@ -1,3 +1,7 @@
+/**
+ * Manages feeds' XML downloads.
+ */
+
 'use strict';
 
 function downloadService(net, feedParser, config, feedsService, articlesService, feedsWaitingRoom) {
@@ -14,6 +18,10 @@ function downloadService(net, feedParser, config, feedsService, articlesService,
         return days * 24 * 60 * 60 * 1000;
     }
     
+    /**
+     * Determines which feeds are active enough to be downloaded in main download job (HI basket).
+     * The rest will be downloaded in background (LO basket).
+     */
     function getActivityBaskets() {
         var hi = [];
         var lo = [];

@@ -1,3 +1,7 @@
+/**
+ * Manages articles. Decorates raw objects from database with extra functionality.
+ */
+
 'use strict';
 
 function articlesService($rootScope, articlesStorage, feedsService) {

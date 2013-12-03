@@ -1,3 +1,7 @@
+/**
+ * App bootstrap script
+ */
+
 'use strict';
 
 var sputnik = angular.module('sputnik', ['ngRoute', 'ngSanitize', 'ngAnimate']);
@@ -14,7 +18,7 @@ function initApp(userDataPath, currentDataModelVersion) {
         
         var config = initSputnikConfig(userDataPath, currentDataModelVersion);
         
-        // initiating modules
+        // initiating modules for injection into angular
         
         $provide.value('config', config);
         
