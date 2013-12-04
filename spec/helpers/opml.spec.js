@@ -24,13 +24,40 @@ describe('opml', function () {
                         '<outline text="Category C" title="Category C">' + // double nesting should be flattened
                             '<outline text="z" title="z" type="rss" xmlUrl="http://z.com/feed" htmlUrl="http://z.com"/>' +
                         '</outline>' +
+                        '<something text="blah">' + // should be ignored because is not outline
+                            '<outline text="blah blah" type="rss" xmlUrl="http://blah.com"/>' +
+                        '</something>' +
                     '</outline>' +
                     '<outline text="e" type="rss" xmlUrl="http://e.com/feed" htmlUrl="http://e.com"/>' + // lack of title attr
                     '<outline text="f" title="f" type="rss" xmlUrl="http://f.com/feed"/>' + // lack of htmlUrl attr
-                    '<outline text="g" title="g" type="rss" xmlUrl="http://g.com/feed" htmlUrl="http://g.com"/>' +
+                    '<outline text="g" xmlUrl="http://g.com/feed"/>' + // if lack of type should still treat as rss if xmlUrl present
                     '<outline text="song.mp3" type="song"/>' + // should be ignored if is different type
-                    '<outline text="Wazup?"/>' + // should be ignored if no type attr
-                    '<outline text="Wazup again?" type="rss"/>' + // should be ignored if lack of xmlUrl attr
+                    '<outline text="Wazup?"/>' + // should be ignored if no xmlUrl attr
+                    '<outline text="Wazup again?" type="rss"/>' + // should be ignored if lack of xmlUrl attr even if type is ok
+                    '<something text="blah">' + // should be ignored because is not outline
+                        '<outline text="blah blah" type="rss" xmlUrl="http://blah.com"/>' +
+                    '</something>' +
+                '</body>' +
+            '</opml>';
+        
+        var nestedOpml = '<?xml version="1.0" encoding="UTF-8"?>' +
+            '<opml version="1.0">' +
+                '<body>' +
+                    '<outline text="My Feeds">' +
+                        '<outline text="b" xmlUrl="http://b.com/feed"/>' +
+                        '<outline text="Category A">' +
+                            '<outline text="a" xmlUrl="http://a.com/feed"/>' +
+                        '</outline>' +
+                    '</outline>' +
+                '</body>' +
+            '</opml>';
+        
+        var simplestOpml = '<?xml version="1.0" encoding="UTF-8"?>' +
+            '<opml version="1.0">' +
+                '<body>' +
+                    '<outline text="My Feeds">' +
+                        '<outline text="b" xmlUrl="http://b.com/feed"/>' +
+                    '</outline>' +
                 '</body>' +
             '</opml>';
         
@@ -59,9 +86,29 @@ describe('opml', function () {
             expect(fst.feeds[7].category).toBeUndefined();
         });
         
+        it('should omit main category if used as root container', function () {
+            var fst = feedsStorage.make();
+            opml.import(nestedOpml, fst);
+            
+            expect(fst.categories.length).toBe(1);
+            expect(fst.feeds.length).toBe(2);
+            expect(fst.categories).not.toContain('My Feeds');
+            expect(fst.feeds[0].url).toBe('http://b.com/feed');
+            expect(fst.feeds[0].category).toBeUndefined();
+            expect(fst.feeds[1].url).toBe('http://a.com/feed');
+            expect(fst.feeds[1].category).toBe('Category A');
+            
+            fst = feedsStorage.make();
+            opml.import(simplestOpml, fst);
+            
+            expect(fst.categories.length).toBe(1);
+            expect(fst.feeds.length).toBe(1);
+        });
+        
         it('should do nothing if not valid OPML was given', function () {
             var fst = feedsStorage.make();
             opml.import('<data><item>Hello!</item></data>', fst);
+            opml.import('Not even XML', fst);
             expect(fst.categories.length).toBe(0);
             expect(fst.feeds.length).toBe(0);
         });

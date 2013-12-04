@@ -10,6 +10,11 @@ exports.isOpml = function (fileContent) {
 exports.import = function (fileContent, feedsStorage) {
     var xml = new xmldoc.XmlDocument(fileContent);
     
+    function isFeed(outline) {
+        return outline.attr.type === 'rss' ||
+            (outline.attr.type === undefined && outline.attr.xmlUrl !== undefined);
+    }
+    
     function addFeed(xmlNode, categoryName) {
         if (!xmlNode.attr.xmlUrl) {
             return;
@@ -23,8 +28,8 @@ exports.import = function (fileContent, feedsStorage) {
     }
     
     function addCategory(categoryNode, categoryName) {
-        categoryNode.eachChild(function (subOutline) {
-            if (subOutline.attr.type === 'rss') {
+        categoryNode.childrenNamed('outline').forEach(function (subOutline) {
+            if (isFeed(subOutline)) {
                 // feed
                 addFeed(subOutline, categoryName);
             } else if (subOutline.children.length > 0) {
@@ -35,9 +40,39 @@ exports.import = function (fileContent, feedsStorage) {
         });
     }
     
+    function getRootContainer(xml) {
+        
+        function hasSubCategory(outlines) {
+            for (var i = 0; i < outlines.length; i += 1) {
+                console.log(outlines[i].childrenNamed('outline'))
+                if (outlines[i].childrenNamed('outline').length > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // obvious default
+        var root = xml.childNamed('body');
+        if (root.childrenNamed('outline').length === 1) {
+            // only one outline in main container, it looks suspicious
+            
+            // this should work but doesn't because of bug in xmldoc
+            //if (root.descendantWithPath("outline.outline.outline") !== undefined) {
+            // so instead we are using...
+            if (hasSubCategory(root.childNamed('outline').childrenNamed('outline'))) {
+                // there are 3 levels of outline nesting, so omit the highest level,
+                // because it is root container without other useful role
+                root = root.childNamed('outline');
+            }
+        }
+        return root;
+    }
+    
     if (xml.name === 'opml') {
-        xml.childNamed('body').eachChild(function (outline) {
-            if (outline.attr.type === 'rss') {
+        var root = getRootContainer(xml);
+        root.childrenNamed('outline').forEach(function (outline) {
+            if (isFeed(outline)) {
                 // feed
                 addFeed(outline, undefined);
             } else if (outline.children.length > 0) {
