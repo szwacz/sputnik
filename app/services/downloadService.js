@@ -236,7 +236,7 @@ function downloadService(net, feedParser, config, feedsService, articlesService,
             }
             return articlesService.digest(url, result.articles);
         }, def.reject)
-        .then(def.resolve);
+        .finally(def.resolve);
         
         return def.promise;
     }
