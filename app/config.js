@@ -6,10 +6,11 @@
 
 'use strict';
 
-function initSputnikConfig(userDataPath, currentDataModelVersion) {
+function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
     
     var fs = require('fs');
     var gui = require('nw.gui');
+    var safeFile = require('./helpers/safeFile');
     
     function generateGuid() {
         var crypto = require('crypto');
@@ -22,39 +23,13 @@ function initSputnikConfig(userDataPath, currentDataModelVersion) {
     
     var userConf = {};
     var userConfPath = userDataPath + '/config.json';
-    if (fs.existsSync(userConfPath)) {
-        userConf = JSON.parse(fs.readFileSync(userConfPath));
-    }
     
     function setUserConfProperty(key, value) {
         userConf[key] = value;
-        fs.writeFile(userConfPath, JSON.stringify(userConf, null, 4), { encoding: 'utf8' });
+        safeFile.write(userConfPath, JSON.stringify(userConf, null, 4), { encoding: 'utf8' });
     }
     
-    // default values
-    
-    if (!userConf.dataModelVersion || userConf.dataModelVersion !== currentDataModelVersion) {
-        setUserConfProperty('dataModelVersion', currentDataModelVersion);
-    }
-    
-    if (!userConf.guid) {
-        // guid is unique ID of this app instance
-        setUserConfProperty('guid', generateGuid());
-    }
-    
-    if (userConf.articlesPerPage === undefined) {
-        setUserConfProperty('articlesPerPage', 30);
-    }
-    
-    if (userConf.keepArticlesForMonths === undefined) {
-        setUserConfProperty('keepArticlesForMonths', 12);
-    }
-    
-    if (userConf.keepTaggedArticlesForever === undefined) {
-        setUserConfProperty('keepTaggedArticlesForever', true);
-    }
-    
-    return  {
+    var api = {
         get version() {
             return gui.App.manifest.version;
         },
@@ -109,4 +84,33 @@ function initSputnikConfig(userDataPath, currentDataModelVersion) {
             setUserConfProperty('keepTaggedArticlesForever', value);
         },
     };
+    
+    safeFile.read(userConfPath)
+    .then(function (data) {
+        if (data !== null) {
+            userConf = JSON.parse(data);
+            callback(api);
+        }
+        
+        // default values
+        
+        if (!userConf.dataModelVersion || userConf.dataModelVersion !== currentDataModelVersion) {
+            setUserConfProperty('dataModelVersion', currentDataModelVersion);
+        }
+        
+        if (!userConf.guid) {
+            // guid is unique ID of this app instance
+            setUserConfProperty('guid', generateGuid());
+        }
+        
+        if (userConf.articlesPerPage === undefined) {
+            setUserConfProperty('articlesPerPage', 30);
+        }
+        if (userConf.keepArticlesForMonths === undefined) {
+            setUserConfProperty('keepArticlesForMonths', 12);
+        }
+        if (userConf.keepTaggedArticlesForever === undefined) {
+            setUserConfProperty('keepTaggedArticlesForever', true);
+        }
+    });
 }

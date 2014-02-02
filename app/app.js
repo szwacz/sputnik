@@ -7,16 +7,22 @@
 var sputnik = angular.module('sputnik', ['ngRoute', 'ngSanitize', 'ngAnimate']);
 
 // on document ready
-$(function () {
-    // dataManager lets run app startup code if sure user data model is up to date
-    dataManager(initApp);
-});
+$(initDataModel);
 
-function initApp(userDataPath, currentDataModelVersion) {
+function initDataModel() {
+    // dataManager lets run app startup code if sure user data model is up to date
+    dataManager(initConfig);
+}
+
+function initConfig(userDataPath, currentDataModelVersion) {
+    initSputnikConfig(userDataPath, currentDataModelVersion, function (config) {
+        initApp(config);
+    });
+}
+
+function initApp(config) {
     
     sputnik.config(function ($provide, $routeProvider) {
-        
-        var config = initSputnikConfig(userDataPath, currentDataModelVersion);
         
         // initiating modules for injection into angular
         
