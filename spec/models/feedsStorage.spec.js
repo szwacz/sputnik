@@ -5,180 +5,306 @@ describe('feedsStorage', function () {
     var feedsStorage = require('../app/models/feedsStorage');
     
     it('should init with no data', function () {
-        var fst = feedsStorage.make();
-        expect(fst.categories.length).toBe(0);
-        expect(fst.feeds.length).toBe(0);
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            expect(fst.categories.length).toBe(0);
+            expect(fst.feeds.length).toBe(0);
+            done = true;
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can add feed', function () {
-        var fst = feedsStorage.make();
-        var feedData = {
-            url: "a.com/feed/",
-            siteUrl: "a.com",
-            title: "Site A",
-            category: "Category 1",
-            favicon: "./path/to/favicon.png"
-        };
-        var addedFeed = fst.addFeed(feedData);
-        expect(feedData).toEqual(addedFeed);
-        expect(feedData).toEqual(fst.feeds[0]);
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            var feedData = {
+                url: "a.com/feed/",
+                siteUrl: "a.com",
+                title: "Site A",
+                category: "Category 1",
+                favicon: "./path/to/favicon.png"
+            };
+            fst.addFeed(feedData)
+            .then(function (addedFeed) {
+                expect(feedData).toEqual(addedFeed);
+                expect(feedData).toEqual(fst.feeds[0]);
+                done = true;
+            });
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('should not allow to add same feed many times', function () {
-        var fst = feedsStorage.make();
-        var feedData = {
-            url: "a.com/feed"
-        };
-        var f1 = fst.addFeed(feedData);
-        var f2 = fst.addFeed(feedData);
-        expect(fst.feeds.length).toBe(1);
-        expect(f1).toEqual(f2);
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            var feedData = {
+                url: "a.com/feed"
+            };
+            var f1, f2;
+            fst.addFeed(feedData)
+            .then(function (addedFeed) {
+                f1 = addedFeed;
+                return fst.addFeed(feedData);
+            })
+            .then(function (addedFeed) {
+                f2 = addedFeed;
+                expect(fst.feeds.length).toBe(1);
+                expect(f1).toEqual(f2);
+                done = true;
+            });
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can add new category', function () {
-        var fst = feedsStorage.make();
-        fst.addCategory('Cool Category');
-        expect(fst.categories.length).toBe(1);
-        expect(fst.categories).toContain('Cool Category');
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addCategory('Cool Category');
+            expect(fst.categories.length).toBe(1);
+            expect(fst.categories).toContain('Cool Category');
+            done = true;
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it("can't add new category with invalid name", function () {
-        var fst = feedsStorage.make();
-        fst.addCategory('');
-        expect(fst.categories.length).toBe(0);
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addCategory('');
+            expect(fst.categories.length).toBe(0);
+            done = true;
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('should not allow to add 2 categories with same name', function () {
-        var fst = feedsStorage.make();
-        fst.addCategory("Cool Category");
-        fst.addCategory("Cool Category");
-        expect(fst.categories.length).toBe(1);
+        var done = false;
+        var fst = feedsStorage.make()
+        .then(function (fst) {
+            fst.addCategory("Cool Category");
+            fst.addCategory("Cool Category");
+            expect(fst.categories.length).toBe(1);
+            done = true;
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can add new feed with category set', function () {
-        var fst = feedsStorage.make();
-        fst.addFeed({
-            url: "a.com/feed",
-            category: "Cool Category"
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: "a.com/feed",
+                category: "Cool Category"
+            });
+            expect(fst.feeds.length).toBe(1);
+            expect(fst.categories.length).toBe(1);
+            expect(fst.categories).toContain('Cool Category');
+            done = true;
         });
-        expect(fst.feeds.length).toBe(1);
-        expect(fst.categories.length).toBe(1);
-        expect(fst.categories).toContain('Cool Category');
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can change any feed value', function () {
-        var fst = feedsStorage.make();
-        var f = fst.addFeed({
-            url: "a.com/feed"
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: "a.com/feed"
+            })
+            .then(function (feed) {
+                return fst.setFeedValue(feed.url, 'favicon', 'favicon.gif')
+            })
+            .then(function (feed) {
+                expect(feed.favicon).toBe('favicon.gif');
+                done = true;
+            });
         });
-        
-        f = fst.setFeedValue(f.url, 'favicon', 'favicon.gif');
-        expect(f.favicon).toBe('favicon.gif');
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can change feed category', function () {
-        var fst = feedsStorage.make();
-        var f = fst.addFeed({
-            url: "a.com/feed",
-            category: 'A'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: "a.com/feed",
+                category: 'A'
+            })
+            .then(function (feed) {
+                return fst.setFeedValue(feed.url, 'category', 'B');
+            })
+            .then(function (feed) {
+                expect(feed.category).toBe('B');
+                expect(fst.categories).toEqual(['A', 'B']);
+                done = true;
+            });
         });
-        
-        f = fst.setFeedValue(f.url, 'category', 'B');
-        expect(f.category).toBe('B');
-        expect(fst.categories).toEqual(['A', 'B']);
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can remove feed category', function () {
-        var fst = feedsStorage.make();
-        var f = fst.addFeed({
-            url: "a.com/feed",
-            category: 'A'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            var f = fst.addFeed({
+                url: "a.com/feed",
+                category: 'A'
+            });
+            
+            f = fst.setFeedValue(f.url, 'category', '');
+            expect(f.category).toBeUndefined();
+            expect(fst.categories).toEqual(['A']);
+            done = true;
         });
-        
-        f = fst.setFeedValue(f.url, 'category', '');
-        expect(f.category).toBeUndefined();
-        expect(fst.categories).toEqual(['A']);
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can delete feed', function () {
-        var fst = feedsStorage.make();
-        fst.addFeed({
-            url: 'a.com/feed'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed'
+            });
+            fst.removeFeed('a.com/feed');
+            expect(fst.feeds.length).toBe(0);
+            done = true;
         });
-        fst.removeFeed('a.com/feed');
-        expect(fst.feeds.length).toBe(0);
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('should delete category and feeds assigned to that category', function () {
-        var fst = feedsStorage.make();
-        fst.addFeed({
-            url: 'a.com/feed',
-            category: 'Cool Category'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed',
+                category: 'Cool Category'
+            });
+            fst.addFeed({
+                url: 'b.com/feed',
+                category: 'Cool Category'
+            });
+            fst.removeCategory('Cool Category');
+            expect(fst.categories.length).toBe(0);
+            expect(fst.feeds.length).toBe(0);
+            done = true;
         });
-        fst.addFeed({
-            url: 'b.com/feed',
-            category: 'Cool Category'
-        });
-        fst.removeCategory('Cool Category');
-        expect(fst.categories.length).toBe(0);
-        expect(fst.feeds.length).toBe(0);
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can change category name', function () {
-        var fst = feedsStorage.make();
-        fst.addFeed({
-            url: 'a.com/feed',
-            category: 'Cool Category'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed',
+                category: 'Cool Category'
+            });
+            fst.changeCategoryName('Cool Category', 'Better Name')
+            .then(function () {
+                expect(fst.categories).toEqual(['Better Name']);
+                expect(fst.feeds[0].category).toBe('Better Name');
+                done = true;
+            });
         });
-        fst.changeCategoryName('Cool Category', 'Better Name');
-        expect(fst.categories).toEqual(['Better Name']);
-        expect(fst.feeds[0].category).toBe('Better Name');
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it("can't change category name to invalid one", function () {
-        var fst = feedsStorage.make();
-        fst.addFeed({
-            url: 'a.com/feed',
-            category: 'Cool Category'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed',
+                category: 'Cool Category'
+            });
+            fst.changeCategoryName('Cool Category', '')
+            .then(function () {
+                expect(fst.categories).toEqual(['Cool Category']);
+                expect(fst.feeds[0].category).toBe('Cool Category');
+                done = true;
+            });
         });
-        fst.changeCategoryName('Cool Category', '');
-        expect(fst.categories).toEqual(['Cool Category']);
-        expect(fst.feeds[0].category).toBe('Cool Category');
+        waitsFor(function () { return done; }, null, 200);
+    });
+    
+    it("change category name for the same name has no effect", function () {
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed',
+                category: 'Cool Category'
+            });
+            fst.changeCategoryName('Cool Category', 'Cool Category')
+            .then(function () {
+                expect(fst.categories).toEqual(['Cool Category']);
+                expect(fst.feeds[0].category).toBe('Cool Category');
+                done = true;
+            });
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('can create new category via feed property', function () {
-        var fst = feedsStorage.make();
-        var f = fst.addFeed({
-            url: 'a.com/feed',
-            category: 'Cool Category'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed',
+                category: 'Cool Category'
+            })
+            .then(function (feed) {
+                return fst.setFeedValue(feed.url, 'category', 'Better Name');
+            })
+            .then(function (feed) {
+                expect(feed.category).toBe('Better Name');
+                expect(fst.categories.length).toBe(2);
+                expect(fst.categories).toContain('Better Name');
+                expect(fst.feeds[0].category).toBe('Better Name');
+                done = true;
+            });
         });
-        f = fst.setFeedValue(f.url, 'category', 'Better Name');
-        expect(f.category).toBe('Better Name');
-        expect(fst.categories.length).toBe(2);
-        expect(fst.categories).toContain('Better Name');
-        expect(fst.feeds[0].category).toBe('Better Name');
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('should merge two categories if name of one was changed to name of the other', function () {
-        var fst = feedsStorage.make();
-        fst.addFeed({
-            url: 'a.com/feed',
-            category: 'Cool Category'
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.addFeed({
+                url: 'a.com/feed',
+                category: 'Cool Category'
+            });
+            fst.addFeed({
+                url: 'b.com/feed',
+                category: 'Second Category'
+            });
+            fst.changeCategoryName('Second Category', 'Cool Category');
+            expect(fst.categories.length).toBe(1);
+            expect(fst.feeds.length).toBe(2);
+            expect(fst.feeds[0].category).toBe('Cool Category');
+            expect(fst.feeds[1].category).toBe('Cool Category');
+            done = true;
         });
-        fst.addFeed({
-            url: 'b.com/feed',
-            category: 'Second Category'
-        });
-        fst.changeCategoryName('Second Category', 'Cool Category');
-        expect(fst.categories.length).toBe(1);
-        expect(fst.feeds.length).toBe(2);
-        expect(fst.feeds[0].category).toBe('Cool Category');
-        expect(fst.feeds[1].category).toBe('Cool Category');
+        waitsFor(function () { return done; }, null, 200);
     });
     
     it('should terminate gracefully when setFeedValue gets nonexistent feedUrl', function () {
-        var fst = feedsStorage.make();
-        fst.setFeedValue('blah', 'favicon', 'abc');
+        var done = false;
+        feedsStorage.make()
+        .then(function (fst) {
+            fst.setFeedValue('blah', 'favicon', 'abc');
+            done = true;
+        });
+        waitsFor(function () { return done; }, null, 200);
     });
     
     
@@ -189,8 +315,7 @@ describe('feedsStorage', function () {
         var filePath = './temp/feeds.json';
         var feedsData = {
             "categories": [
-                "Second Category"
-                // "First Category" is not saved here for reason, see github issue #1
+                "Second Category", "First Category"
             ],
             "feeds": [
                 {
@@ -224,10 +349,14 @@ describe('feedsStorage', function () {
             
             eraseFile();
             
-            var fst = feedsStorage.make(filePath);
-            
-            expect(fst.categories.length).toBe(0);
-            expect(fst.feeds.length).toBe(0);
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                expect(fst.categories.length).toBe(0);
+                expect(fst.feeds.length).toBe(0);
+                done = true;
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         // should save recent data to disk after any of this actions:
@@ -236,69 +365,92 @@ describe('feedsStorage', function () {
             
             eraseFile();
             
-            var fst = feedsStorage.make(filePath);
-            var f1 = {
-                url: 'a.com/feed',
-                category: 'Cool Category'
-            };
-            fst.addFeed(f1);
-            
-            var savedData = grabFromDisk();
-            
-            expect(savedData.categories).toContain('Cool Category');
-            expect(savedData.feeds[0]).toEqual(f1);
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                var f1 = {
+                    url: 'a.com/feed',
+                    category: 'Cool Category'
+                };
+                fst.addFeed(f1)
+                .then(function () {
+                    var savedData = grabFromDisk();
+                    expect(savedData.categories).toContain('Cool Category');
+                    expect(savedData.feeds[0]).toEqual(f1);
+                    done = true;
+                });
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('test removeFeed', function () {
-            var fst = feedsStorage.make(filePath);
-            fst.removeFeed('b.com/feed');
-            var savedData = grabFromDisk();
-            expect(savedData.feeds.length).toBe(1);
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                fst.removeFeed('b.com/feed')
+                .then(function () {
+                    var savedData = grabFromDisk();
+                    expect(savedData.feeds.length).toBe(1);
+                    done = true;
+                });
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('test setFeedValue', function () {
-            var fst = feedsStorage.make(filePath);
-            fst.setFeedValue('b.com/feed', 'favicon', 'abc');
-            var savedData = grabFromDisk();
-            expect(savedData.feeds[1].favicon).toBe('abc');
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                fst.setFeedValue('b.com/feed', 'favicon', 'abc')
+                .then(function () {
+                    var savedData = grabFromDisk();
+                    expect(savedData.feeds[1].favicon).toBe('abc');
+                    done = true;
+                });
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('test addCategory', function () {
-            var fst = feedsStorage.make(filePath);
-            fst.addCategory('Third Category');
-            var savedData = grabFromDisk();
-            expect(savedData.categories).toContain('Third Category');
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                fst.addCategory('Third Category')
+                .then(function () {
+                    var savedData = grabFromDisk();
+                    expect(savedData.categories).toContain('Third Category');
+                    done = true;
+                });
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('test changeCategoryName', function () {
-            var fst = feedsStorage.make(filePath);
-            fst.changeCategoryName('First Category', 'New Name');
-            var savedData = grabFromDisk();
-            expect(savedData.categories).toContain('New Name');
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                fst.changeCategoryName('First Category', 'New Name')
+                .then(function () {
+                    var savedData = grabFromDisk();
+                    expect(savedData.categories).toContain('New Name');
+                    done = true;
+                });
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('test removeCategory', function () {
-            var fst = feedsStorage.make(filePath);
-            fst.removeCategory('First Category');
-            var savedData = grabFromDisk();
-            expect(savedData.categories).not.toContain('First Category');
-        });
-        
-        it('github issue #1 - rename category for the same name', function () {
-            var fst = feedsStorage.make(filePath);
-            
-            // "First Category" doesn't appear in categories in feeds.json
-            // but app should obtain category from field in feed
-            // this is for recovering already affected apps by this bug
-            expect(fst.categories).toContain('First Category');
-            
-            // this line causes the bug
-            fst.changeCategoryName('First Category', 'First Category');
-            
-            // bug should stop appearing - what means 'First Category'
-            // should appear after this action in categories array
-            var savedData = grabFromDisk();
-            expect(savedData.categories).toContain('First Category');
+            var done = false;
+            feedsStorage.make(filePath)
+            .then(function (fst) {
+                fst.removeCategory('First Category')
+                .then(function () {
+                    var savedData = grabFromDisk();
+                    expect(savedData.categories).not.toContain('First Category');
+                    done = true;
+                });
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
     });

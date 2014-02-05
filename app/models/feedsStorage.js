@@ -1,31 +1,9 @@
 'use strict';
 
-var fs = require('fs');
+var Q = require('q');
+var safeFile = require('../helpers/safeFile');
 
 exports.make = function (dataPath) {
-    
-    var model;
-    
-    //-----------------------------------------------------
-    // Init
-    //-----------------------------------------------------
-    
-    if (dataPath && fs.existsSync(dataPath)) {
-        model = JSON.parse(fs.readFileSync(dataPath, { encoding: 'utf8' }));
-        
-        // this loop fixes github issue #1
-        model.feeds.forEach(function (feed) {
-            if (model.categories.indexOf(feed.category) === -1) {
-                addCategory(feed.category);
-            }
-        });
-        
-    } else {
-        model = {
-            categories: [],
-            feeds: []
-        };
-    }
     
     //-----------------------------------------------------
     // Helper functions
@@ -50,10 +28,19 @@ exports.make = function (dataPath) {
         return list;
     }
     
-    function save() {
+    function save(responseObj) {
+        var def = Q.defer();
+        
         if (dataPath) {
-            fs.writeFileSync(dataPath, JSON.stringify(model, null, 2), { encoding: 'utf8' });
+            safeFile.write(dataPath, JSON.stringify(model, null, 4))
+            .then(function () {
+                def.resolve(responseObj);
+            });
+        } else {
+            def.resolve(responseObj);
         }
+        
+        return def.promise;
     }
     
     //-----------------------------------------------------
@@ -63,7 +50,7 @@ exports.make = function (dataPath) {
     function addFeed(feedModel) {
         var feed = getFeedByUrl(feedModel.url);
         if (feed) {
-            return feed;
+            return save(feed);
         }
         
         feed = feedModel;
@@ -75,16 +62,14 @@ exports.make = function (dataPath) {
             model.categories.push(feed.category);
         }
         
-        save();
-        
-        return feed;
+        return save(feed);
     }
     
     function setFeedValue(feedUrl, key, value) {
         var feed = getFeedByUrl(feedUrl);
         
         if (!feed) {
-            return null;
+            return save(null);
         }
         
         if (key === 'category') {
@@ -97,9 +82,7 @@ exports.make = function (dataPath) {
         
         feed[key] = value;
         
-        save();
-        
-        return feed;
+        return save(feed);
     }
     
     function removeFeed(url) {
@@ -111,29 +94,20 @@ exports.make = function (dataPath) {
             }
         }
         
-        save();
-        
-        return feed;
+        return save(feed);
     }
     
     function addCategory(name) {
-        if (!name || name === '') {
-            return;
-        }
-        if (model.categories.indexOf(name) === -1) {
+        if (name && name !== '' && model.categories.indexOf(name) === -1) {
             model.categories.push(name);
         }
         
-        save();
+        return save();
     }
     
     function changeCategoryName(currentName, newName) {
-        if (!newName || newName === '') {
-            return;
-        }
-        
         var currNameIndex = model.categories.indexOf(currentName);
-        if (currNameIndex !== -1) {
+        if (newName !== undefined && newName !== '' && currNameIndex !== -1) {
             if (model.categories.indexOf(newName) !== -1 && currentName !== newName) {
                 // newName already is defined, we are merging two categories together
                 // so we must to throw away one of this categories from array
@@ -146,9 +120,9 @@ exports.make = function (dataPath) {
             categoryFeeds.forEach(function (feed) {
                 feed.category = newName;
             });
-            
-            save();
         }
+        
+        return save();
     }
     
     function removeCategory(name) {
@@ -163,10 +137,20 @@ exports.make = function (dataPath) {
             removeFeed(feed.url);
         });
         
-        save();
+        return save();
     }
     
-    return {
+    //-----------------------------------------------------
+    // Init
+    //-----------------------------------------------------
+    
+    var def = Q.defer();
+    var model = {
+        categories: [],
+        feeds: []
+    };
+    
+    var api = {
         get categories() {
             return model.categories;
         },
@@ -180,4 +164,18 @@ exports.make = function (dataPath) {
         changeCategoryName: changeCategoryName,
         removeCategory: removeCategory,
     };
+    
+    if (dataPath) {
+        safeFile.read(dataPath)
+        .then(function (data) {
+            if (data !== null) {
+                model = JSON.parse(data);
+            }
+            def.resolve(api);
+        });
+    } else {
+        def.resolve(api);
+    }
+    
+    return def.promise;
 }

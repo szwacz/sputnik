@@ -26,7 +26,7 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
     
     function setUserConfProperty(key, value) {
         userConf[key] = value;
-        safeFile.write(userConfPath, JSON.stringify(userConf, null, 4), { encoding: 'utf8' });
+        safeFile.write(userConfPath, JSON.stringify(userConf, null, 4));
     }
     
     var api = {

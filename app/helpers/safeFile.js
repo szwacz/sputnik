@@ -75,6 +75,9 @@ module.exports.write = function (path, data) {
         })
         .finally(function () {
             def.resolve();
+        })
+        .catch(function (e) {
+            def.reject(e);
         });
     });
     
