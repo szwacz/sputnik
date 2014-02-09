@@ -4,41 +4,49 @@ describe('feedsService', function () {
     
     var feedsStorage = require('../app/models/feedsStorage');
     
-    beforeEach(module('sputnik', function($provide) {
-        var fst = feedsStorage.make();
+    beforeEach(function () {
+        var done = false;
         
-        // initial data for tests
-        // Ą,ą,ć chars for utf sorting test
-        fst.addFeed({
-            url: 'd.com/feed',
-            title: 'd',
-        });
-        fst.addFeed({
-            url: 'e.com/feed',
-            title: 'e',
-        });
-        fst.addFeed({
-            url: 'c.com/feed',
-            title: 'c',
-            category: 'ć Second Category',
-        });
-        fst.addCategory('Third Category');
-        fst.addFeed({
-            url: 'a.com/feed',
-            title: 'ąĄ',
-            category: 'ą First Category',
-        });
-        fst.addFeed({
-            url: 'b.com/feed',
-            title: 'b',
-            category: 'ą First Category',
+        feedsStorage.make()
+        .then(function (fst) {
+            // initial data for tests
+            // Ą,ą,ć chars for utf sorting test
+            fst.addFeed({
+                url: 'd.com/feed',
+                title: 'd',
+            });
+            fst.addFeed({
+                url: 'e.com/feed',
+                title: 'e',
+            });
+            fst.addFeed({
+                url: 'c.com/feed',
+                title: 'c',
+                category: 'ć Second Category',
+            });
+            fst.addCategory('Third Category');
+            fst.addFeed({
+                url: 'a.com/feed',
+                title: 'ąĄ',
+                category: 'ą First Category',
+            });
+            fst.addFeed({
+                url: 'b.com/feed',
+                title: 'b',
+                category: 'ą First Category',
+            });
+            
+            module('sputnik', function($provide) {
+                $provide.value('feedsStorage', fst);
+                $provide.value('opml', require('../app/helpers/opml'));
+                $provide.value('config', { dataHomeFolder: '/userdata' });
+            });
+            
+            done = true;
         });
         
-        $provide.value('feedsStorage', fst);
-        
-        $provide.value('opml', require('../app/helpers/opml'));
-        $provide.value('config', { dataHomeFolder: '/userdata' });
-    }));
+        waitsFor(function () { return done; }, null, 200);
+    });
     
     it('can import and export OPML', inject(function (feedsService) {
         var opml = '<?xml version="1.0" encoding="UTF-8"?>' +
