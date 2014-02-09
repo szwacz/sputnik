@@ -7,7 +7,7 @@
   },
   "window": {
     "icon": "visual/icon.png",
-    "show": false,
+    "show": true,
     "toolbar": true,
     "width": 1000,
     "height": 660,

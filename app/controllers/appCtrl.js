@@ -13,6 +13,8 @@ function AppCtrl($scope, $location, config, feedsService, articlesService, favic
     
     analytics.init(config.analyticsUrl, config.guid, config.version);
     
+    $(document.body).removeClass('app-not-ready');
+    
     //-----------------------------------------------------
     // Notification bar
     //-----------------------------------------------------
