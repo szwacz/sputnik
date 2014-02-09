@@ -24,15 +24,26 @@ describe('downloadService', function () {
     
     var feedsWaitingRoomStoragePath = 'temp/feeds-waiting';
     
-    beforeEach(module('sputnik', function($provide) {
-        $provide.value('feedsStorage', feedsStorage.make());
-        $provide.value('articlesStorage', articlesStorage.make());
-        $provide.value('net', net);
-        $provide.value('opml', {});
-        $provide.value('feedParser', feedParser);
-        $provide.value('feedsWaitingRoom', feedsWaitingRoom.init(feedsWaitingRoomStoragePath));
-        $provide.value('config', {});
-    }));
+    beforeEach(function () {
+        var done = false;
+        
+        feedsStorage.make()
+        .then(function (fst) {
+            module('sputnik', function($provide) {
+                $provide.value('feedsStorage', fst);
+                $provide.value('articlesStorage', articlesStorage.make());
+                $provide.value('net', net);
+                $provide.value('opml', {});
+                $provide.value('feedParser', feedParser);
+                $provide.value('feedsWaitingRoom', feedsWaitingRoom.init(feedsWaitingRoomStoragePath));
+                $provide.value('config', {});
+            });
+            
+            done = true;
+        });
+        
+        waitsFor(function () { return done; }, null, 200);
+    });
     
     describe('calculating feeds average activity', function () {
         

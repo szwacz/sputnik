@@ -34,25 +34,35 @@ describe('integration: feedsService and articlesService', function () {
         }
     ];
     
-    beforeEach(module('sputnik', function($provide) {
-        var fst = feedsStorage.make();
+    beforeEach(function () {
+        var done = false;
         
-        // initial data for tests
-        fst.addFeed({
-            url: 'a.com/feed',
-            title: 'a',
-            category: 'First Category',
-        });
-        fst.addFeed({
-            url: 'b.com/feed',
-            title: 'b',
+        feedsStorage.make()
+        .then(function (fst) {
+            
+            // initial data for tests
+            fst.addFeed({
+                url: 'a.com/feed',
+                title: 'a',
+                category: 'First Category',
+            });
+            fst.addFeed({
+                url: 'b.com/feed',
+                title: 'b',
+            });
+            
+            module('sputnik', function($provide) {
+                $provide.value('feedsStorage', fst);
+                $provide.value('articlesStorage', articlesStorage.make());
+                $provide.value('opml', {});
+                $provide.value('config', {});
+            });
+            
+            done = true;
         });
         
-        $provide.value('feedsStorage', fst);
-        $provide.value('articlesStorage', articlesStorage.make());
-        $provide.value('opml', {});
-        $provide.value('config', {});
-    }));
+        waitsFor(function () { return done; }, null, 200);
+    });
     
     it('article has reference to its feed', inject(function (feedsService, articlesService) {
         var done = false;
