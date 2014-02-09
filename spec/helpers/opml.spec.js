@@ -68,101 +68,132 @@ describe('opml', function () {
         });
         
         it('should add categories and feeds to storage', function () {
-            var fst = feedsStorage.make();
-            opml.import(opmlContent, fst);
-            
-            expect(fst.categories.length).toBe(2);
-            expect(fst.feeds.length).toBe(8);
-            
-            // nested categories not supported in sputnik
-            expect(fst.categories).not.toContain('Category C');
-            
-            expect(fst.feeds[0].url).toBe('http://a.com/feed');
-            expect(fst.feeds[0].siteUrl).toBe('http://a.com');
-            expect(fst.feeds[0].title).toBe('a');
-            expect(fst.feeds[0].category).toBe('Category A');
-            
-            expect(fst.feeds[7].title).toBe('g');
-            expect(fst.feeds[7].category).toBeUndefined();
+            var done = false;
+            feedsStorage.make()
+            .then(function (fst) {
+                opml.import(opmlContent, fst);
+                
+                expect(fst.categories.length).toBe(2);
+                expect(fst.feeds.length).toBe(8);
+                
+                // nested categories not supported in sputnik
+                expect(fst.categories).not.toContain('Category C');
+                
+                expect(fst.feeds[0].url).toBe('http://a.com/feed');
+                expect(fst.feeds[0].siteUrl).toBe('http://a.com');
+                expect(fst.feeds[0].title).toBe('a');
+                expect(fst.feeds[0].category).toBe('Category A');
+                
+                expect(fst.feeds[7].title).toBe('g');
+                expect(fst.feeds[7].category).toBeUndefined();
+                done = true;
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('should omit main category if used as root container', function () {
-            var fst = feedsStorage.make();
-            opml.import(nestedOpml, fst);
-            
-            expect(fst.categories.length).toBe(1);
-            expect(fst.feeds.length).toBe(2);
-            expect(fst.categories).not.toContain('My Feeds');
-            expect(fst.feeds[0].url).toBe('http://b.com/feed');
-            expect(fst.feeds[0].category).toBeUndefined();
-            expect(fst.feeds[1].url).toBe('http://a.com/feed');
-            expect(fst.feeds[1].category).toBe('Category A');
-            
-            fst = feedsStorage.make();
-            opml.import(simplestOpml, fst);
-            
-            expect(fst.categories.length).toBe(1);
-            expect(fst.feeds.length).toBe(1);
+            var done = false;
+            feedsStorage.make()
+            .then(function (fst) {
+                opml.import(nestedOpml, fst);
+                expect(fst.categories.length).toBe(1);
+                expect(fst.feeds.length).toBe(2);
+                expect(fst.categories).not.toContain('My Feeds');
+                expect(fst.feeds[0].url).toBe('http://b.com/feed');
+                expect(fst.feeds[0].category).toBeUndefined();
+                expect(fst.feeds[1].url).toBe('http://a.com/feed');
+                expect(fst.feeds[1].category).toBe('Category A');
+                
+                return feedsStorage.make();
+            })
+            .then(function (fst) {
+                opml.import(simplestOpml, fst);
+                expect(fst.categories.length).toBe(1);
+                expect(fst.feeds.length).toBe(1);
+                done = true;
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('should do nothing if not valid OPML was given', function () {
-            var fst = feedsStorage.make();
-            opml.import('<data><item>Hello!</item></data>', fst);
-            opml.import('Not even XML', fst);
-            expect(fst.categories.length).toBe(0);
-            expect(fst.feeds.length).toBe(0);
+            var done = false;
+            feedsStorage.make()
+            .then(function (fst) {
+                opml.import('<data><item>Hello!</item></data>', fst);
+                opml.import('Not even XML', fst);
+                expect(fst.categories.length).toBe(0);
+                expect(fst.feeds.length).toBe(0);
+                done = true;
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
     });
     
     describe('exporting', function () {
         
         it('should create empty OPML from empty storage', function () {
-            var fst = feedsStorage.make();
-            var opmlContent = opml.export(fst);
-            var xml = new xmldoc.XmlDocument(opmlContent);
-            expect(xml.name).toBe('opml');
-            expect(xml.childNamed('head').children.length).toBe(1);
-            expect(xml.childNamed('body').children.length).toBe(0);
+            var done = false;
+            var fst = feedsStorage.make()
+            .then(function (fst) {
+                var opmlContent = opml.export(fst);
+                var xml = new xmldoc.XmlDocument(opmlContent);
+                expect(xml.name).toBe('opml');
+                expect(xml.childNamed('head').children.length).toBe(1);
+                expect(xml.childNamed('body').children.length).toBe(0);
+                done = true;
+            });
+            waitsFor(function () { return done; }, null, 200);
         });
         
         it('should create OPML', function () {
-            var fst = feedsStorage.make();
-            
-            fst.addFeed({
-                url: 'a.com/feed',
-                siteUrl: 'a.com',
-                title: 'a',
-                category: 'First Category ąĄłŁ', // utf8 test
+            var done = false;
+            var fst = feedsStorage.make()
+            .then(function (fst) {
+                fst.addFeed({
+                    url: 'a.com/feed',
+                    siteUrl: 'a.com',
+                    title: 'a',
+                    category: 'First Category ąĄłŁ', // utf8 test
+                })
+                .then(function () {
+                    return fst.addFeed({
+                        url: 'b.com/feed',
+                        siteUrl: 'b.com',
+                        title: 'b',
+                        category: 'First Category ąĄłŁ',
+                    });
+                })
+                .then(function () {
+                    return fst.addFeed({
+                        url: 'c.com/feed',
+                    });
+                })
+                .then(function () {
+                    return fst.addFeed({
+                        url: 'd.com/feed',
+                    });
+                })
+                .then(function () {
+                    var opmlContent = opml.export(fst);
+                    var xml = new xmldoc.XmlDocument(opmlContent);
+                    
+                    expect(xml.childNamed('body').children.length).toBe(3);
+                    
+                    expect(xml.childNamed('body').children[0].attr.title).toBe('First Category ąĄłŁ');
+                    expect(xml.childNamed('body').children[0].attr.text).toBe('First Category ąĄłŁ');
+                    expect(xml.childNamed('body').children[0].children.length).toBe(2);
+                    expect(xml.childNamed('body').children[0].children[0].attr.text).toBe('a');
+                    expect(xml.childNamed('body').children[0].children[1].attr.text).toBe('b');
+                    
+                    expect(xml.childNamed('body').children[1].attr.text).toBe('Feed');
+                    expect(xml.childNamed('body').children[1].attr.title).toBe('Feed');
+                    expect(xml.childNamed('body').children[1].attr.type).toBe('rss');
+                    expect(xml.childNamed('body').children[1].attr.xmlUrl).toBe('c.com/feed');
+                    expect(xml.childNamed('body').children[1].attr.htmlUrl).toBeUndefined();
+                    done = true;
+                });
             });
-            fst.addFeed({
-                url: 'b.com/feed',
-                siteUrl: 'b.com',
-                title: 'b',
-                category: 'First Category ąĄłŁ',
-            });
-            fst.addFeed({
-                url: 'c.com/feed',
-            });
-            fst.addFeed({
-                url: 'd.com/feed',
-            });
-            
-            var opmlContent = opml.export(fst);
-            var xml = new xmldoc.XmlDocument(opmlContent);
-            
-            expect(xml.childNamed('body').children.length).toBe(3);
-            
-            expect(xml.childNamed('body').children[0].attr.title).toBe('First Category ąĄłŁ');
-            expect(xml.childNamed('body').children[0].attr.text).toBe('First Category ąĄłŁ');
-            expect(xml.childNamed('body').children[0].children.length).toBe(2);
-            expect(xml.childNamed('body').children[0].children[0].attr.text).toBe('a');
-            expect(xml.childNamed('body').children[0].children[1].attr.text).toBe('b');
-            
-            expect(xml.childNamed('body').children[1].attr.text).toBe('Feed');
-            expect(xml.childNamed('body').children[1].attr.title).toBe('Feed');
-            expect(xml.childNamed('body').children[1].attr.type).toBe('rss');
-            expect(xml.childNamed('body').children[1].attr.xmlUrl).toBe('c.com/feed');
-            expect(xml.childNamed('body').children[1].attr.htmlUrl).toBeUndefined();
+            waitsFor(function () { return done; }, null, 200);
         });
     });
     
