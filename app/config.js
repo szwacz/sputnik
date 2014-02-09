@@ -22,11 +22,11 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
     var appConf = JSON.parse(fs.readFileSync('./appConfig.json'));
     
     var userConf = {};
-    var userConfPath = userDataPath + '/config.json';
+    var userConfFile = safeFile(userDataPath + '/config.json');
     
     function setUserConfProperty(key, value) {
         userConf[key] = value;
-        safeFile.write(userConfPath, JSON.stringify(userConf, null, 4));
+        userConfFile.write(JSON.stringify(userConf, null, 4));
     }
     
     var api = {
@@ -85,7 +85,7 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
         },
     };
     
-    safeFile.read(userConfPath)
+    userConfFile.read()
     .then(function (data) {
         if (data !== null) {
             userConf = JSON.parse(data);

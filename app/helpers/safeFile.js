@@ -14,7 +14,7 @@ var qWriteFile = Q.denodeify(fs.writeFile);
 var qUnlink = Q.denodeify(fs.unlink);
 var qStat = Q.denodeify(fs.stat);
 
-module.exports.read = function (path) {
+function read(path) {
     var def = Q.defer();
     
     var bkp = path + '~';
@@ -54,7 +54,7 @@ module.exports.read = function (path) {
     return def.promise;
 };
 
-module.exports.write = function (path, data) {
+function write(path, data) {
     var def = Q.defer();
     
     var bkp = path + '~';
@@ -82,4 +82,43 @@ module.exports.write = function (path, data) {
     });
     
     return def.promise;
+};
+
+module.exports = function (path) {
+    
+    var queue = [];
+    
+    function registerTask(task) {
+        task.def = Q.defer();
+        queue.push(task);
+        doTask();
+        return task.def.promise;
+    }
+    
+    function doTask() {
+        if (queue.length === 0) {
+            return;
+        }
+        var task = queue.shift();
+        var promise;
+        switch (task.name) {
+            case 'read':
+                promise = read(path);
+                break;
+            case 'write':
+                promise = write(path, task.data);
+                break;
+        }
+        promise.then(task.def.resolve, task.def.reject);
+        promise.then(doTask, doTask);
+    }
+    
+    return {
+        read: function () {
+            return registerTask({ name: 'read' });
+        },
+        write: function (data) {
+            return registerTask({ name: 'write', data: data });
+        }
+    };
 };

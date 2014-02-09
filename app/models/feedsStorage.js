@@ -5,6 +5,8 @@ var safeFile = require('../helpers/safeFile');
 
 exports.make = function (dataPath) {
     
+    var dataFile = safeFile(dataPath);
+    
     //-----------------------------------------------------
     // Helper functions
     //-----------------------------------------------------
@@ -32,7 +34,7 @@ exports.make = function (dataPath) {
         var def = Q.defer();
         
         if (dataPath) {
-            safeFile.write(dataPath, JSON.stringify(model, null, 4))
+            dataFile.write(JSON.stringify(model, null, 4))
             .then(function () {
                 def.resolve(responseObj);
             });
@@ -166,7 +168,7 @@ exports.make = function (dataPath) {
     };
     
     if (dataPath) {
-        safeFile.read(dataPath)
+        dataFile.read()
         .then(function (data) {
             if (data !== null) {
                 model = JSON.parse(data);

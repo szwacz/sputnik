@@ -33,9 +33,10 @@ describe('safeFile', function () {
         fse.writeFileSync(backupPath, 'bkp');
         fse.writeFileSync(tmpPath, 'tmp');
         
-        safeFile.write(testPath, 'abcŁŹŃ')
+        var sf = safeFile(testPath);
+        sf.write('abcŁŹŃ')
         .then(function () {
-            return safeFile.read(testPath);
+            return sf.read();
         })
         .then(function (data) {
             expect(data).toBe('abcŁŹŃ');
@@ -47,7 +48,8 @@ describe('safeFile', function () {
     it("should return null if both files doesn't exit", function () {
         var done = false;
         
-        safeFile.read(testPath)
+        var sf = safeFile(testPath);
+        sf.read()
         .then(function (data) {
             expect(data).toBeNull();
             done = true;
@@ -61,7 +63,8 @@ describe('safeFile', function () {
         fse.writeFileSync(testPath, '');
         fse.writeFileSync(backupPath, '');
         
-        safeFile.read(testPath)
+        var sf = safeFile(testPath);
+        sf.read()
         .then(function (data) {
             expect(data).toBeNull();
             done = true;
@@ -75,7 +78,8 @@ describe('safeFile', function () {
         fse.writeFileSync(testPath, '');
         fse.writeFileSync(backupPath, '123');
         
-        safeFile.read(testPath)
+        var sf = safeFile(testPath);
+        sf.read()
         .then(function (data) {
             expect(data).toBe('123');
             done = true;
@@ -88,7 +92,8 @@ describe('safeFile', function () {
         
         fse.writeFileSync(backupPath, 'qwe');
         
-        safeFile.read(testPath)
+        var sf = safeFile(testPath);
+        sf.read()
         .then(function (data) {
             expect(data).toBe('qwe');
             done = true;
@@ -102,7 +107,8 @@ describe('safeFile', function () {
         fse.writeFileSync(testPath, 'qwe');
         fse.writeFileSync(backupPath, '');
         
-        safeFile.read(testPath)
+        var sf = safeFile(testPath);
+        sf.read()
         .then(function (data) {
             expect(data).toBe('qwe');
             done = true;
@@ -116,11 +122,31 @@ describe('safeFile', function () {
         fse.writeFileSync(testPath, 'qwe');
         fse.writeFileSync(backupPath, '123');
         
-        safeFile.read(testPath)
+        var sf = safeFile(testPath);
+        sf.read()
         .then(function (data) {
             expect(data).toBe('qwe');
             done = true;
         }, function (err) {console.log(err)});
+        waitsFor(function () { return done; }, null, 200);
+    });
+    
+    it("queues concurrent tasks", function () {
+        var done = false;
+        
+        fse.writeFileSync(testPath, 'abc');
+        
+        var sf = safeFile(testPath);
+        sf.write('123');
+        sf.write('456');
+        sf.write('789')
+        .then(function () {
+            return sf.read();
+        })
+        .then(function (data) {
+            expect(data).toBe('789');
+            done = true;
+        });
         waitsFor(function () { return done; }, null, 200);
     });
     
