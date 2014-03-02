@@ -89,7 +89,6 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
     .then(function (data) {
         if (data !== null) {
             userConf = JSON.parse(data);
-            callback(api);
         }
         
         // default values
@@ -112,5 +111,7 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
         if (userConf.keepTaggedArticlesForever === undefined) {
             setUserConfProperty('keepTaggedArticlesForever', true);
         }
+        
+        callback(api);
     });
 }
