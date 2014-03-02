@@ -14,18 +14,19 @@ cp -r -f ./Sputnik /opt
 cp -f ./Sputnik.desktop /usr/share/applications
 
 # solution for lacking libudev.so.0
-udevDependent=`which udisks 2> /dev/null` # Ubuntu, Mint
-if [ -z "$udevDependent" ]
-then
-    udevDependent=`which systemd 2> /dev/null` # Fedora, SUSE
-fi
-if [ -z "$udevDependent" ]
-then
-    udevDependent=`which findmnt` # Arch
-fi
-udevso=`ldd $udevDependent | grep libudev.so | awk '{print $3;}'`
-if [ -e "$udevso" ]; then
-    ln -sf "$udevso" /opt/Sputnik/libudev.so.0
-fi
+paths=(
+  "/lib/x86_64-linux-gnu/libudev.so.1" # Ubuntu, Xubuntu, Mint
+  "/usr/lib64/libudev.so.1" # SUSE, Fedora
+  "/usr/lib/libudev.so.1" # Arch, Fedora 32bit
+  "/lib/i386-linux-gnu/libudev.so.1" # Ubuntu 32bit
+)
+for i in "${paths[@]}"
+do
+  if [ -f $i ]
+  then
+    ln -sf "$i" /opt/Sputnik/libudev.so.0
+    break
+  fi
+done
 
 echo "Installation done!"
