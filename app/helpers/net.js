@@ -39,36 +39,40 @@ exports.getUrl = function (url, options) {
         }
     }
     
-    request(options, function (err, response, body) {
-        if (err) {
-            deferred.reject(err);
-        } else if (response.statusCode === 404) {
-            deferred.reject({
-                code: '404'
-            });
-        } else if (response.statusCode !== 200) {
-            deferred.reject({
-                code: 'unknownError'
-            });
-        } else {
-            // if response came compressed
-            var encoding = response.headers['content-encoding'];
-
-            if (encoding === 'gzip') {
-                zlib.gunzip(body, function (err, decoded) {
-                    deferred.resolve(decoded);
+    try {
+        request(options, function (err, response, body) {
+            if (err) {
+                deferred.reject(err);
+            } else if (response.statusCode === 404) {
+                deferred.reject({
+                    code: '404'
                 });
-            } else if (encoding === 'deflate') {
-                zlib.inflate(body, function (err, decoded) {
-                    deferred.resolve(decoded);
+            } else if (response.statusCode !== 200) {
+                deferred.reject({
+                    code: 'unknownError'
                 });
             } else {
-                deferred.resolve(body);
+                // if response came compressed
+                var encoding = response.headers['content-encoding'];
+    
+                if (encoding === 'gzip') {
+                    zlib.gunzip(body, function (err, decoded) {
+                        deferred.resolve(decoded);
+                    });
+                } else if (encoding === 'deflate') {
+                    zlib.inflate(body, function (err, decoded) {
+                        deferred.resolve(decoded);
+                    });
+                } else {
+                    deferred.resolve(body);
+                }
             }
-        }
-    }).on('error', function (err) {
+        }).on('error', function (err) {
+            // nothing
+        });
+    } catch (err) {
         // nothing
-    });
+    }
     
     return deferred.promise;
 };
