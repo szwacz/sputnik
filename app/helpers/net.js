@@ -26,20 +26,20 @@ exports.getUrl = function (url, options) {
         options.timeout = 20000;
     }
     
-    if (proxyFunc) {
-        // returns PAC file format
-        var proxy = proxyFunc(url);
-        if (proxy.substring(0, 5) === 'PROXY') {
-            var endIndex = proxy.indexOf(';');
-            if (endIndex === -1) {
-                endIndex = proxy.length;
-            }
-            proxy = proxy.substring(6, endIndex);
-            options.proxy = 'http://' + proxy;
-        }
-    }
-    
     try {
+        if (proxyFunc) {
+            // returns PAC file format
+            var proxy = proxyFunc(url);
+            if (proxy.substring(0, 5) === 'PROXY') {
+                var endIndex = proxy.indexOf(';');
+                if (endIndex === -1) {
+                    endIndex = proxy.length;
+                }
+                proxy = proxy.substring(6, endIndex);
+                options.proxy = 'http://' + proxy;
+            }
+        }
+        
         request(options, function (err, response, body) {
             if (err) {
                 deferred.reject(err);
