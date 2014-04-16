@@ -1,3 +1,7 @@
+1.0.6 (2014-04-16)
+-------------------
+* Fixed bug while adding new feeds.
+
 1.0.5 (2014-03-02)
 -------------------
 * Fix: User data loss not possible if app killed in inapropreate moment
