@@ -100,18 +100,22 @@ function faviconsService(config, $http, $rootScope, $q) {
     function getFaviconForSite(siteUrl) {
         var def = $q.defer();
         
-        // get site's HTML
-        $http.get(siteUrl)
-        .then(function (response) {
-            // look for favicon in this HTML
-            return getFavicon(findFaviconInHtml(siteUrl, response.data))
-        })
-        .then(def.resolve, function () {
-            // if favicon not found this way, try the old way
-            // (default url where favicon should be stored)
-            return blindTryFaviconUrls(siteUrl);
-        })
-        .then(def.resolve, def.reject);
+        if (!siteUrl) {
+            def.reject()
+        } else {
+            // get site's HTML
+            $http.get(siteUrl)
+            .then(function (response) {
+                // look for favicon in this HTML
+                return getFavicon(findFaviconInHtml(siteUrl, response.data))
+            })
+            .then(def.resolve, function () {
+                // if favicon not found this way, try the old way
+                // (default url where favicon should be stored)
+                return blindTryFaviconUrls(siteUrl);
+            })
+            .then(def.resolve, def.reject);
+        }
         
         return def.promise;
     }
