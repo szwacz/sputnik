@@ -1,3 +1,8 @@
+1.0.7 (2014-05-07)
+-------------------
+* Fixed race between concurrent writes in safeFile helper.
+* Fixed favicons loading if feed has no site URL.
+
 1.0.6 (2014-04-16)
 -------------------
 * Fixed bug while adding new feeds.
