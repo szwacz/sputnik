@@ -87,6 +87,7 @@ function write(path, data) {
 module.exports = function (path) {
     
     var queue = [];
+    var taskRunning = false;
     
     function registerTask(task) {
         task.def = Q.defer();
@@ -95,10 +96,16 @@ module.exports = function (path) {
         return task.def.promise;
     }
     
+    function taskFinished() {
+        taskRunning = false;
+        doTask();
+    }
+    
     function doTask() {
-        if (queue.length === 0) {
+        if (taskRunning || queue.length === 0) {
             return;
         }
+        taskRunning = true;
         var task = queue.shift();
         var promise;
         switch (task.name) {
@@ -110,7 +117,7 @@ module.exports = function (path) {
                 break;
         }
         promise.then(task.def.resolve, task.def.reject);
-        promise.then(doTask, doTask);
+        promise.then(taskFinished, taskFinished);
     }
     
     return {

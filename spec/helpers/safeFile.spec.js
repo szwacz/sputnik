@@ -138,7 +138,9 @@ describe('safeFile', function () {
         
         var sf = safeFile(testPath);
         sf.write('123');
-        sf.write('456');
+        // if 2 concurrent writes of different length will fire at the same time
+        // they can appear as merged
+        sf.write('456 456');
         sf.write('789')
         .then(function () {
             return sf.read();
