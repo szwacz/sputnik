@@ -8,7 +8,7 @@ fi
 echo "Installing Sputnik..."
 
 # copy main app
-cp -r -f ./Sputnik /opt
+cp -af ./Sputnik/. /opt/Sputnik/
 
 # copy .desktop file
 cp -f ./Sputnik.desktop /usr/share/applications
