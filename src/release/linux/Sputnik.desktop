@@ -1,4 +1,5 @@
 [Desktop Entry]
+Version=1.0
 Type=Application
 Encoding=UTF-8
 Name=Sputnik
@@ -6,4 +7,4 @@ Comment=RSS Reader
 Exec=/opt/Sputnik/sputnik.sh
 Icon=/opt/Sputnik/visual/icon.png
 Terminal=false
-Categories=Network;News;
+Categories=Application;Network;News;

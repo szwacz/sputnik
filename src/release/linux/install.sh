@@ -8,10 +8,14 @@ fi
 echo "Installing Sputnik..."
 
 # copy main app
-cp -af ./Sputnik/. /opt/Sputnik/
+cp -af ./Sputnik /opt/
+
+# set execution permissions
+chmod 755 /opt/Sputnik/sputnik
+chmod 755 /opt/Sputnik/sputnik.sh
 
 # copy .desktop file
-cp -f ./Sputnik.desktop /usr/share/applications
+cp -f ./Sputnik.desktop /usr/share/applications/
 
 # solution for lacking libudev.so.0
 paths=(
@@ -30,3 +34,5 @@ do
 done
 
 echo "Installation done!"
+echo "Application has been installed to /opt/Sputnik/"
+echo "You might need to logout and login again to see Sputnik in the launcher."
