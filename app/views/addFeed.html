@@ -16,7 +16,7 @@
             <p>Type or copy/paste link to website you want to subscribe to<br/>
             (it could be URL to entire site, or direct link to RSS file).</p>
             <input id="url-input" type="text" ng-model="url" ng-change="urlChange()"
-                   placeholder="Put link here" class="add-feed__url-input"/>
+                   placeholder="Put link here" class="add-feed__url-input" autofocus />
             
             <span class="add-feed__indicators">
                 <div class="spinner" ng-if="urlValidity == 'checking'"></div>
