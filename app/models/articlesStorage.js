@@ -1,9 +1,7 @@
-'use strict';
-
 var Datastore = require('nedb');
 var Q = require('q');
 
-exports.make = function (dbPath) {
+var make = function (dbPath) {
     
     var db = new Datastore({
         filename : dbPath,
@@ -395,4 +393,8 @@ exports.make = function (dbPath) {
         untagArticle: untagArticle,
         removeTag: removeTag,
     };
-}
+};
+
+export default {
+    make: make
+};

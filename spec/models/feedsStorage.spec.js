@@ -1,22 +1,17 @@
-'use strict';
+import feedsStorage from 'models/feedsStorage';
 
 describe('feedsStorage', function () {
     
-    var feedsStorage = require('../app/models/feedsStorage');
-    
-    it('should init with no data', function () {
-        var done = false;
+    it('should init with no data', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             expect(fst.categories.length).toBe(0);
             expect(fst.feeds.length).toBe(0);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can add feed', function () {
-        var done = false;
+    it('can add feed', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             var feedData = {
@@ -30,14 +25,12 @@ describe('feedsStorage', function () {
             .then(function (addedFeed) {
                 expect(feedData).toEqual(addedFeed);
                 expect(feedData).toEqual(fst.feeds[0]);
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('should not allow to add same feed many times', function () {
-        var done = false;
+    it('should not allow to add same feed many times', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             var feedData = {
@@ -53,49 +46,41 @@ describe('feedsStorage', function () {
                 f2 = addedFeed;
                 expect(fst.feeds.length).toBe(1);
                 expect(f1).toEqual(f2);
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can add new category', function () {
-        var done = false;
+    it('can add new category', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addCategory('Cool Category');
             expect(fst.categories.length).toBe(1);
             expect(fst.categories).toContain('Cool Category');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it("can't add new category with invalid name", function () {
-        var done = false;
+    it("can't add new category with invalid name", function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addCategory('');
             expect(fst.categories.length).toBe(0);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('should not allow to add 2 categories with same name', function () {
-        var done = false;
+    it('should not allow to add 2 categories with same name', function (done) {
         var fst = feedsStorage.make()
         .then(function (fst) {
             fst.addCategory("Cool Category");
             fst.addCategory("Cool Category");
             expect(fst.categories.length).toBe(1);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can add new feed with category set', function () {
-        var done = false;
+    it('can add new feed with category set', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -105,13 +90,11 @@ describe('feedsStorage', function () {
             expect(fst.feeds.length).toBe(1);
             expect(fst.categories.length).toBe(1);
             expect(fst.categories).toContain('Cool Category');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can change any feed value', function () {
-        var done = false;
+    it('can change any feed value', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -122,14 +105,12 @@ describe('feedsStorage', function () {
             })
             .then(function (feed) {
                 expect(feed.favicon).toBe('favicon.gif');
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can change feed category', function () {
-        var done = false;
+    it('can change feed category', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -142,14 +123,12 @@ describe('feedsStorage', function () {
             .then(function (feed) {
                 expect(feed.category).toBe('B');
                 expect(fst.categories).toEqual(['A', 'B']);
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can remove feed category', function () {
-        var done = false;
+    it('can remove feed category', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             var f = fst.addFeed({
@@ -160,13 +139,11 @@ describe('feedsStorage', function () {
             f = fst.setFeedValue(f.url, 'category', '');
             expect(f.category).toBeUndefined();
             expect(fst.categories).toEqual(['A']);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can delete feed', function () {
-        var done = false;
+    it('can delete feed', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -174,13 +151,11 @@ describe('feedsStorage', function () {
             });
             fst.removeFeed('a.com/feed');
             expect(fst.feeds.length).toBe(0);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('should delete category and feeds assigned to that category', function () {
-        var done = false;
+    it('should delete category and feeds assigned to that category', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -194,13 +169,11 @@ describe('feedsStorage', function () {
             fst.removeCategory('Cool Category');
             expect(fst.categories.length).toBe(0);
             expect(fst.feeds.length).toBe(0);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can change category name', function () {
-        var done = false;
+    it('can change category name', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -211,14 +184,12 @@ describe('feedsStorage', function () {
             .then(function () {
                 expect(fst.categories).toEqual(['Better Name']);
                 expect(fst.feeds[0].category).toBe('Better Name');
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it("can't change category name to invalid one", function () {
-        var done = false;
+    it("can't change category name to invalid one", function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -229,14 +200,12 @@ describe('feedsStorage', function () {
             .then(function () {
                 expect(fst.categories).toEqual(['Cool Category']);
                 expect(fst.feeds[0].category).toBe('Cool Category');
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it("change category name for the same name has no effect", function () {
-        var done = false;
+    it("change category name for the same name has no effect", function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -247,14 +216,12 @@ describe('feedsStorage', function () {
             .then(function () {
                 expect(fst.categories).toEqual(['Cool Category']);
                 expect(fst.feeds[0].category).toBe('Cool Category');
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('can create new category via feed property', function () {
-        var done = false;
+    it('can create new category via feed property', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -269,14 +236,12 @@ describe('feedsStorage', function () {
                 expect(fst.categories.length).toBe(2);
                 expect(fst.categories).toContain('Better Name');
                 expect(fst.feeds[0].category).toBe('Better Name');
-                done = true;
+                done();
             });
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('should merge two categories if name of one was changed to name of the other', function () {
-        var done = false;
+    it('should merge two categories if name of one was changed to name of the other', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.addFeed({
@@ -292,24 +257,20 @@ describe('feedsStorage', function () {
             expect(fst.feeds.length).toBe(2);
             expect(fst.feeds[0].category).toBe('Cool Category');
             expect(fst.feeds[1].category).toBe('Cool Category');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('should terminate gracefully when setFeedValue gets nonexistent feedUrl', function () {
-        var done = false;
+    it('should terminate gracefully when setFeedValue gets nonexistent feedUrl', function (done) {
         feedsStorage.make()
         .then(function (fst) {
             fst.setFeedValue('blah', 'favicon', 'abc');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 200);
     });
     
     
-    describe('disk persistance', function () {
-        
+    describe('disk persistance', function (done) {
         var fs = require('fs');
         
         var filePath = './temp/feeds.json';
@@ -349,23 +310,20 @@ describe('feedsStorage', function () {
             
             eraseFile();
             
-            var done = false;
+            
             feedsStorage.make(filePath)
             .then(function (fst) {
                 expect(fst.categories.length).toBe(0);
                 expect(fst.feeds.length).toBe(0);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
         // should save recent data to disk after any of this actions:
         
-        it('test addFeed', function () {
-            
+        it('test addFeed', function (done) {
             eraseFile();
             
-            var done = false;
             feedsStorage.make(filePath)
             .then(function (fst) {
                 var f1 = {
@@ -377,80 +335,69 @@ describe('feedsStorage', function () {
                     var savedData = grabFromDisk();
                     expect(savedData.categories).toContain('Cool Category');
                     expect(savedData.feeds[0]).toEqual(f1);
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('test removeFeed', function () {
-            var done = false;
+        it('test removeFeed', function (done) {
             feedsStorage.make(filePath)
             .then(function (fst) {
                 fst.removeFeed('b.com/feed')
                 .then(function () {
                     var savedData = grabFromDisk();
                     expect(savedData.feeds.length).toBe(1);
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('test setFeedValue', function () {
-            var done = false;
+        it('test setFeedValue', function (done) {
             feedsStorage.make(filePath)
             .then(function (fst) {
                 fst.setFeedValue('b.com/feed', 'favicon', 'abc')
                 .then(function () {
                     var savedData = grabFromDisk();
                     expect(savedData.feeds[1].favicon).toBe('abc');
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('test addCategory', function () {
-            var done = false;
+        it('test addCategory', function (done) {
             feedsStorage.make(filePath)
             .then(function (fst) {
                 fst.addCategory('Third Category')
                 .then(function () {
                     var savedData = grabFromDisk();
                     expect(savedData.categories).toContain('Third Category');
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('test changeCategoryName', function () {
-            var done = false;
+        it('test changeCategoryName', function (done) {
             feedsStorage.make(filePath)
             .then(function (fst) {
                 fst.changeCategoryName('First Category', 'New Name')
                 .then(function () {
                     var savedData = grabFromDisk();
                     expect(savedData.categories).toContain('New Name');
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('test removeCategory', function () {
-            var done = false;
+        it('test removeCategory', function (done) {
             feedsStorage.make(filePath)
             .then(function (fst) {
                 fst.removeCategory('First Category')
                 .then(function () {
                     var savedData = grabFromDisk();
                     expect(savedData.categories).not.toContain('First Category');
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
     });

@@ -1,8 +1,6 @@
-'use strict';
+import articlesStorage from 'models/articlesStorage';
 
 describe('articlesStorage', function () {
-    
-    var articlesStorage = require('../app/models/articlesStorage');
     
     // things in format returned by feedsHarvester
     var harvest1 = [
@@ -95,8 +93,7 @@ describe('articlesStorage', function () {
         return null;
     };
     
-    it('should digest data from feedsHarvester and store them', function () {
-        var done = false;
+    it('should digest data from feedsHarvester and store them', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -125,13 +122,11 @@ describe('articlesStorage', function () {
             expect(art.pubTime).toBe(3);
             expect(art.isRead).toBe(false);
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should paginate results, sorted: 0-newest, last-oldest', function () {
-        var done = false;
+    it('should paginate results, sorted: 0-newest, last-oldest', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -157,13 +152,11 @@ describe('articlesStorage', function () {
             expect(result.articles.length).toBe(1);
             expect(result.articles[0].guid).toBe('guid2');
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should not duplicate same articles when digested many times', function () {
-        var done = false;
+    it('should not duplicate same articles when digested many times', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -180,13 +173,11 @@ describe('articlesStorage', function () {
             expect(getArt(articles, 'guid2')).not.toBeNull();
             expect(getArt(articles, 'link1')).not.toBeNull();
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should update article title or content if has changed in xml', function () {
-        var done = false;
+    it('should update article title or content if has changed in xml', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -206,13 +197,18 @@ describe('articlesStorage', function () {
             expect(art.title).toBe('different title');
             expect(art.content).toBe('different description');
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should do fine when 2 digest jobs were executed simultaneously', function () {
+    it('should do fine when 2 digest jobs were executed simultaneously', function (done) {
         var doneTasks = 0;
+        var ticDone = function () {
+            doneTasks += 1;
+            if (doneTasks === 2) {
+                done();
+            }
+        };
         var as = articlesStorage.make();
         
         as.digest('a.com/feed', harvest1)
@@ -221,8 +217,7 @@ describe('articlesStorage', function () {
         })
         .then(function (result) {
             expect(result.articles.length).toBe(3);
-            
-            doneTasks += 1;
+            ticDone();
         });
         
         as.digest('a.com/feed', harvest1)
@@ -231,15 +226,11 @@ describe('articlesStorage', function () {
         })
         .then(function (result) {
             expect(result.articles.length).toBe(3);
-            
-            doneTasks += 1;
+            ticDone();
         });
-        
-        waitsFor(function () { return doneTasks === 2; }, null, 500);
     });
     
-    it('should mark articles which not appear in feeds xml anymore as abandoned', function () {
-        var done = false;
+    it('should mark articles which not appear in feeds xml anymore as abandoned', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -255,13 +246,11 @@ describe('articlesStorage', function () {
             expect(getArt(articles, 'guid2').isAbandoned).toBe(false);
             expect(getArt(articles, 'link1').isAbandoned).toBe(true);
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should not mark as abandoned if empty list of articles provided', function () {
-        var done = false;
+    it('should not mark as abandoned if empty list of articles provided', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -274,13 +263,11 @@ describe('articlesStorage', function () {
             expect(getArt(result.articles, 'link3').isAbandoned).toBe(false);
             expect(getArt(result.articles, 'guid2').isAbandoned).toBe(false);
             expect(getArt(result.articles, 'link1').isAbandoned).toBe(false);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('if article reappeared in feed after some time merge it in DB with old one', function () {
-        var done = false;
+    it('if article reappeared in feed after some time merge it in DB with old one', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', [{
             title: "art",
@@ -317,13 +304,11 @@ describe('articlesStorage', function () {
             expect(result.articles[1].content).toBe('description-again'); // description should be updated
             expect(result.articles[1].pubTime).toBe(1); // pubTime of first article should be preserved
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should mark article as read', function () {
-        var done = false;
+    it('should mark article as read', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -338,13 +323,11 @@ describe('articlesStorage', function () {
             expect(getArt(articles, 'guid2').isRead).toBe(true);
             expect(getArt(articles, 'link1').isRead).toBe(false);
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should count unread articles for given feed', function () {
-        var done = false;
+    it('should count unread articles for given feed', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -359,13 +342,11 @@ describe('articlesStorage', function () {
         })
         .then(function (count) {
             expect(count).toBe(2);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should set "now" date for article if pubDate was not provided in feed xml', function () {
-        var done = false;
+    it('should set "now" date for article if pubDate was not provided in feed xml', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvestNoPubDate)
         .then(function () {
@@ -378,13 +359,11 @@ describe('articlesStorage', function () {
             expect(articles[0].pubTime).toBeGreaterThan(now - 500);
             expect(articles[0].pubTime).toBeLessThan(now + 500);
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should parse audio enclosures', function () {
-        var done = false;
+    it('should parse audio enclosures', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -402,13 +381,11 @@ describe('articlesStorage', function () {
             // if no enclosures specified this field should be undefined
             expect(art.enclosures).toBe(undefined);
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should remove all articles of given feed', function () {
-        var done = false;
+    it('should remove all articles of given feed', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -421,13 +398,11 @@ describe('articlesStorage', function () {
             expect(result.articles.length).toBe(0);
             expect(result.numAll).toBe(0);
             
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('should count unread articles for feed', function () {
-        var done = false;
+    it('should count unread articles for feed', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -435,13 +410,11 @@ describe('articlesStorage', function () {
         })
         .then(function (count) {
             expect(count).toBe(3);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it('getArticles should tell how much unread articles not visible on current page', function () {
-        var done = false;
+    it('getArticles should tell how much unread articles not visible on current page', function (done) {
         var as = articlesStorage.make();
         as.digest('a.com/feed', harvest1)
         .then(function () {
@@ -473,15 +446,13 @@ describe('articlesStorage', function () {
         .then(function (result) {
             expect(result.unreadBefore).toBe(0);
             expect(result.unreadAfter).toBe(0);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
     describe('tagging', function () {
         
-        it('should add tag', function () {
-            var done = false;
+        it('should add tag', function (done) {
             var as = articlesStorage.make();
             as.addTag('tag1')
             .then(function (addedTag) {
@@ -493,13 +464,11 @@ describe('articlesStorage', function () {
                 expect(tags.length).toBe(1);
                 expect(tags[0]._id).toBeDefined();
                 expect(tags[0].name).toBe('tag1');
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should not add 2 tags with the same name', function () {
-            var done = false;
+        it('should not add 2 tags with the same name', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.addTag('tag1')
@@ -515,13 +484,11 @@ describe('articlesStorage', function () {
             .then(function (tags) {
                 expect(tags.length).toBe(1);
                 expect(tags[0]._id).toBe(tag1._id);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should tag and untag articles', function () {
-            var done = false;
+        it('should tag and untag articles', function (done) {
             var as = articlesStorage.make();
             var tag1;
             var tag2;
@@ -571,13 +538,11 @@ describe('articlesStorage', function () {
                 var art = getArt(result.articles, 'link3');
                 expect(art.tags.length).toBe(1);
                 expect(art.tags[0]).toBe(tag2._id);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should not tag article twice with same tag', function () {
-            var done = false;
+        it('should not tag article twice with same tag', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.digest('a.com/feed', harvest1)
@@ -593,13 +558,11 @@ describe('articlesStorage', function () {
             })
             .then(function (taggedArticle) {
                 expect(taggedArticle.tags.length).toBe(1);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should list all articles with given tag', function () {
-            var done = false;
+        it('should list all articles with given tag', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.digest('a.com/feed', harvest1)
@@ -622,13 +585,11 @@ describe('articlesStorage', function () {
                 expect(result.articles.length).toBe(2);
                 expect(result.articles[0].guid).toBe('link3');
                 expect(result.articles[1].guid).toBe('link1');
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should remove tag', function () {
-            var done = false;
+        it('should remove tag', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.digest('a.com/feed', harvest1)
@@ -644,13 +605,11 @@ describe('articlesStorage', function () {
             })
             .then(function (tags) {
                 expect(tags.length).toBe(0);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should remove tag, and its reference from articles', function () {
-            var done = false;
+        it('should remove tag, and its reference from articles', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.digest('a.com/feed', harvest1)
@@ -678,13 +637,11 @@ describe('articlesStorage', function () {
             })
             .then(function (result) {
                 expect(result.articles.length).toBe(0);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('should change tag name', function () {
-            var done = false;
+        it('should change tag name', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.addTag('tag1')
@@ -698,17 +655,15 @@ describe('articlesStorage', function () {
             .then(function (tags) {
                 expect(tags.length).toBe(1);
                 expect(tags[0].name).toBe('new name');
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
     });
     
     describe('cleaning database', function () {
         
-        it('should remove abandoned articles older than X', function () {
-            var done = false;
+        it('should remove abandoned articles older than X', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.digest('a.com/feed', harvest1)
@@ -734,13 +689,11 @@ describe('articlesStorage', function () {
                 expect(result.numAll).toBe(2);
                 expect(result.articles[0].guid).toBe('link4');
                 expect(result.articles[1].guid).toBe('guid2'); // should stay because is not abandoned
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
-        it('if option set, should not remove tagged articles even if other conditions met', function () {
-            var done = false;
+        it('if option set, should not remove tagged articles even if other conditions met', function (done) {
             var as = articlesStorage.make();
             var tag1;
             as.digest('a.com/feed', harvest1)
@@ -773,9 +726,8 @@ describe('articlesStorage', function () {
                 expect(result.articles[0].guid).toBe('link4');
                 expect(result.articles[1].guid).toBe('guid2'); // should stay because is not abandoned
                 expect(result.articles[2].guid).toBe('link1'); // should stay because has tag
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 500);
         });
         
     });
