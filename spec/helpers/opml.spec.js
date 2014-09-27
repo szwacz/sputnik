@@ -1,10 +1,9 @@
-'use strict';
+import opml from 'helpers/opml';
+import feedsStorage from 'models/feedsStorage';
+
+var xmldoc = require('xmldoc');
 
 describe('opml', function () {
-    
-    var opml = require('../app/helpers/opml');
-    var feedsStorage = require('../app/models/feedsStorage');
-    var xmldoc = require('xmldoc');
     
     describe('importing', function () {
         
@@ -67,8 +66,7 @@ describe('opml', function () {
             expect(opml.isOpml('Something, something.')).toBeFalsy();
         });
         
-        it('should add categories and feeds to storage', function () {
-            var done = false;
+        it('should add categories and feeds to storage', function (done) {
             feedsStorage.make()
             .then(function (fst) {
                 opml.import(opmlContent, fst);
@@ -86,13 +84,11 @@ describe('opml', function () {
                 
                 expect(fst.feeds[7].title).toBe('g');
                 expect(fst.feeds[7].category).toBeUndefined();
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('should omit main category if used as root container', function () {
-            var done = false;
+        it('should omit main category if used as root container', function (done) {
             feedsStorage.make()
             .then(function (fst) {
                 opml.import(nestedOpml, fst);
@@ -110,29 +106,25 @@ describe('opml', function () {
                 opml.import(simplestOpml, fst);
                 expect(fst.categories.length).toBe(1);
                 expect(fst.feeds.length).toBe(1);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('should do nothing if not valid OPML was given', function () {
-            var done = false;
+        it('should do nothing if not valid OPML was given', function (done) {
             feedsStorage.make()
             .then(function (fst) {
                 opml.import('<data><item>Hello!</item></data>', fst);
                 opml.import('Not even XML', fst);
                 expect(fst.categories.length).toBe(0);
                 expect(fst.feeds.length).toBe(0);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 200);
         });
     });
     
     describe('exporting', function () {
         
-        it('should create empty OPML from empty storage', function () {
-            var done = false;
+        it('should create empty OPML from empty storage', function (done) {
             var fst = feedsStorage.make()
             .then(function (fst) {
                 var opmlContent = opml.export(fst);
@@ -140,13 +132,11 @@ describe('opml', function () {
                 expect(xml.name).toBe('opml');
                 expect(xml.childNamed('head').children.length).toBe(1);
                 expect(xml.childNamed('body').children.length).toBe(0);
-                done = true;
+                done();
             });
-            waitsFor(function () { return done; }, null, 200);
         });
         
-        it('should create OPML', function () {
-            var done = false;
+        it('should create OPML', function (done) {
             var fst = feedsStorage.make()
             .then(function (fst) {
                 fst.addFeed({
@@ -190,10 +180,9 @@ describe('opml', function () {
                     expect(xml.childNamed('body').children[1].attr.type).toBe('rss');
                     expect(xml.childNamed('body').children[1].attr.xmlUrl).toBe('c.com/feed');
                     expect(xml.childNamed('body').children[1].attr.htmlUrl).toBeUndefined();
-                    done = true;
+                    done();
                 });
             });
-            waitsFor(function () { return done; }, null, 200);
         });
     });
     

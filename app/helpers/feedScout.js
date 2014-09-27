@@ -1,5 +1,3 @@
-'use strict';
-
 var Q = require('q');
 var urlUtil = require('url');
 var cheerio = require('cheerio');
@@ -19,7 +17,7 @@ function findFeedUrlInHtml(body, url) {
     return null;
 }
 
-exports.scout = function (url, net, feedParser) {
+function scout (url, net, feedParser) {
     var deferred = Q.defer();
     
     if (!url.match(/^http/)) {
@@ -53,4 +51,8 @@ exports.scout = function (url, net, feedParser) {
     }, deferred.reject);
     
     return deferred.promise;
+}
+
+export default {
+    scout: scout
 };

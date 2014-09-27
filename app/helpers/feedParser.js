@@ -1,5 +1,3 @@
-'use strict'
-
 var Q = require('q');
 var iconv = require('iconv-lite');
 var FeedParser = require('feedparser');
@@ -62,6 +60,10 @@ function normalizeEncoding(bodyBuf) {
     return body;
 }
 
-exports.parse = function (buff) {
+function parse(buff) {
     return parseFeed(normalizeEncoding(buff));
+}
+
+export default {
+    parse: parse
 };

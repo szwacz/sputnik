@@ -1,9 +1,8 @@
-'use strict';
+import safeFile from 'helpers/safeFile';
 
 var Q = require('q');
-var safeFile = require('../helpers/safeFile');
 
-exports.make = function (dataPath) {
+var make = function (dataPath) {
     
     var dataFile = safeFile(dataPath);
     
@@ -180,4 +179,8 @@ exports.make = function (dataPath) {
     }
     
     return def.promise;
-}
+};
+
+export default {
+    make: make
+};

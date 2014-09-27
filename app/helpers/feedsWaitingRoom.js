@@ -1,11 +1,9 @@
-'use strict'
-
 var Q = require('q');
 var fs = require('fs');
 var pathUtil = require('path');
 var crypto = require('crypto');
 
-exports.init = function (waitingPlacePath) {
+var init = function (waitingPlacePath) {
     
     function storeOne(url, data) {
         var def = Q.defer();
@@ -55,3 +53,7 @@ exports.init = function (waitingPlacePath) {
         getOne: getOne
     };
 };
+
+export default {
+    init: init
+}

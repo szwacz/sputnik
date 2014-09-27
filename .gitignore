@@ -1,29 +1,8 @@
 bower_components
 node_modules
-
-.komodotools
-*.komodoproject
-
 ._.DS_Store
 .DS_Store
-
 *.log
-
-# compiled css
-/app/visual/css/*
-
-# node-webkit runtimes
-/nw/osx/node-webkit.app/*
-/nw/windows/*
-/nw/linux/*
-
-# 7zip (command line version)
-/scripts/7zip/*
-# makeself (https://github.com/megastep/makeself)
-/scripts/makeself/*
-
-# temporaty folder used for testing
-/spec/temp
-
-# data folder for testing
-/userdata
+/runtime/
+/build/
+temp

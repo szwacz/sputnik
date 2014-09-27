@@ -3,8 +3,6 @@
  * No dataloss possible if application or system srashed during save.
  */
 
-'use strict';
-
 var Q = require('q');
 var fs = require('fs');
 
@@ -84,7 +82,7 @@ function write(path, data) {
     return def.promise;
 };
 
-module.exports = function (path) {
+export default function (path) {
     
     var queue = [];
     var taskRunning = false;

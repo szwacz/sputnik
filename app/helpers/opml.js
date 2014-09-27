@@ -1,13 +1,11 @@
-'use strict';
-
 var xmldoc = require('xmldoc');
 
-exports.isOpml = function (fileContent) {
+var isOpml = function (fileContent) {
     var xml = new xmldoc.XmlDocument(fileContent);
     return xml.name === 'opml';
 };
 
-exports.import = function (fileContent, feedsStorage) {
+var importOpml = function (fileContent, feedsStorage) {
     var xml = new xmldoc.XmlDocument(fileContent);
     
     function isFeed(outline) {
@@ -84,7 +82,7 @@ exports.import = function (fileContent, feedsStorage) {
     }
 };
 
-exports.export = function (feedsStorage) {
+var exportOpml = function (feedsStorage) {
     
     function feedAttributes(xmlElement, feed) {
         xmlElement.att('text', feed.title || 'Feed');
@@ -131,3 +129,9 @@ exports.export = function (feedsStorage) {
     
     return root.end({ pretty: true });
 };
+
+export default {
+    isOpml: isOpml,
+    import: importOpml,
+    export: exportOpml,
+}

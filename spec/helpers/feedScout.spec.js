@@ -1,15 +1,13 @@
-'use strict';
+import feedParser from 'helpers/feedParser';
+import scout from 'helpers/feedScout';
+import netMock from 'mocks/net.mock';
+
+var fs = require('fs');
 
 describe('feedScout', function () {
     
-    var fs = require('fs');
-    
-    var netMock = require('./mocks/net.mock');
-    var feedParser = require('../app/helpers/feedParser');
-    var scout = require('../app/helpers/feedScout');
-    
-    var atomXml = fs.readFileSync('./data/atom.xml');
-    var rss2Xml = fs.readFileSync('./data/rss2.xml');
+    var atomXml = fs.readFileSync('./assets/atom.xml');
+    var rss2Xml = fs.readFileSync('./assets/rss2.xml');
     
     var htmlLinkAtom = '<html><head><link href="http://atom-xml" title="The Site" type="application/atom+xml"></head></html>';
     var htmlLinkRss = '<html><head><link href="http://rss2-xml" title="The Site" type="application/rss+xml"></head></html>';
@@ -38,121 +36,95 @@ describe('feedScout', function () {
     });
 
     
-    it("should return nothing if 404", function () {
-        var done = false;
+    it("should return nothing if 404", function (done) {
         scout.scout('http://404', net, feedParser).fail(function (err) {
             expect(err.code).toBe('404');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if timeout", function () {
-        var done = false;
+    it("should return nothing if timeout", function (done) {
         scout.scout('timeout', net, feedParser).fail(function (err) {
             expect(err.code).toBe('ETIMEDOUT');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if address not found", function () {
-        var done = false;
+    it("should return nothing if address not found", function (done) {
         scout.scout('not-found', net, feedParser).fail(function (err) {
             expect(err.code).toBe('ENOTFOUND');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should deal with Atom XML", function () {
-        var done = false;
+    it("should deal with Atom XML", function (done) {
         scout.scout('http://atom-xml', net, feedParser).then(function (feedUrl) {
             expect(feedUrl).toBe('http://atom-xml');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should deal with RSS XML", function () {
-        var done = false;
+    it("should deal with RSS XML", function (done) {        
         scout.scout('http://rss2-xml', net, feedParser).then(function (feedUrl) {
             expect(feedUrl).toBe('http://rss2-xml');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should deal with HTML with <link> to Atom", function () {
-        var done = false;
+    it("should deal with HTML with <link> to Atom", function (done) {
         scout.scout('http://html-link-atom', net, feedParser).then(function (feedUrl) {
             expect(feedUrl).toBe('http://atom-xml');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
     it("should deal with HTML with <link> to RSS", function () {
-        var done = false;
         scout.scout('http://html-link-rss', net, feedParser).then(function (feedUrl) {
             expect(feedUrl).toBe('http://rss2-xml');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should deal with HTML with RELATIVE <link> to RSS", function () {
-        var done = false;
+    it("should deal with HTML with RELATIVE <link> to RSS", function (done) {
         scout.scout('http://html-link-relative-rss', net, feedParser).then(function (feedUrl) {
             expect(feedUrl).toBe('http://html-link-relative-rss/rss2-xml');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if HTML has no <link> tag", function () {
-        var done = false;
+    it("should return nothing if HTML has no <link> tag", function (done) {
         scout.scout('http://html-no-link', net, feedParser).fail(function (err) {
             expect(err.code).toBe('noFeed');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if HTMLs <link> gets 404", function () {
-        var done = false;
+    it("should return nothing if HTMLs <link> gets 404", function (done) {
         scout.scout('http://html-link-404', net, feedParser).fail(function (err) {
             expect(err.code).toBe('404');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if HTMLs <link> gets timeout", function () {
-        var done = false;
+    it("should return nothing if HTMLs <link> gets timeout", function (done) {
         scout.scout('http://html-link-timeout', net, feedParser).fail(function (err) {
             expect(err.code).toBe('ETIMEDOUT');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if HTMLs <link> gets timeout", function () {
-        var done = false;
+    it("should return nothing if HTMLs <link> gets timeout", function (done) {
         scout.scout('http://html-link-not-found', net, feedParser).fail(function (err) {
             expect(err.code).toBe('ENOTFOUND');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
-    it("should return nothing if HTMLs <link> gets HTML instead of feed format", function () {
-        var done = false;
+    it("should return nothing if HTMLs <link> gets HTML instead of feed format", function (done) {
         scout.scout('http://html-link-html', net, feedParser).fail(function (err) {
             expect(err.code).toBe('noFeed');
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
     });
     
 });

@@ -50,7 +50,10 @@ gulp.task('transpile:spec', function() {
 });
 
 gulp.task('copy:spec', function() {
-    return jetpack.copyAsync('spec', destForCode.path(), { overwrite: true, only: ['spec/runner'] });
+    return jetpack.copyAsync('spec', destForCode.path(), {
+        overwrite: true,
+        only: ['spec/runner', 'spec/assets']
+    });
 });
 
 gulp.task('less', function () {
