@@ -44,7 +44,7 @@ gulp.task('transpile:app', function() {
 });
 
 gulp.task('transpile:spec', function() {
-    return gulp.src(['spec/**/*.js', '!spec/runner/**'])
+    return gulp.src(['spec/**/*.js', '!spec/runner/**', '!spec/vendor/**'])
     .pipe(es6ModuleTranspiler({ type: "amd" }))
     .pipe(gulp.dest(destForCode.path()));
 });
@@ -52,7 +52,7 @@ gulp.task('transpile:spec', function() {
 gulp.task('copy:spec', function() {
     return jetpack.copyAsync('spec', destForCode.path(), {
         overwrite: true,
-        only: ['spec/runner', 'spec/assets']
+        only: ['spec/runner', 'spec/assets', 'spec/vendor']
     });
 });
 

@@ -3,8 +3,6 @@
  * Manages categories and feeds tree.
  */
 
-'use strict';
-
 function feedsService($rootScope, feedsStorage, opml, config) {
     
     var Q = require('q');
@@ -296,3 +294,5 @@ function feedsService($rootScope, feedsStorage, opml, config) {
         },
     };
 }
+
+export default feedsService;

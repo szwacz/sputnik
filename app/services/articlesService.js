@@ -2,8 +2,6 @@
  * Manages articles. Decorates raw objects from database with extra functionality.
  */
 
-'use strict';
-
 function articlesService($rootScope, articlesStorage, feedsService) {
     
     var Q = require('q');
@@ -223,3 +221,5 @@ function articlesService($rootScope, articlesStorage, feedsService) {
         addTag: addTag,
     };
 }
+
+export default articlesService;

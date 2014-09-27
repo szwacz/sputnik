@@ -1,9 +1,9 @@
-'use strict';
+import feedsStorage from 'models/feedsStorage';
+import articlesStorage from 'models/articlesStorage';
+import feedsServiceClass from 'services/feedsService';
+import articlesServiceClass from 'services/articlesService';
 
 describe('integration: feedsService and articlesService', function () {
-    
-    var feedsStorage = require('../app/models/feedsStorage');
-    var articlesStorage = require('../app/models/articlesStorage');
     
     var harvest = [
         {
@@ -34,9 +34,11 @@ describe('integration: feedsService and articlesService', function () {
         }
     ];
     
-    beforeEach(function () {
-        var done = false;
-        
+    var feedsService;
+    var articlesService;
+    var $rootScope;
+    
+    beforeEach(function (done) {
         feedsStorage.make()
         .then(function (fst) {
             
@@ -51,42 +53,43 @@ describe('integration: feedsService and articlesService', function () {
                 title: 'b',
             });
             
-            module('sputnik', function($provide) {
+            module('sputnik', function ($provide) {
                 $provide.value('feedsStorage', fst);
                 $provide.value('articlesStorage', articlesStorage.make());
                 $provide.value('opml', {});
                 $provide.value('config', {});
+                $provide.service('feedsService', feedsServiceClass);
+                $provide.service('articlesService', articlesServiceClass);
             });
             
-            done = true;
+            done();
         });
-        
-        waitsFor(function () { return done; }, null, 200);
     });
     
-    it('article has reference to its feed', inject(function (feedsService, articlesService) {
-        var done = false;
+    beforeEach(inject(function (_$rootScope_, _feedsService_, _articlesService_) {
+        $rootScope = _$rootScope_;
+        feedsService = _feedsService_;
+        articlesService = _articlesService_;
+    }));
+    
+    it('article has reference to its feed', function (done) {
         articlesService.digest('a.com/feed', harvest)
         .then(function () {
             return articlesService.getArticles('a.com/feed', 0, 1);
         })
         .then(function (result) {
             expect(result.articles[0].feed).toEqual(feedsService.feeds[0]);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, "timeout", 500);
-    }));
+    });
     
-    it('fires unreadArticlesRecounted event when this value calculated at startup', inject(function ($rootScope, feedsService, articlesService) {
-        var done = false;
+    it('fires unreadArticlesRecounted event when this value calculated at startup', function (done) {
         $rootScope.$on('unreadArticlesRecounted', function (evt) {
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, null, 500);
-    }));
+    });
     
-    it('unreadArticlesCount is kept up to date after calling setIsRead', inject(function (feedsService, articlesService) {
-        var done = false;
+    it('unreadArticlesCount is kept up to date after calling setIsRead', function (done) {
         articlesService.digest('a.com/feed', harvest)
         .then(function () {
             return articlesService.digest('b.com/feed', harvest2);
@@ -106,13 +109,11 @@ describe('integration: feedsService and articlesService', function () {
             expect(feedsService.tree[0].unreadArticlesCount).toBe(1);
             expect(feedsService.tree[0].feeds[0].unreadArticlesCount).toBe(1);
             expect(feedsService.tree[1].unreadArticlesCount).toBe(2);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, "timeout", 500);
-    }));
+    });
     
-    it('unreadArticlesCount is kept up to date after calling markAllAsRead', inject(function (feedsService, articlesService) {
-        var done = false;
+    it('unreadArticlesCount is kept up to date after calling markAllAsRead', function (done) {
         articlesService.digest('a.com/feed', harvest)
         .then(function () {
             expect(feedsService.unreadArticlesCount).toBe(2);
@@ -124,9 +125,8 @@ describe('integration: feedsService and articlesService', function () {
             expect(feedsService.unreadArticlesCount).toBe(0);
             expect(feedsService.tree[0].unreadArticlesCount).toBe(0);
             expect(feedsService.tree[0].feeds[0].unreadArticlesCount).toBe(0);
-            done = true;
+            done();
         });
-        waitsFor(function () { return done; }, "timeout", 500);
-    }));
+    });
     
 });

@@ -18,6 +18,14 @@
     -->
     <script src="jasmine/boot.js"></script>
     
+    <script src="../vendor/jquery.js"></script>
+    <script src="../vendor/angular.js"></script>
+    <script src="../vendor/angular-mocks.js"></script>
+    <script>
+        // instantiating main app module
+        var sputnik = angular.module('sputnik', []);
+    </script>
+    
     <script>
         
         // Catch all uncought node.js errors and report them to the console.
