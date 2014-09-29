@@ -134,4 +134,4 @@ export default {
     isOpml: isOpml,
     import: importOpml,
     export: exportOpml,
-}
+};
