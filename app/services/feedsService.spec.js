@@ -49,7 +49,6 @@ describe('feedsService', function () {
     });
     
     beforeEach(inject(function (_$rootScope_, _feedsService_) {
-        console.log(_$rootScope_)
         $rootScope = _$rootScope_;
         feedsService = _feedsService_;
     }));
