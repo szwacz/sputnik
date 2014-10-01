@@ -2,9 +2,7 @@
  * Manages feeds' XML downloads.
  */
 
-'use strict';
-
-function downloadService(net, feedParser, config, feedsService, articlesService, feedsWaitingRoom) {
+export default function (net, feedParser, config, feedsService, articlesService, feedsWaitingRoom) {
     
     var Q = require('q');
     

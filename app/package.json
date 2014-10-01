@@ -19,6 +19,7 @@
         "cheerio": "0.12.2",
         "feedparser": "0.16.x",
         "iconv-lite": "0.2.x",
+        "moment": "2.x.x",
         "nedb": "0.8.13",
         "q": "0.9.x",
         "request": "2.x.x",
