@@ -1,11 +1,11 @@
-import feedParser from 'helpers/feedParser';
+import feedParser from './feedParser';
 
 var fs = require('fs');
 
 describe('feedParser', function () {
     
     it("should parse Atom feed", function (done) {
-        var buff = fs.readFileSync('./assets/atom.xml'); 
+        var buff = fs.readFileSync('./spec_assets/atom.xml'); 
         feedParser.parse(buff).then(function (result) {
             expect(result.meta.title).toBe('Paul Irish');
             expect(result.meta.link).toBe('http://paulirish.com/');
@@ -16,7 +16,7 @@ describe('feedParser', function () {
     });
     
     it("should parse RSSv2 feed", function (done) {
-        var buff = fs.readFileSync('./assets/rss2.xml'); 
+        var buff = fs.readFileSync('./spec_assets/rss2.xml'); 
         feedParser.parse(buff).then(function (result) {
             expect(result.meta.title).toBe('The Weinberg Foundation');
             expect(result.meta.link).toBe('http://www.the-weinberg-foundation.org');
@@ -27,7 +27,7 @@ describe('feedParser', function () {
     });
     
     it("should convert to UTF-8 any feed encoded in different charset", function (done) {
-        var buff = fs.readFileSync('./assets/iso-encoded.xml');
+        var buff = fs.readFileSync('./spec_assets/iso-encoded.xml');
         feedParser.parse(buff).then(function (result) {
             expect(result.articles[0].title).toBe('ąśćńłóżźĄŚŻĆŃÓŁ');
             expect(result.articles[0].description).toBe('ąśćńłóżźĄŚŻĆŃÓŁ');

@@ -1,4 +1,4 @@
-import feedsWaitingRoom from 'helpers/feedsWaitingRoom';
+import feedsWaitingRoom from './feedsWaitingRoom';
 
 var jetpack = require('fs-jetpack');
 

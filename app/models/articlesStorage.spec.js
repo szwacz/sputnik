@@ -1,4 +1,4 @@
-import articlesStorage from 'models/articlesStorage';
+import articlesStorage from './articlesStorage';
 
 describe('articlesStorage', function () {
     

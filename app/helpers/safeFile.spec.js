@@ -1,4 +1,4 @@
-import safeFile from 'helpers/safeFile';
+import safeFile from './safeFile';
 
 var jetpack = require('fs-jetpack');
 

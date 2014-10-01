@@ -49,6 +49,7 @@ gulp.task('copy', function() {
         only: [
             'app/node_modules',
             'app/vendor',
+            'app/spec_assets',
             '*.html'
         ]
     });

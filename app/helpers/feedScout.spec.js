@@ -1,13 +1,13 @@
-import feedParser from 'helpers/feedParser';
-import scout from 'helpers/feedScout';
-import netMock from 'mocks/net.mock';
+import feedParser from './feedParser';
+import scout from './feedScout';
+import netMock from '../mocks/net.mock';
 
 var fs = require('fs');
 
 describe('feedScout', function () {
     
-    var atomXml = fs.readFileSync('./assets/atom.xml');
-    var rss2Xml = fs.readFileSync('./assets/rss2.xml');
+    var atomXml = fs.readFileSync('./spec_assets/atom.xml');
+    var rss2Xml = fs.readFileSync('./spec_assets/rss2.xml');
     
     var htmlLinkAtom = '<html><head><link href="http://atom-xml" title="The Site" type="application/atom+xml"></head></html>';
     var htmlLinkRss = '<html><head><link href="http://rss2-xml" title="The Site" type="application/rss+xml"></head></html>';

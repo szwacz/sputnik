@@ -1,4 +1,4 @@
-import feedsStorage from 'models/feedsStorage';
+import feedsStorage from './feedsStorage';
 
 describe('feedsStorage', function () {
     
@@ -271,7 +271,7 @@ describe('feedsStorage', function () {
     
     
     describe('disk persistance', function (done) {
-        var fs = require('fs');
+        var jetpack = require('fs-jetpack');
         
         var filePath = './temp/feeds.json';
         var feedsData = {
@@ -295,15 +295,15 @@ describe('feedsStorage', function () {
         };
         
         beforeEach(function () {
-            fs.writeFileSync(filePath, JSON.stringify(feedsData), { encoding: 'utf8' });
+            jetpack.write(filePath, feedsData);
         });
         
         function eraseFile() {
-            fs.unlinkSync(filePath);
+            jetpack.remove(filePath);
         }
         
         function grabFromDisk() {
-            return JSON.parse(fs.readFileSync(filePath, { encoding: 'utf8' }));
+            return jetpack.read(filePath, 'json');
         }
         
         it("should init when data file doesn't exist", function () {
