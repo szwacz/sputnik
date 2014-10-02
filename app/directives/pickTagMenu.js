@@ -1,6 +1,4 @@
-'use strict';
-
-function pickTagMenuDirective($rootScope) {
+export default function ($rootScope) {
     return {
         restrict: 'E',
         replace: true,

@@ -3,9 +3,7 @@
  * Migrates legacy data models to current version.
  */
 
-"use strict";
-
-var dataManager = function (callback) {
+export default function (callback) {
     
     var gui = require('nw.gui');
     var fs = require('fs');

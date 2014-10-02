@@ -1,6 +1,4 @@
-'use strict';
-
-function ImportExportCtrl($scope, $location, feedsService) {
+export default function ImportExportCtrl($scope, $location, feedsService) {
     var opml = require('./helpers/opml');
     var fs = require('fs');
     

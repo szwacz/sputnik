@@ -1,6 +1,4 @@
-'use strict';
-
-function ReadCtrl($scope, $window, feedsService, articlesService, downloadService, config) {
+export default function ReadCtrl($scope, $window, feedsService, articlesService, downloadService, config) {
     
     var Q = require('q');
     

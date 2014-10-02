@@ -1,8 +1,0 @@
-{
-    "targetPlatform": "windows",
-    "websiteUrl": "http://localhost:8080/",
-    "websiteUrlUpdate": "http://localhost:8080/update/",
-    "websiteUrlDonate": "http://localhost:8080/donate/",
-    "analyticsUrl": "http://localhost/sputnik/analytics/hit.php",
-    "checkUpdatesUrl": "http://localhost/sputnik/check-updates/updates.json"
-}

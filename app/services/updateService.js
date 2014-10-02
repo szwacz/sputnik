@@ -2,9 +2,7 @@
  * Checks if there is newer version of this app available.
  */
 
-'use strict';
-
-function updateService(config, $http) {
+export default function (config, $http) {
     
     var Q = require('q');
     

@@ -13,25 +13,25 @@
 
 @font-face {
     font-family: "OpenSans";
-    src: url("../fonts/OpenSans/OpenSans-Light.ttf") format('truetype');
+    src: url("../visual/fonts/OpenSans/OpenSans-Light.ttf") format('truetype');
     font-weight: 200;
     font-style: normal;
 }
 @font-face {
     font-family: "OpenSans";
-    src: url("../fonts/OpenSans/OpenSans-Regular.ttf") format('truetype');
+    src: url("../visual/fonts/OpenSans/OpenSans-Regular.ttf") format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 @font-face {
     font-family: "OpenSans";
-    src: url("../fonts/OpenSans/OpenSans-Italic.ttf") format('truetype');
+    src: url("../visual/fonts/OpenSans/OpenSans-Italic.ttf") format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 @font-face {
     font-family: "OpenSans";
-    src: url("../fonts/OpenSans/OpenSans-Bold.ttf") format('truetype');
+    src: url("../visual/fonts/OpenSans/OpenSans-Bold.ttf") format('truetype');
     font-weight: 700;
     font-style: normal;
 }
@@ -41,12 +41,8 @@
 html {
     height: 100%;
     font-family: sans-serif;
-}
-html.window-ready {
-    // bugfix: background will be scalled to incorrect size and then rescaled what doesn't look good
-    // that's why is added after ready
     background-color: #462e3c;
-    background-image: url('../images/bg.jpg');
+    background-image: url('../visual/images/bg.jpg');
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -153,7 +149,7 @@ h1 {
     right: 0;
     width: 8px;
     height: 8px;
-    background: url('../images/rounded-corner-BR.svg') no-repeat;
+    background: url('../visual/images/rounded-corner-BR.svg') no-repeat;
 }
 .toolbar-on-left:after {
     content: "";
@@ -163,7 +159,7 @@ h1 {
     right: 0;
     width: 8px;
     height: 8px;
-    background: url('../images/rounded-corner-TR.svg') no-repeat;
+    background: url('../visual/images/rounded-corner-TR.svg') no-repeat;
 }
 .toolbar-on-left__container {
     margin-top: 1rem;

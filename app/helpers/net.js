@@ -1,16 +1,14 @@
-'use strict';
-
 var Q = require('q');
 var request = require('request');
 var zlib = require('zlib');
 
 var proxyFunc;
 
-exports.proxyDiscoveryFunc = function (func) {
+var proxyDiscoveryFunc = function (func) {
     proxyFunc = func;
 };
 
-exports.getUrl = function (url, options) {
+var getUrl = function (url, options) {
     var deferred = Q.defer();
     
     options = options || {};
@@ -75,4 +73,9 @@ exports.getUrl = function (url, options) {
     }
     
     return deferred.promise;
+};
+
+export default {
+   proxyDiscoveryFunc: proxyDiscoveryFunc,
+   getUrl: getUrl,
 };

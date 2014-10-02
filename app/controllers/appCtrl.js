@@ -1,9 +1,10 @@
-'use strict';
+import analytics from '../helpers/analytics';
 
-function AppCtrl($scope, $location, config, feedsService, articlesService, faviconsService, updateService) {
+export default [
+    '$scope', '$location', 'config', 'feedsService', 'articlesService', 'faviconsService', 'updateService',
+    function ($scope, $location, config, feedsService, articlesService, faviconsService, updateService) {
     
     var os = require('os');
-    var analytics = require('./helpers/analytics');
     var gui = require('nw.gui');
     var win = gui.Window.get();
     
@@ -71,18 +72,6 @@ function AppCtrl($scope, $location, config, feedsService, articlesService, favic
     
     $scope.$on('faviconUpdated', function (evt) {
         $scope.$apply();
-    });
-    
-    //-----------------------------------------------------
-    // App about to close
-    //-----------------------------------------------------
-    
-    windowStateManager.show();
-    
-    win.on('close', function () {
-        windowStateManager.save();
-        windowStateManager.hide();
-        this.close(true);
     });
     
     //-----------------------------------------------------
@@ -214,4 +203,4 @@ function AppCtrl($scope, $location, config, feedsService, articlesService, favic
     var scheduleInterval = setInterval(walkThroughSchedule, 1800000);
     // first schedule do after 1 minute from startup
     setTimeout(walkThroughSchedule, 30000);
-}
+}];

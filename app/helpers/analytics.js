@@ -17,13 +17,13 @@ function hit(payload) {
     });
 }
 
-exports.init = function (analyticsUrl, appGuid, appVersion) {
+var init = function (analyticsUrl, appGuid, appVersion) {
     url = analyticsUrl;
     guid = appGuid;
     version = appVersion;
 };
 
-exports.dailyHit = function () {
+var dailyHit = function () {
     var a = {};
     a.guid = guid;
     a.version = version;
@@ -31,9 +31,15 @@ exports.dailyHit = function () {
     hit(a);
 };
 
-exports.monthlyReaport = function (a) {
+var monthlyReaport = function (a) {
     a.guid = guid;
     a.version = version;
     a.type = 'monthlyReaport';
     hit(a);
 };
+
+export default {
+    init: init,
+    dailyHit: dailyHit,
+    monthlyReaport: monthlyReaport,
+}

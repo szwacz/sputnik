@@ -1,6 +1,4 @@
-'use strict';
-
-function articlesListDirective($sanitize, $rootScope) {
+export default function ($sanitize, $rootScope) {
     
     var organizer = require('./helpers/articlesOrganizer');
     var fs = require('fs');

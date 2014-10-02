@@ -3,14 +3,12 @@
  * - reads from file app/appConfig.json
  * - reads and writes to file userdata/config.json
  */
+import safeFile from './helpers/safeFile';
 
-'use strict';
-
-function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
+export default function(userDataPath, currentDataModelVersion, callback) {
     
     var fs = require('fs');
     var gui = require('nw.gui');
-    var safeFile = require('./helpers/safeFile');
     
     function generateGuid() {
         var crypto = require('crypto');
@@ -19,7 +17,14 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
         return crypto.createHash('md5').update(rand + now).digest('hex');
     }
     
-    var appConf = JSON.parse(fs.readFileSync('./appConfig.json'));
+    var appConf = {
+        "targetPlatform": "windows",
+        "websiteUrl": "http://localhost:8080/",
+        "websiteUrlUpdate": "http://localhost:8080/update/",
+        "websiteUrlDonate": "http://localhost:8080/donate/",
+        "analyticsUrl": "http://localhost/sputnik/analytics/hit.php",
+        "checkUpdatesUrl": "http://localhost/sputnik/check-updates/updates.json"
+    };
     
     var userConf = {};
     var userConfFile = safeFile(userDataPath + '/config.json');
@@ -114,4 +119,4 @@ function initSputnikConfig(userDataPath, currentDataModelVersion, callback) {
         
         callback(api);
     });
-}
+};

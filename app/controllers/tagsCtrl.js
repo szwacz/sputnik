@@ -1,6 +1,4 @@
-'use strict';
-
-function TagsCtrl($scope, feedsService) {
+export default function TagsCtrl($scope, feedsService) {
     
     $scope.changeTagName = function (tag, newName) {
         tag.setName(newName)

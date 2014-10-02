@@ -1,6 +1,4 @@
-'use strict';
-
-function dropdownDirective() {
+export default function () {
     return {
         restrict: 'C',
         link: function ($scope, $element) {

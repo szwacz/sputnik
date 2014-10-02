@@ -3,9 +3,7 @@
  * Scouts for sites' favicons and saves them locally.
  */
 
-'use strict';
-
-function faviconsService(config, $http, $rootScope, $q) {
+export default function (config, $http, $rootScope, $q) {
     
     var cheerio = require('cheerio');
     var urlUtil = require('url');
