@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-controller="AppCtrl">
 <head>
     <meta charset="utf-8">
     
@@ -9,7 +9,13 @@
     <script src="vendor/nwbp/contextmenu.js"></script>
     <script src="vendor/nwbp/external-links.js"></script>
     
+    <script src="vendor/jquery.js"></script>
+    <script src="vendor/angular.js"></script>
+    <script src="vendor/angular-sanitize.js"></script>
+    <script src="vendor/angular-route.js"></script>
+    <script src="vendor/angular-animate.js"></script>
     <script src="vendor/require.js"></script>
+    
     <script>
         requirejs(['app'], function (app) {});
     </script>
@@ -30,6 +36,14 @@
         }());
     </script>
 </head>
-<body>
+<body class='app-not-ready'>
+    
+    <ng-view></ng-view>
+    
+    <div class="notification-bar"
+        ng-if="notificationBarVisible"
+        ng-animate
+        ng-bind="notificationMessage"></div>
+    
 </body>
 </html>
