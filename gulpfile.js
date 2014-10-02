@@ -80,7 +80,7 @@ gulp.task('transpile', function() {
 });
 
 gulp.task('less', function () {
-    return gulp.src('app/stylesheets/**/*.less')
+    return gulp.src('app/stylesheets/main.less')
     .pipe(less())
     .pipe(gulp.dest(destForCode.path('stylesheets')));
 });
