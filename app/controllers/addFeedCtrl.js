@@ -1,7 +1,8 @@
+import scout from '../helpers/feedScout';
+
 export default function AddFeedCtrl($scope, $location, feedsService, net, feedParser) {
     
     var gui = require('nw.gui');
-    var scout = require('./helpers/feedScout');
     var determinedFeedUrl;
     var clipboard = gui.Clipboard.get();
     

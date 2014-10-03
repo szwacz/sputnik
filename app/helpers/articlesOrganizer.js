@@ -1,4 +1,3 @@
-'use strict';
 
 function monthLabel(month) {
     var labels = [
@@ -18,7 +17,7 @@ function monthLabel(month) {
     return labels[month];
 }
 
-exports.organizeByDays = function (articles) {
+var organizeByDays = function (articles) {
     var now = new Date();
     var yesterday = new Date();
     yesterday.setDate(now.getDate() - 1);
@@ -66,4 +65,8 @@ exports.organizeByDays = function (articles) {
     }
     
     return articlesDays;
-}
+};
+
+export default {
+    organizeByDays: organizeByDays
+};
