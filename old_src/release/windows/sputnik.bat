@@ -1,1 +1,0 @@
-start app/sputnik.exe
