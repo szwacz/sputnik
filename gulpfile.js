@@ -104,6 +104,9 @@ gulp.task('finalize', function() {
             // Add "-dev" suffix to name, so node-webkit will write all
             // data like cookies and locaStorage into separate place.
             manifest.name += '-dev';
+            // Change URLs to development environment
+            manifest.config.analyticsUrl = "http://localhost:3333/analytics/hit";
+            manifest.config.checkUpdatesUrl = "http://localhost:3333/check-updates/updates.json";
             break;
     }
     destForCode.write('package.json', manifest, { jsonIndent: 4 });

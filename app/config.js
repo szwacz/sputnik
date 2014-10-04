@@ -17,14 +17,7 @@ export default function(userDataPath, currentDataModelVersion, callback) {
         return crypto.createHash('md5').update(rand + now).digest('hex');
     }
     
-    var appConf = {
-        "targetPlatform": "windows",
-        "websiteUrl": "http://localhost:8080/",
-        "websiteUrlUpdate": "http://localhost:8080/update/",
-        "websiteUrlDonate": "http://localhost:8080/donate/",
-        "analyticsUrl": "http://localhost/sputnik/analytics/hit.php",
-        "checkUpdatesUrl": "http://localhost/sputnik/check-updates/updates.json"
-    };
+    var appConf = gui.App.manifest.config;
     
     var userConf = {};
     var userConfFile = safeFile(userDataPath + '/config.json');
@@ -42,17 +35,11 @@ export default function(userDataPath, currentDataModelVersion, callback) {
             return userDataPath;
         },
         
-        get targetPlatform() {
-            return appConf.targetPlatform;
-        },
         get websiteUrl() {
             return appConf.websiteUrl;
         },
         get websiteUrlUpdate() {
             return appConf.websiteUrlUpdate;
-        },
-        get websiteUrlDonate() {
-            return appConf.websiteUrlDonate;
         },
         get analyticsUrl() {
             return appConf.analyticsUrl;
