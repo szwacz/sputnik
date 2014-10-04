@@ -156,22 +156,6 @@ export default [
             schedule.lastAnalyticsDailyHit = todayDate;
         }
         
-        // once every month send reaport about basic usage informations
-        if (!schedule.nextAnalyticsMonthlyReaport) {
-            // first reaport in 7 days
-            schedule.nextAnalyticsMonthlyReaport = nowTime + daysToMs(7);
-        } else if (schedule.nextAnalyticsMonthlyReaport <= nowTime) {
-            analytics.monthlyReaport({
-                feedsCount: feedsService.feeds.length,
-                categoriesCount: feedsService.categoriesNames.length,
-                tagsCount: articlesService.allTags.length,
-                articlesDbSize: articlesService.dbSize,
-                platform: config.targetPlatform + '|' + os.platform() + '|' + os.type() + '|' + os.release(),
-                windowSize: win.width + 'x' + win.height
-            });
-            schedule.nextAnalyticsMonthlyReaport = nowTime + daysToMs(30);
-        }
-        
         // check for new version every 7 days
         if (!schedule.nextCheckForUpdates || schedule.nextCheckForUpdates <= nowTime) {
             schedule.nextCheckForUpdates = nowTime + daysToMs(7);

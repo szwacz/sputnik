@@ -31,15 +31,7 @@ var dailyHit = function () {
     hit(a);
 };
 
-var monthlyReaport = function (a) {
-    a.guid = guid;
-    a.version = version;
-    a.type = 'monthlyReaport';
-    hit(a);
-};
-
 export default {
     init: init,
     dailyHit: dailyHit,
-    monthlyReaport: monthlyReaport,
 }
