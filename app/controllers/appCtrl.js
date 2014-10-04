@@ -75,37 +75,6 @@ export default [
     });
     
     //-----------------------------------------------------
-    // Open link in system default browser,
-    // if has class 'js-external-link' somewhere in DOM chain.
-    //-----------------------------------------------------
-    
-    function supportExternalLinks(event) {
-        
-        var href;
-        var isExternal = false;
-        
-        function crawlDom(element) {
-            if (element.nodeName.toLowerCase() === 'a') {
-                href = element.getAttribute('href');
-            }
-            if (element.classList.contains('js-external-link')) {
-                isExternal = true;
-            }
-            
-            if (href && isExternal) {
-                gui.Shell.openExternal(href);
-                event.preventDefault();
-            } else if (element.parentElement) {
-                crawlDom(element.parentElement);
-            }
-        }
-        
-        crawlDom(event.target);
-    }
-    
-    document.body.addEventListener('click', supportExternalLinks, false);
-    
-    //-----------------------------------------------------
     // Checking for new version
     //-----------------------------------------------------
     
