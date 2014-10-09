@@ -1,5 +1,6 @@
 import organizerModule from './organizer/organizer';
 import tagsModule from './tags/tags';
+import aboutModule from './about/about';
 
 import dataManager from './dataManager/dataManager';
 import initSputnikConfig from './config';
@@ -10,7 +11,6 @@ import opml from './helpers/opml';
 import feedParser from './helpers/feedParser';
 import feedsWaitingRoom from './helpers/feedsWaitingRoom';
 
-import aboutCtrl from './controllers/aboutCtrl';
 import addFeedCtrl from './controllers/addFeedCtrl';
 import appCtrl from './controllers/appCtrl';
 import importExportCtrl from './controllers/importExportCtrl';
@@ -52,11 +52,12 @@ function initApp(config) {
         var sputnik = angular.module('sputnik', [
             organizerModule.name,
             tagsModule.name,
+            aboutModule.name,
             'ngRoute',
             'ngSanitize',
             'ngAnimate',
         ]);
-        sputnik.controller('AboutCtrl', aboutCtrl);
+        
         sputnik.controller('AddFeedCtrl', addFeedCtrl);
         sputnik.controller('AppCtrl', appCtrl);
         sputnik.controller('ImportExportCtrl', importExportCtrl);
@@ -108,10 +109,7 @@ function initApp(config) {
             .when('/settings', {
                 controller: 'SettingsCtrl',
                 templateUrl: 'views/settings.html'
-            }).when('/about/:subview', {
-                controller: 'AboutCtrl',
-                templateUrl: 'views/about/main.html'
-            });
+            }).when('/about/:subview', aboutModule.view);
             
         });
         
