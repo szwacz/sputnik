@@ -3,7 +3,7 @@ node_modules
 ._.DS_Store
 .DS_Store
 *.log
-/runtime/
+/nw/
 /build/
 /releases/
 temp

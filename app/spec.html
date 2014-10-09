@@ -14,9 +14,6 @@
         to start when function window.startJasmine is called.
     -->
     <script src="vendor/jasmine/boot.js"></script>
-    <script>
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 500;
-    </script>
     <script src="vendor/require.js"></script>
     
     <script src="vendor/jquery.js"></script>
@@ -28,6 +25,9 @@
     </script>
     
     <script>
+        
+        // Default timeout for asynchronous specs
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 500;
         
         // Catch all uncought node.js errors and report them to the console.
         process.on('uncaughtException', function(err) {
