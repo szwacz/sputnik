@@ -1,3 +1,5 @@
+import organizerModule from './organizer/organizer';
+
 import dataManager from './dataManager/dataManager';
 import initSputnikConfig from './config';
 import feedsStorage from './models/feedsStorage';
@@ -11,7 +13,6 @@ import aboutCtrl from './controllers/aboutCtrl';
 import addFeedCtrl from './controllers/addFeedCtrl';
 import appCtrl from './controllers/appCtrl';
 import importExportCtrl from './controllers/importExportCtrl';
-import organizeCtrl from './controllers/organizeCtrl';
 import readCtrl from './controllers/readCtrl';
 import settingsCtrl from './controllers/settingsCtrl';
 import tagsCtrl from './controllers/tagsCtrl';
@@ -19,8 +20,6 @@ import tagsCtrl from './controllers/tagsCtrl';
 import articlesListDirective from './directives/articlesList';
 import dropdownDirective from './directives/dropdown';
 import pickTagMenuDirective from './directives/pickTagMenu';
-import organizeCategoryDirective from './directives/organizeCategory';
-import organizeFeedDirective from './directives/organizeFeed';
 import articlesService from './services/articlesService';
 import downloadService from './services/downloadService';
 import faviconsService from './services/faviconsService';
@@ -50,13 +49,16 @@ function initApp(config) {
     feedsStorage.make(dataPath)
     .then(function (fst) {
         
-        var sputnik = angular.module('sputnik', ['ngRoute', 'ngSanitize', 'ngAnimate']);
-        console.log(appCtrl)
+        var sputnik = angular.module('sputnik', [
+            organizerModule.name,
+            'ngRoute',
+            'ngSanitize',
+            'ngAnimate',
+        ]);
         sputnik.controller('AboutCtrl', aboutCtrl);
         sputnik.controller('AddFeedCtrl', addFeedCtrl);
         sputnik.controller('AppCtrl', appCtrl);
         sputnik.controller('ImportExportCtrl', importExportCtrl);
-        sputnik.controller('OrganizeCtrl', organizeCtrl);
         sputnik.controller('ReadCtrl', readCtrl);
         sputnik.controller('SettingsCtrl', settingsCtrl);
         sputnik.controller('TagsCtrl', tagsCtrl);
@@ -64,8 +66,6 @@ function initApp(config) {
         sputnik.directive('articlesList', articlesListDirective);
         sputnik.directive('dropdown', dropdownDirective);
         sputnik.directive('pickTagMenu', pickTagMenuDirective);
-        sputnik.directive('organizeCategory', organizeCategoryDirective);
-        sputnik.directive('organizeFeed', organizeFeedDirective);
         
         sputnik.factory('articlesService', articlesService);
         sputnik.factory('downloadService', downloadService);
@@ -102,10 +102,9 @@ function initApp(config) {
             }).when('/add', {
                 controller: 'AddFeedCtrl',
                 templateUrl: 'views/addFeed.html'
-            }).when('/organize', {
-                controller: 'OrganizeCtrl',
-                templateUrl: 'views/organize.html'
-            }).when('/tags', {
+            })
+            .when('/organize', organizerModule.view)
+            .when('/tags', {
                 controller: 'TagsCtrl',
                 templateUrl: 'views/tags.html'
             }).when('/settings', {

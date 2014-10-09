@@ -24,10 +24,10 @@
         
         <div ng-repeat="item in feedsTree" ng-switch="item.type">
             <div ng-switch-when="category" class="organize__category-container">
-                <organize-category category="item" categories-names="categoriesNames"/>
+                <organizer-category category="item" categories-names="categoriesNames"/>
             </div>
             <div ng-switch-when="feed">
-                <organize-feed feed="item" categories-names="categoriesNames"/>
+                <organizer-feed feed="item" categories-names="categoriesNames"/>
             </div>
         </div>
         

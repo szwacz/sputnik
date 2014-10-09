@@ -2,12 +2,12 @@ export default function () {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: './views/directives/organizeCategory.html',
+        templateUrl: 'organizer/views/category.html',
         scope: {
             category: '=',
             categoriesNames: '=',
         },
-        link: function ($scope, element, attrs) {
+        link: function ($scope) {
             $scope.showRename = false;
             $scope.showDelete = false;
             $scope.newName = $scope.category.title;

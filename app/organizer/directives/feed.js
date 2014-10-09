@@ -2,12 +2,12 @@ export default function () {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: './views/directives/organizeFeed.html',
+        templateUrl: 'organizer/views/feed.html',
         scope: {
             feed: '=',
             categoriesNames: '=',
         },
-        link: function ($scope, element, attrs) {
+        link: function ($scope) {
             $scope.showChangeCategory = false;
             $scope.showDelete = false;
             $scope.chosenCategoryName = $scope.feed.category;
