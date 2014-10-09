@@ -1,4 +1,5 @@
 import organizerModule from './organizer/organizer';
+import tagsModule from './tags/tags';
 
 import dataManager from './dataManager/dataManager';
 import initSputnikConfig from './config';
@@ -15,7 +16,6 @@ import appCtrl from './controllers/appCtrl';
 import importExportCtrl from './controllers/importExportCtrl';
 import readCtrl from './controllers/readCtrl';
 import settingsCtrl from './controllers/settingsCtrl';
-import tagsCtrl from './controllers/tagsCtrl';
 
 import articlesListDirective from './directives/articlesList';
 import dropdownDirective from './directives/dropdown';
@@ -51,6 +51,7 @@ function initApp(config) {
         
         var sputnik = angular.module('sputnik', [
             organizerModule.name,
+            tagsModule.name,
             'ngRoute',
             'ngSanitize',
             'ngAnimate',
@@ -61,7 +62,6 @@ function initApp(config) {
         sputnik.controller('ImportExportCtrl', importExportCtrl);
         sputnik.controller('ReadCtrl', readCtrl);
         sputnik.controller('SettingsCtrl', settingsCtrl);
-        sputnik.controller('TagsCtrl', tagsCtrl);
         
         sputnik.directive('articlesList', articlesListDirective);
         sputnik.directive('dropdown', dropdownDirective);
@@ -104,10 +104,8 @@ function initApp(config) {
                 templateUrl: 'views/addFeed.html'
             })
             .when('/organize', organizerModule.view)
-            .when('/tags', {
-                controller: 'TagsCtrl',
-                templateUrl: 'views/tags.html'
-            }).when('/settings', {
+            .when('/tags', tagsModule.view)
+            .when('/settings', {
                 controller: 'SettingsCtrl',
                 templateUrl: 'views/settings.html'
             }).when('/about/:subview', {

@@ -1,4 +1,4 @@
-export default function TagsCtrl($scope, feedsService) {
+export default function ($scope) {
     
     $scope.changeTagName = function (tag, newName) {
         tag.setName(newName)
