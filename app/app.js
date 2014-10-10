@@ -1,6 +1,7 @@
 import organizerModule from './organizer/organizer';
 import tagsModule from './tags/tags';
 import importExportModule from './import_export/import_export';
+import settingsModule from './settings/settings';
 import aboutModule from './about/about';
 
 import dataManager from './dataManager/dataManager';
@@ -51,6 +52,7 @@ function initApp(config) {
             organizerModule.name,
             tagsModule.name,
             importExportModule.name,
+            settingsModule.name,
             aboutModule.name,
             'ngRoute',
             'ngSanitize',
@@ -60,7 +62,6 @@ function initApp(config) {
         sputnik.controller('AddFeedCtrl', addFeedCtrl);
         sputnik.controller('AppCtrl', appCtrl);
         sputnik.controller('ReadCtrl', readCtrl);
-        sputnik.controller('SettingsCtrl', settingsCtrl);
         
         sputnik.directive('articlesList', articlesListDirective);
         sputnik.directive('dropdown', dropdownDirective);
@@ -101,10 +102,7 @@ function initApp(config) {
             })
             .when('/organize', organizerModule.view)
             .when('/tags', tagsModule.view)
-            .when('/settings', {
-                controller: 'SettingsCtrl',
-                templateUrl: 'views/settings.html'
-            })
+            .when('/settings', settingsModule.view)
             .when('/about/:subview', aboutModule.view);
             
         });
