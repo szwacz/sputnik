@@ -1,4 +1,4 @@
-import opml from '../helpers/opml';
+import opmlService from '../import_export/services/opml';
 import feedsStorage from '../models/feedsStorage';
 import feedsServiceClass from './feedsService';
 
@@ -6,6 +6,7 @@ describe('feedsService', function () {
     
     var $rootScope;
     var feedsService;
+    var opml;
     
     beforeEach(function (done) {
         feedsStorage.make()
@@ -39,18 +40,19 @@ describe('feedsService', function () {
             
             module('sputnik', function ($provide) {
                 $provide.value('feedsStorage', fst);
-                $provide.value('opml', opml);
                 $provide.value('config', { dataHomeFolder: '/userdata' });
                 $provide.service('feedsService', feedsServiceClass);
+                $provide.service('opml', opmlService);
             });
             
             done();
         });
     });
     
-    beforeEach(inject(function (_$rootScope_, _feedsService_) {
+    beforeEach(inject(function (_$rootScope_, _feedsService_, _opml_) {
         $rootScope = _$rootScope_;
         feedsService = _feedsService_;
+        opml = _opml_;
     }));
     
     it('can import and export OPML', function () {

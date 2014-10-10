@@ -1,9 +1,19 @@
-import opml from './opml';
-import feedsStorage from '../models/feedsStorage';
+import opmlService from './opml';
+import feedsStorage from '../../models/feedsStorage';
 
 var xmldoc = require('xmldoc');
 
 describe('opml', function () {
+    
+    var opml;
+    
+    beforeEach(module('sputnik', function($provide) {
+        $provide.service('opml', opmlService);
+    }));
+    
+    beforeEach(inject(function (_opml_) {
+        opml = _opml_;
+    }));
     
     describe('importing', function () {
         

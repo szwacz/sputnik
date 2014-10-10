@@ -1,5 +1,6 @@
 import organizerModule from './organizer/organizer';
 import tagsModule from './tags/tags';
+import importExportModule from './import_export/import_export';
 import aboutModule from './about/about';
 
 import dataManager from './dataManager/dataManager';
@@ -7,13 +8,11 @@ import initSputnikConfig from './config';
 import feedsStorage from './models/feedsStorage';
 import articlesStorage from './models/articlesStorage';
 import net from './helpers/net';
-import opml from './helpers/opml';
 import feedParser from './helpers/feedParser';
 import feedsWaitingRoom from './helpers/feedsWaitingRoom';
 
 import addFeedCtrl from './controllers/addFeedCtrl';
 import appCtrl from './controllers/appCtrl';
-import importExportCtrl from './controllers/importExportCtrl';
 import readCtrl from './controllers/readCtrl';
 import settingsCtrl from './controllers/settingsCtrl';
 
@@ -52,6 +51,7 @@ function initApp(config) {
         var sputnik = angular.module('sputnik', [
             organizerModule.name,
             tagsModule.name,
+            importExportModule.name,
             aboutModule.name,
             'ngRoute',
             'ngSanitize',
@@ -60,7 +60,6 @@ function initApp(config) {
         
         sputnik.controller('AddFeedCtrl', addFeedCtrl);
         sputnik.controller('AppCtrl', appCtrl);
-        sputnik.controller('ImportExportCtrl', importExportCtrl);
         sputnik.controller('ReadCtrl', readCtrl);
         sputnik.controller('SettingsCtrl', settingsCtrl);
         
@@ -89,18 +88,17 @@ function initApp(config) {
             net.proxyDiscoveryFunc(gui.App.getProxyForURL);
             $provide.value('net', net);
             
-            $provide.value('opml', opml);
             $provide.value('feedParser', feedParser);
             
             // Configuring routes
             
-            $routeProvider.when('/', {
+            $routeProvider
+            .when('/', {
                 controller: 'ReadCtrl',
                 templateUrl: 'views/read.html'
-            }).when('/importExport', {
-                controller: 'ImportExportCtrl',
-                templateUrl: 'views/importExport.html'
-            }).when('/add', {
+            })
+            .when('/importExport', importExportModule.view)
+            .when('/add', {
                 controller: 'AddFeedCtrl',
                 templateUrl: 'views/addFeed.html'
             })
@@ -109,7 +107,8 @@ function initApp(config) {
             .when('/settings', {
                 controller: 'SettingsCtrl',
                 templateUrl: 'views/settings.html'
-            }).when('/about/:subview', aboutModule.view);
+            })
+            .when('/about/:subview', aboutModule.view);
             
         });
         

@@ -1,8 +1,6 @@
-import opml from '../helpers/opml';
-
 var fs = require('fs');
 
-export default function ImportExportCtrl($scope, $location, feedsService) {
+export default function ($scope, $location, feedsService, opml) {
     
     $scope.state = 'waitingForUser';
     
