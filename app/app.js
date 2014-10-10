@@ -9,7 +9,6 @@ import feedsStorage from './models/feedsStorage';
 import articlesStorage from './models/articlesStorage';
 import net from './helpers/net';
 import feedParser from './helpers/feedParser';
-import feedsWaitingRoom from './helpers/feedsWaitingRoom';
 
 import addFeedCtrl from './controllers/addFeedCtrl';
 import appCtrl from './controllers/appCtrl';
@@ -82,8 +81,6 @@ function initApp(config) {
             
             var dbPath = config.dataHomeFolder + '/articles.nedb';
             $provide.value('articlesStorage', articlesStorage.make(dbPath));
-            
-            $provide.value('feedsWaitingRoom', feedsWaitingRoom.init(config.dataHomeFolder + '/feeds-waiting-room'));
             
             net.proxyDiscoveryFunc(gui.App.getProxyForURL);
             $provide.value('net', net);
