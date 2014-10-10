@@ -1,3 +1,4 @@
+import readModule from './read/read';
 import organizerModule from './organizer/organizer';
 import tagsModule from './tags/tags';
 import importExportModule from './import_export/import_export';
@@ -13,12 +14,8 @@ import feedParser from './helpers/feedParser';
 
 import addFeedCtrl from './controllers/addFeedCtrl';
 import appCtrl from './controllers/appCtrl';
-import readCtrl from './controllers/readCtrl';
-import settingsCtrl from './controllers/settingsCtrl';
 
-import articlesListDirective from './directives/articlesList';
 import dropdownDirective from './directives/dropdown';
-import pickTagMenuDirective from './directives/pickTagMenu';
 import articlesService from './services/articlesService';
 import downloadService from './services/downloadService';
 import faviconsService from './services/faviconsService';
@@ -49,6 +46,7 @@ function initApp(config) {
     .then(function (fst) {
         
         var sputnik = angular.module('sputnik', [
+            readModule.name,
             organizerModule.name,
             tagsModule.name,
             importExportModule.name,
@@ -61,11 +59,8 @@ function initApp(config) {
         
         sputnik.controller('AddFeedCtrl', addFeedCtrl);
         sputnik.controller('AppCtrl', appCtrl);
-        sputnik.controller('ReadCtrl', readCtrl);
         
-        sputnik.directive('articlesList', articlesListDirective);
         sputnik.directive('dropdown', dropdownDirective);
-        sputnik.directive('pickTagMenu', pickTagMenuDirective);
         
         sputnik.factory('articlesService', articlesService);
         sputnik.factory('downloadService', downloadService);
@@ -91,10 +86,7 @@ function initApp(config) {
             // Configuring routes
             
             $routeProvider
-            .when('/', {
-                controller: 'ReadCtrl',
-                templateUrl: 'views/read.html'
-            })
+            .when('/', readModule.view)
             .when('/importExport', importExportModule.view)
             .when('/add', {
                 controller: 'AddFeedCtrl',

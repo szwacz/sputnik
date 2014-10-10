@@ -1,10 +1,10 @@
-import organizer from '../helpers/articlesOrganizer';
+import organizer from '../../helpers/articlesOrganizer';
 
 var fs = require('fs');
 
 export default function ($sanitize, $rootScope) {
     
-    var articleTemplate = fs.readFileSync('./views/read/article.html', { encoding: 'utf8' });
+    var articleTemplate = fs.readFileSync('read/views/article.html', { encoding: 'utf8' });
     
     var presentedArticles;
     

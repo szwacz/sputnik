@@ -2,7 +2,7 @@ export default function ($rootScope) {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: './views/directives/pickTagMenu.html',
+        templateUrl: 'read/views/pick_tag_menu.html',
         scope: true,
         link: function ($scope, $element) {
             
