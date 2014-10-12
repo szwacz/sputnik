@@ -90,9 +90,6 @@ gulp.task('finalize', ['prepare-runtime'], function() {
             // Set extra flag so we know this is development mode, and we can
             // alter some behaviours of running app.
             manifest.developmentMode = true;
-            // Change URLs to development environment
-            manifest.config.analyticsUrl = "http://localhost:3333/analytics/hit";
-            manifest.config.checkUpdatesUrl = "http://localhost:3333/check-updates/updates.json";
             break;
     }
     destForCodeDir.write('package.json', manifest, { jsonIndent: 4 });

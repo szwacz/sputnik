@@ -2,6 +2,8 @@
 
 export default function (config, analytics, feedsService, articlesService, faviconsService) {
     
+    var gui = require('nw.gui');
+    
     var daysToMs = function (numDays) {
         return numDays * 24 * 60 * 60 * 1000;
     }
@@ -13,11 +15,14 @@ export default function (config, analytics, feedsService, articlesService, favic
         var today = new Date();
         var nowTime = Date.now();
         
-        // once every day send analytics daily hit
-        var todayDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-        if (todayDate !== schedule.lastAnalyticsDailyHit) {
-            analytics.dailyHit();
-            schedule.lastAnalyticsDailyHit = todayDate;
+        // Block analytics in development mode
+        if (!gui.App.manifest.developmentMode) {
+            // once every day send analytics daily hit
+            var todayDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+            if (todayDate !== schedule.lastAnalyticsDailyHit) {
+                analytics.dailyHit();
+                schedule.lastAnalyticsDailyHit = todayDate;
+            }
         }
         
         // check for new version every 7 days
