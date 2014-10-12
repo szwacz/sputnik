@@ -1,10 +1,9 @@
-import scout from '../helpers/feedScout';
+import scout from '../../helpers/feedScout';
 
-export default function AddFeedCtrl($scope, $location, feedsService, net, feedParser) {
+export default function ($scope, $location, feedsService, net, feedParser) {
     
     var gui = require('nw.gui');
     var determinedFeedUrl;
-    var clipboard = gui.Clipboard.get();
     
     function constructCategoriesOptions() {
         var cats = [
@@ -99,22 +98,4 @@ export default function AddFeedCtrl($scope, $location, feedsService, net, feedPa
         $location.path('/');
     };
     
-    // context menu for pasting text
-    function initContextMenu() {
-        var menu = new gui.Menu();
-        menu.append(new gui.MenuItem({
-            label: 'Paste',
-            click: function () {
-                angular.element('#url-input').val(clipboard.get());
-            }
-        }));
-        
-        angular.element('#url-input').on('contextmenu', function(ev) {
-            ev.preventDefault();
-            menu.popup(ev.pageX, ev.pageY);
-            return false;
-        });
-    }
-    
-    initContextMenu();
 }

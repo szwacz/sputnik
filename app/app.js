@@ -1,5 +1,6 @@
 import coreModule from './core/core';
 import readModule from './read/read';
+import addFeedModule from './add_feed/add_feed';
 import organizerModule from './organizer/organizer';
 import tagsModule from './tags/tags';
 import importExportModule from './import_export/import_export';
@@ -12,8 +13,6 @@ import feedsStorage from './core/models/feeds_storage';
 import articlesStorage from './core/models/articles_storage';
 import net from './helpers/net';
 import feedParser from './helpers/feedParser';
-
-import addFeedCtrl from './controllers/addFeedCtrl';
 
 import dropdownDirective from './directives/dropdown';
 
@@ -43,6 +42,7 @@ function initApp(config) {
         var sputnik = angular.module('sputnik', [
             coreModule.name,
             readModule.name,
+            addFeedModule.name,
             organizerModule.name,
             tagsModule.name,
             importExportModule.name,
@@ -52,8 +52,6 @@ function initApp(config) {
             'ngSanitize',
             'ngAnimate',
         ]);
-        
-        sputnik.controller('AddFeedCtrl', addFeedCtrl);
         
         sputnik.directive('dropdown', dropdownDirective);
         
@@ -77,10 +75,7 @@ function initApp(config) {
             $routeProvider
             .when('/', readModule.view)
             .when('/importExport', importExportModule.view)
-            .when('/add', {
-                controller: 'AddFeedCtrl',
-                templateUrl: 'views/addFeed.html'
-            })
+            .when('/add', addFeedModule.view)
             .when('/organize', organizerModule.view)
             .when('/tags', tagsModule.view)
             .when('/settings', settingsModule.view)
