@@ -1,3 +1,4 @@
+import coreModule from './core/core';
 import readModule from './read/read';
 import organizerModule from './organizer/organizer';
 import tagsModule from './tags/tags';
@@ -13,14 +14,12 @@ import net from './helpers/net';
 import feedParser from './helpers/feedParser';
 
 import addFeedCtrl from './controllers/addFeedCtrl';
-import appCtrl from './controllers/appCtrl';
 
 import dropdownDirective from './directives/dropdown';
 import articlesService from './services/articlesService';
 import downloadService from './services/downloadService';
 import faviconsService from './services/faviconsService';
 import feedsService from './services/feedsService';
-import updateService from './services/updateService';
 
 var gui = require('nw.gui');
 
@@ -46,6 +45,7 @@ function initApp(config) {
     .then(function (fst) {
         
         var sputnik = angular.module('sputnik', [
+            coreModule.name,
             readModule.name,
             organizerModule.name,
             tagsModule.name,
@@ -58,7 +58,6 @@ function initApp(config) {
         ]);
         
         sputnik.controller('AddFeedCtrl', addFeedCtrl);
-        sputnik.controller('AppCtrl', appCtrl);
         
         sputnik.directive('dropdown', dropdownDirective);
         
@@ -66,7 +65,6 @@ function initApp(config) {
         sputnik.factory('downloadService', downloadService);
         sputnik.factory('faviconsService', faviconsService);
         sputnik.factory('feedsService', feedsService);
-        sputnik.factory('updateService', updateService);
         
         sputnik.config(function ($provide, $routeProvider) {
             
