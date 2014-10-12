@@ -14,8 +14,6 @@ import articlesStorage from './core/models/articles_storage';
 import net from './helpers/net';
 import feedParser from './helpers/feedParser';
 
-import dropdownDirective from './directives/dropdown';
-
 var gui = require('nw.gui');
 
 // on document ready
@@ -52,8 +50,6 @@ function initApp(config) {
             'ngSanitize',
             'ngAnimate',
         ]);
-        
-        sputnik.directive('dropdown', dropdownDirective);
         
         sputnik.config(function ($provide, $routeProvider) {
             
