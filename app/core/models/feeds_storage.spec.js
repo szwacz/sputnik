@@ -1,4 +1,4 @@
-import feedsStorage from './feedsStorage';
+import feedsStorage from './feeds_storage';
 
 describe('feedsStorage', function () {
     

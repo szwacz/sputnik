@@ -1,5 +1,5 @@
 import opmlService from './opml';
-import feedsStorage from '../../models/feedsStorage';
+import feedsStorage from '../../core/models/feeds_storage';
 
 var xmldoc = require('xmldoc');
 

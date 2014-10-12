@@ -1,5 +1,5 @@
-import articlesStorage from '../models/articlesStorage';
-import articlesServiceClass from './articlesService';
+import articlesStorage from '../models/articles_storage';
+import articlesServiceClass from './articles';
 
 describe('articlesService', function () {
     

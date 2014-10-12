@@ -1,7 +1,7 @@
-import feedsStorage from '../models/feedsStorage';
-import articlesStorage from '../models/articlesStorage';
-import feedsServiceClass from './feedsService';
-import articlesServiceClass from './articlesService';
+import feedsStorage from '../models/feeds_storage';
+import articlesStorage from '../models/articles_storage';
+import feedsServiceClass from './feeds';
+import articlesServiceClass from './articles';
 
 describe('integration: feedsService and articlesService', function () {
     

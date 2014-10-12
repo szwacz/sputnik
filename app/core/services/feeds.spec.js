@@ -1,6 +1,6 @@
-import opmlService from '../import_export/services/opml';
-import feedsStorage from '../models/feedsStorage';
-import feedsServiceClass from './feedsService';
+import opmlService from '../../import_export/services/opml';
+import feedsStorage from '../models/feeds_storage';
+import feedsServiceClass from './feeds';
 
 describe('feedsService', function () {
     
