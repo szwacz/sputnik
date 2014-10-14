@@ -1,11 +1,21 @@
-import feedParser from './feedParser';
+import feedParserService from './feed_parser';
 
 var fs = require('fs');
 
 describe('feedParser', function () {
     
+    beforeEach(module('sputnik', function ($provide) {
+        $provide.service('feedParser', feedParserService);
+    }));
+    
+    var feedParser;
+    
+    beforeEach(inject(function (_feedParser_) {
+        feedParser = _feedParser_;
+    }));
+    
     it("should parse Atom feed", function (done) {
-        var buff = fs.readFileSync('./spec_assets/atom.xml'); 
+        var buff = fs.readFileSync('./spec_assets/atom.xml');
         feedParser.parse(buff).then(function (result) {
             expect(result.meta.title).toBe('Paul Irish');
             expect(result.meta.link).toBe('http://paulirish.com/');

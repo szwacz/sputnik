@@ -12,7 +12,6 @@ import initSputnikConfig from './config';
 import feedsStorage from './core/models/feeds_storage';
 import articlesStorage from './core/models/articles_storage';
 import net from './helpers/net';
-import feedParser from './helpers/feedParser';
 
 var gui = require('nw.gui');
 
@@ -63,8 +62,6 @@ function initApp(config) {
             
             net.proxyDiscoveryFunc(gui.App.getProxyForURL);
             $provide.value('net', net);
-            
-            $provide.value('feedParser', feedParser);
             
             // Configuring routes
             

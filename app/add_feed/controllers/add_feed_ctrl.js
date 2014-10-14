@@ -1,6 +1,4 @@
-import scout from '../../helpers/feedScout';
-
-export default function ($scope, $location, feedsService, net, feedParser) {
+export default function ($scope, $location, feedsService, net, feedParser, scout) {
     
     var gui = require('nw.gui');
     var determinedFeedUrl;
