@@ -2,7 +2,7 @@
  * Manages feeds' XML downloads.
  */
 
-export default function (net, feedParser, feedsService, articlesService) {
+export default function ($http, feedParser, feedsService, articlesService) {
     
     var Q = require('q');
     
@@ -44,25 +44,24 @@ export default function (net, feedParser, feedsService, articlesService) {
             
             workingTasks += 1;
             
-            net.getUrl(url, { timeout: 10000 }).then(function (buff) {
+            $http.get(url)
+            .success(function (data) {
                 
                 timeoutsInARow = 0;
                 
-                parseFeed(url, buff).then(function () {
+                parseFeed(url, data)
+                .then(function () {
                     notify(url, 'ok');
                 }, function () {
                     notify(url, 'parseError');
                 });
                 
-            }, function (err) {
+            })
+            .error(function (err) {
                 switch (err.code) {
                     case '404':
                         notify(url, '404');
                         break;
-                    //case 'ENOTFOUND': 
-                    //case 'ECONNREFUSED':
-                    //case 'ETIMEDOUT':
-                    //case 'ESOCKETTIMEDOUT':
                     default:
                         timeoutsInARow += 1;
                         notify(url, 'connectionError');
@@ -89,10 +88,10 @@ export default function (net, feedParser, feedsService, articlesService) {
         return deferred.promise;
     }
     
-    function parseFeed(url, feedBuff) {
+    function parseFeed(url, data) {
         var def = Q.defer();
         
-        feedParser.parse(feedBuff)
+        feedParser.parse(new Buffer(data))
         .then(function (result) {
             feedsService.digestFeedMeta(url, result.meta);
             var feed = feedsService.getFeedByUrl(url);

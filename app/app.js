@@ -11,9 +11,6 @@ import dataManager from './core/data_migrator/data_migrator';
 import initSputnikConfig from './config';
 import feedsStorage from './core/models/feeds_storage';
 import articlesStorage from './core/models/articles_storage';
-import net from './helpers/net';
-
-var gui = require('nw.gui');
 
 // on document ready
 $(initDataModel);
@@ -59,9 +56,6 @@ function initApp(config) {
             
             var dbPath = config.dataHomeFolder + '/articles.nedb';
             $provide.value('articlesStorage', articlesStorage.make(dbPath));
-            
-            net.proxyDiscoveryFunc(gui.App.getProxyForURL);
-            $provide.value('net', net);
             
             // Configuring routes
             
