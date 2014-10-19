@@ -13,6 +13,16 @@ var cleanTmp = function () {
     tmpDir.remove('.');
 };
 
+var updateMetadataFile = function (key, value) {
+    var releasesDir = projectDir.dir('./releases');
+    var manifest = projectDir.read('app/package.json', 'json');
+    var metadata = releasesDir.read('release.json', 'json') || {};
+    metadata.version = manifest.version;
+    metadata.release_date = new Date();
+    metadata[key] = value;
+    releasesDir.write('release.json', metadata, { jsonIndent: 2 });
+};
+
 // -------------------------------------
 // OSX
 // -------------------------------------
@@ -45,6 +55,7 @@ releaseForOs.osx = function (callback) {
     appdmg(tmpDir.path('appdmg.json'), releasesDir.path(dmgName), function (err, path) {
         gulpUtil.log('DMG image', path, 'ready!');
         cleanTmp();
+        updateMetadataFile('latest_osx_package', dmgName);
         callback();
     });
 };
@@ -101,6 +112,7 @@ releaseForOs.linux = function (callback) {
                 gulpUtil.log('Package', debFileName, 'ready!');
             }
             cleanTmp();
+            updateMetadataFile('latest_linux_package', debFileName);
             callback();
         });
 };
@@ -136,6 +148,7 @@ releaseForOs.windows = function (callback) {
     nsis.on('close', function () {
         gulpUtil.log('Installer', filename, 'ready!');
         cleanTmp();
+        updateMetadataFile('latest_windows_package', filename);
         callback();
     });
 };
