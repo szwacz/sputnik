@@ -30,6 +30,14 @@ export default function () {
         return deferred.promise;
     };
     
+    var del = function (id) {
+        var deferred = Q.defer();
+        db.remove({ _id: id }, {}, function (err, numRemoved) {
+            deferred.resolve();
+        });
+        return deferred.promise;
+    };
+    
     // Give here array of ids, and you will be given back the array of full tag objects.
     var idsToObjects = function (ids) {
         var deferred = Q.defer();
@@ -46,6 +54,7 @@ export default function () {
         init: init,
         add: add,
         update: update,
+        delete: del,
         idsToObjects: idsToObjects,
     };
 };

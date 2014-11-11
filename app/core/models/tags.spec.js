@@ -35,6 +35,23 @@ describe('tags model', function () {
         });
     });
     
+    it('can delete a tag', function (done) {
+        var id;
+        tags.init();
+        tags.add('tag name')
+        .then(function (createdTag) {
+            id = createdTag._id;
+            return tags.delete(id);
+        })
+        .then(function (createdTag) {
+            return tags.idsToObjects([id]);
+        })
+        .then(function (tags) {
+            expect(tags).toEqual([undefined]);
+            done();
+        });
+    });
+    
     it('can replace tags Ids with its full objects', function (done) {
         var createdTags = [];
         tags.init();
