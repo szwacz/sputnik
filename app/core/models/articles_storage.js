@@ -251,14 +251,6 @@ var make = function (dbPath) {
         return deferred.promise;
     }
     
-    function getDbSize() {
-        var fs = require('fs');
-        if (!dbPath || !fs.existsSync(dbPath)) {
-            return 0;
-        }
-        return fs.statSync(dbPath).size;
-    }
-    
     function removeOlderThan(time, leaveTagged) {
         var deferred = Q.defer();
         
@@ -375,7 +367,6 @@ var make = function (dbPath) {
     }
     
     return {
-        getDbSize: getDbSize,
         digest: digest,
         
         getArticles: getArticles,

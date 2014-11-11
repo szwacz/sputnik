@@ -204,10 +204,6 @@ function articlesService($rootScope, articlesStorage, feedsService) {
     }
     
     return  {
-        get dbSize() {
-            return articlesStorage.getDbSize();
-        },
-        
         digest: digest,
         
         getArticles: getArticles,

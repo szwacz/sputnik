@@ -45,10 +45,6 @@ describe('articlesService', function () {
         articlesService = _articlesService_;
     }));
     
-    it('should know its database size', function () {
-        expect(typeof articlesService.dbSize).toBe('number');
-    });
-    
     it('should pass to storage this methods', function () {
         expect(articlesService.removeAllForFeed).toBeDefined();
         expect(articlesService.removeOlderThan).toBeDefined();
