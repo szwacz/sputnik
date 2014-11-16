@@ -1,0 +1,245 @@
+var Nedb = require('nedb');
+var _ = require('underscore');
+var Q = require('q');
+var pathUtil = require('path');
+
+export default function () {
+
+    var categoriesDb;
+    var feedsDb;
+    var categories;
+    var allFeeds;
+    var uncategorizedCategory;
+
+    var categoriesSort = function () {
+        Array.prototype.sort.call(this, function (a, b) {
+            if (a === uncategorizedCategory) {
+                // Uncategorized always last
+                return 1;
+            }
+            return a.name.localeCompare(b.name);
+        });
+    };
+    var feedsSort = function () {
+        Array.prototype.sort.call(this, function (a, b) {
+            return a.name.localeCompare(b.name);
+        });
+    };
+
+    var init = function (pathToDir) {
+        var deferred = Q.defer();
+
+        categories = [];
+        categories.sort = categoriesSort;
+        allFeeds = [];
+
+        var categoriesPath;
+        var feedsPath;
+        if (pathToDir) {
+            categoriesPath = pathUtil.resolve(pathToDir, 'feed_categories.db');
+            feedsPath = pathUtil.resolve(pathToDir, 'feeds.db');
+        }
+
+        categoriesDb = new Nedb({ filename: categoriesPath, autoload: true });
+        feedsDb = new Nedb({ filename: feedsPath, autoload: true });
+
+        // First load all feeds...
+        feedsDb.find({}, function (err, rawFeeds) {
+            if (!err) {
+                // Now load all categories...
+                categoriesDb.find({}, function (err, rawCats) {
+                    if (!err) {
+                        // Decorate raw feeds data from database with rich stuff.
+                        rawCats.forEach(function (rawCat) {
+                            categories.push(decorateCategory(rawCat));
+                        });
+
+                        // Add special category which contains all actually
+                        // uncategorized feeds. This category is not saved
+                        // in database.
+                        uncategorizedCategory = decorateCategory({
+                            _id: 'uncategorized'
+                        });
+                        uncategorizedCategory.update = _.noop;
+                        uncategorizedCategory.remove = _.noop;
+                        categories.push(uncategorizedCategory);
+
+                        categories.sort();
+
+                        // Decorate raw feeds data from database with rich
+                        // stuff, and register feeds to theirs categories.
+                        rawFeeds.forEach(function (rawFeed) {
+                            var feed = decorateFeed(rawFeed);
+                            allFeeds.push(feed);
+                            feed.category.feeds.push(feed);
+                        });
+
+                        // After all sort feeds lists for all categories.
+                        categories.forEach(function (cat) {
+                            cat.feeds.sort();
+                        });
+
+                        deferred.resolve();
+                    }
+                });
+            }
+        });
+
+        return deferred.promise;
+    };
+
+    var decorateFeed = function (feedData) {
+        return {
+            get id() { return feedData._id; },
+            get url() { return feedData.url; },
+            get originalName() { return feedData.originalName; },
+            get name() { return feedData.name || feedData.originalName || ''; },
+            get category() { return getCategoryById(feedData.categoryId); },
+            get favicon() { return feedData.favicon; },
+            update: function (data) {
+                return updateFeed(feedData, data);
+            },
+            setCategory: function (newCategory) {
+                // Remove this feed from curren category listing
+                var index = this.category.feeds.indexOf(this);
+                this.category.feeds.splice(index, 1);
+                // Add it to new category
+                newCategory.feeds.push(this);
+                // Save new state in database
+                var catId;
+                if (newCategory.id === 'uncategorized') {
+                    catId = undefined;
+                } else {
+                    catId = newCategory.id;
+                }
+                return updateFeed(feedData, {
+                    categoryId: catId
+                });
+            },
+            remove: function () {
+                return removeFeed(this);
+            },
+        };
+    };
+
+    var decorateCategory = function (categoryData) {
+        var feedsArr = [];
+        feedsArr.sort = feedsSort;
+        return {
+            get id() { return categoryData._id; },
+            get name() { return categoryData.name; },
+            feeds: feedsArr,
+            update: function (data) {
+                return updateCategory(categoryData, data);
+            },
+            remove: function () {
+                return removeCategory(this);
+            },
+            addFeed: function (feedData) {
+                feedData.categoryId = this.id;
+                return addFeed(feedData);
+            },
+        };
+    };
+
+    var getCategoryById = function (id) {
+        id = id || 'uncategorized';
+        return _.findWhere(categories, { id: id });
+    };
+
+    var addFeed = function (data) {
+        var deferred = Q.defer();
+        if (typeof data.url !== 'string' || data.url === '') {
+            deferred.reject("Feed's URL must be specified");
+        } else {
+            if (data.categoryId === uncategorizedCategory.id) {
+                data.categoryId = undefined;
+            }
+            feedsDb.insert(data, function (err, newFeedRawData) {
+                if (!err) {
+                    var feed = decorateFeed(newFeedRawData);
+                    allFeeds.push(feed);
+                    var cat = getCategoryById(newFeedRawData.categoryId);
+                    cat.feeds.push(feed);
+                    cat.feeds.sort();
+                    deferred.resolve();
+                }
+            });
+        }
+        return deferred.promise;
+    };
+
+    var updateFeed = function (feedRawData, newData) {
+        var deferred = Q.defer();
+        _.extend(feedRawData, newData);
+        feedsDb.update({ _id: feedRawData._id }, feedRawData, {}, function (err) {
+            if (!err) {
+                deferred.resolve();
+            }
+        });
+        return deferred.promise;
+    };
+
+    var removeFeed = function (feed) {
+        var deferred = Q.defer();
+        feedsDb.remove({ _id: feed.id }, {}, function (err) {
+            if (!err) {
+                var index = allFeeds.indexOf(feed);
+                allFeeds.splice(index, 1);
+                index = feed.category.feeds.indexOf(feed);
+                feed.category.feeds.splice(index, 1);
+                deferred.resolve();
+            }
+        });
+        return deferred.promise;
+    };
+
+    var addCategory = function (data) {
+        var deferred = Q.defer();
+        categoriesDb.insert(data, function (err, newCategoryRawData) {
+            if (!err) {
+                categories.push(decorateCategory(newCategoryRawData));
+                categories.sort();
+                deferred.resolve();
+            }
+        });
+        return deferred.promise;
+    };
+
+    var updateCategory = function (catRawData, newData) {
+        var deferred = Q.defer();
+        _.extend(catRawData, newData);
+        categoriesDb.update({ _id: catRawData._id }, catRawData, function (err) {
+            if (!err) {
+                deferred.resolve();
+            }
+        });
+        return deferred.promise;
+    };
+
+    var removeCategory = function (cat) {
+        var deferred = Q.defer();
+        var promises = cat.feeds.map(function (feed) {
+            return feed.remove();
+        });
+        Q.all(promises)
+        .then(function () {
+            categoriesDb.remove({ _id: cat.id }, {}, function (err) {
+                if (!err) {
+                    var index = categories.indexOf(cat);
+                    categories.splice(index, 1);
+                    deferred.resolve();
+                }
+            });
+        });
+        return deferred.promise;
+    };
+
+    return {
+        get categories() { return categories; },
+        get uncategorized() { return uncategorizedCategory; },
+        get all() { return allFeeds; },
+        init: init,
+        addCategory: addCategory,
+    };
+};
