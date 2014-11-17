@@ -1,77 +1,113 @@
 import tagsModel from './tags';
 
+var jetpack = require('fs-jetpack');
+var os = require('os');
+
 describe('tags model', function () {
-    
+
+    var tmpdir = os.tmpdir() + '/sputnik_unit_tests';
     var tags;
-    
+
     beforeEach(module('sputnik', function($provide) {
         $provide.service('tags', tagsModel);
     }));
-    
+
     beforeEach(inject(function (_tags_) {
         tags = _tags_;
     }));
-    
-    it('can add a tag', function (done) {
-        tags.init();
-        tags.add('tag name')
-        .then(function (createdTag) {
-            expect(createdTag._id).toBeDefined();
-            expect(createdTag.name).toBe('tag name');
+
+    afterEach(function() {
+        jetpack.dir(tmpdir, { exists: false });
+    });
+
+    var reload = function () {
+        return tags.init(tmpdir);
+    };
+
+    it('can add, update, remove tag', function (done) {
+        reload()
+        .then(function () {
+            return tags.add({
+                name: 'tag name'
+            });
+        })
+        .then(reload)
+        .then(function () {
+            expect(tags.all.length).toBe(1);
+            var t = tags.all[0];
+            expect(t.id).toBeDefined();
+            expect(t.name).toBe('tag name');
+            return t.update({
+                name: 'bazinga!'
+            });
+        })
+        .then(reload)
+        .then(function () {
+            expect(tags.all.length).toBe(1);
+            var t = tags.all[0];
+            expect(t.name).toBe('bazinga!');
+            return t.remove();
+        })
+        .then(reload)
+        .then(function () {
+            expect(tags.all.length).toBe(0);
+            done();
+        })
+    });
+
+    it('can return tag objects from given id or ids', function (done) {
+        reload()
+        .then(function () {
+            return tags.add({
+                name: 'T1'
+            });
+        })
+        .then(function () {
+            return tags.add({
+                name: 'T2'
+            });
+        })
+        .then(function () {
+            // When solo id given returns one object
+            var t = tags.idsToTags(tags.all[0].id);
+            expect(t).toBe(tags.all[0]);
+            // When array of ids given returns array of objects
+            var arr = tags.idsToTags([tags.all[0].id, tags.all[1].id]);
+            expect(arr[0]).toBe(tags.all[0]);
+            expect(arr[1]).toBe(tags.all[1]);
             done();
         });
     });
-    
-    it('can update a tag', function (done) {
-        tags.init();
-        tags.add('tag name')
-        .then(function (createdTag) {
-            return tags.update(createdTag._id, { name: 'different name' });
+
+    it('sorts tags in alphabetical order', function (done) {
+        reload()
+        .then(function () {
+            return tags.add({
+                name: 'T2'
+            });
         })
-        .then(function (updatedTag) {
-            expect(updatedTag._id).toBeDefined();
-            expect(updatedTag.name).toBe('different name');
+        .then(function () {
+            return tags.add({
+                name: 'T1'
+            });
+        })
+        .then(function () {
+            return tags.add({
+                name: 'T3'
+            });
+        })
+        .then(function () {
+            expect(tags.all[0].name).toBe('T1');
+            expect(tags.all[1].name).toBe('T2');
+            expect(tags.all[2].name).toBe('T3');
+        })
+        .then(reload)
+        .then(function () {
+            expect(tags.all[0].name).toBe('T1');
+            expect(tags.all[1].name).toBe('T2');
+            expect(tags.all[2].name).toBe('T3');
             done();
         });
     });
-    
-    it('can delete a tag', function (done) {
-        var id;
-        tags.init();
-        tags.add('tag name')
-        .then(function (createdTag) {
-            id = createdTag._id;
-            return tags.delete(id);
-        })
-        .then(function (createdTag) {
-            return tags.idsToObjects([id]);
-        })
-        .then(function (tags) {
-            expect(tags).toEqual([undefined]);
-            done();
-        });
-    });
-    
-    it('can replace tags Ids with its full objects', function (done) {
-        var createdTags = [];
-        tags.init();
-        tags.add('tag1')
-        .then(function (createdTag) {
-            createdTags.push(createdTag);
-            return tags.add('tag2');
-        })
-        .then(function (createdTag) {
-            createdTags.push(createdTag);
-            return tags.add('tag3');
-        })
-        .then(function (createdTag) {
-            createdTags.push(createdTag);
-            return tags.idsToObjects([createdTags[0]._id, createdTags[1]._id, createdTags[2]._id]);
-        })
-        .then(function (yourTags) {
-            expect(createdTags).toEqual(yourTags);
-            done();
-        });
-    });
-    
+
 });
