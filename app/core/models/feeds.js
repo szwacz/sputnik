@@ -11,17 +11,23 @@ export default function () {
     var allFeeds;
     var uncategorizedCategory;
 
-    var categoriesSort = function () {
-        Array.prototype.sort.call(this, function (a, b) {
+    // Overriden push methods which takes care also for correct
+    // order of items in collection anytime something is added.
+    var categoriesPush = function (item) {
+        Array.prototype.push.call(this, item);
+        this.sort(function (a, b) {
             if (a === uncategorizedCategory) {
                 // Uncategorized always last
                 return 1;
             }
+            // Except above alphabetical sort
             return a.name.localeCompare(b.name);
         });
     };
-    var feedsSort = function () {
-        Array.prototype.sort.call(this, function (a, b) {
+    var feedsPush = function (item) {
+        Array.prototype.push.call(this, item);
+        this.sort(function (a, b) {
+            // Ordinary alphabetical sort
             return a.name.localeCompare(b.name);
         });
     };
@@ -30,7 +36,7 @@ export default function () {
         var deferred = Q.defer();
 
         categories = [];
-        categories.sort = categoriesSort;
+        categories.push = categoriesPush;
         allFeeds = [];
 
         var categoriesPath;
@@ -49,7 +55,8 @@ export default function () {
                 // Now load all categories...
                 categoriesDb.find({}, function (err, rawCats) {
                     if (!err) {
-                        // Decorate raw feeds data from database with rich stuff.
+                        // Decorate raw feeds data from database
+                        // with useful methods and stuff.
                         rawCats.forEach(function (rawCat) {
                             categories.push(decorateCategory(rawCat));
                         });
@@ -64,19 +71,12 @@ export default function () {
                         uncategorizedCategory.remove = _.noop;
                         categories.push(uncategorizedCategory);
 
-                        categories.sort();
-
-                        // Decorate raw feeds data from database with rich
+                        // Decorate raw feeds data from database with special
                         // stuff, and register feeds to theirs categories.
                         rawFeeds.forEach(function (rawFeed) {
                             var feed = decorateFeed(rawFeed);
                             allFeeds.push(feed);
                             feed.category.feeds.push(feed);
-                        });
-
-                        // After all sort feeds lists for all categories.
-                        categories.forEach(function (cat) {
-                            cat.feeds.sort();
                         });
 
                         deferred.resolve();
@@ -92,15 +92,21 @@ export default function () {
         return {
             get id() { return feedData._id; },
             get url() { return feedData.url; },
-            get originalName() { return feedData.originalName; },
-            get name() { return feedData.name || feedData.originalName || ''; },
+            get originalName() {
+                // feedData.originalName - name as red from feed's XML
+                return feedData.originalName;
+            },
+            get name() {
+                // feedData.name - customized name given to feed by user
+                return feedData.name || feedData.originalName || '';
+            },
             get category() { return getCategoryById(feedData.categoryId); },
             get favicon() { return feedData.favicon; },
             update: function (data) {
                 return updateFeed(feedData, data);
             },
             setCategory: function (newCategory) {
-                // Remove this feed from curren category listing
+                // Remove this feed from current category listing
                 var index = this.category.feeds.indexOf(this);
                 this.category.feeds.splice(index, 1);
                 // Add it to new category
@@ -124,7 +130,7 @@ export default function () {
 
     var decorateCategory = function (categoryData) {
         var feedsArr = [];
-        feedsArr.sort = feedsSort;
+        feedsArr.push = feedsPush;
         return {
             get id() { return categoryData._id; },
             get name() { return categoryData.name; },
@@ -161,7 +167,6 @@ export default function () {
                     allFeeds.push(feed);
                     var cat = getCategoryById(newFeedRawData.categoryId);
                     cat.feeds.push(feed);
-                    cat.feeds.sort();
                     deferred.resolve();
                 }
             });
@@ -199,7 +204,6 @@ export default function () {
         categoriesDb.insert(data, function (err, newCategoryRawData) {
             if (!err) {
                 categories.push(decorateCategory(newCategoryRawData));
-                categories.sort();
                 deferred.resolve();
             }
         });
