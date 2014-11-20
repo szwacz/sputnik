@@ -24,14 +24,13 @@ describe('feeds model', function () {
         return feeds.init(tmpdir);
     };
 
-    it('when totally empty still has special category representing uncategorized feeds', function (done) {
+    it('has special category representing uncategorized feeds', function (done) {
         reload()
         .then(function () {
-            var uncat = feeds.uncategorized;
-            expect(uncat.id).toBe('uncategorized');
-            expect(uncat.name).toBeUndefined();
-            expect(uncat.feeds).toEqual([]);
-            expect(feeds.categories[0]).toBe(uncat);
+            expect(feeds.uncategorized.id).toBe('uncategorized');
+            expect(feeds.uncategorized.name).toBeUndefined();
+            expect(feeds.uncategorized.feeds.length).toBe(0);
+            expect(feeds.categories.length).toBe(0);
             done();
         });
     });
@@ -45,9 +44,8 @@ describe('feeds model', function () {
         })
         .then(reload)
         .then(function () {
-            expect(feeds.categories.length).toBe(2);
-            var cat = feeds.categories[0]; // Uncategorized should be always last,
-                                           // so this one should be on zero index.
+            expect(feeds.categories.length).toBe(1);
+            var cat = feeds.categories[0];
             expect(cat.id).toBeDefined();
             expect(cat.name).toBe('Cat 1');
             expect(cat.feeds).toEqual([]);
@@ -63,8 +61,7 @@ describe('feeds model', function () {
         })
         .then(reload)
         .then(function () {
-            expect(feeds.categories.length).toBe(1);
-            expect(feeds.categories[0].id).toBe('uncategorized');
+            expect(feeds.categories.length).toBe(0);
             done();
         });
     });
@@ -223,7 +220,7 @@ describe('feeds model', function () {
         .then(reload)
         .then(function () {
             expect(feeds.all.length).toBe(0);
-            expect(feeds.categories.length).toBe(1);
+            expect(feeds.categories.length).toBe(0);
             done();
         });
     });

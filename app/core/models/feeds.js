@@ -16,11 +16,7 @@ export default function () {
     var categoriesPush = function (item) {
         Array.prototype.push.call(this, item);
         this.sort(function (a, b) {
-            if (a === uncategorizedCategory) {
-                // Uncategorized always last
-                return 1;
-            }
-            // Except above alphabetical sort
+            // Ordinary alphabetical sort
             return a.name.localeCompare(b.name);
         });
     };
@@ -69,7 +65,6 @@ export default function () {
                         });
                         uncategorizedCategory.update = _.noop;
                         uncategorizedCategory.remove = _.noop;
-                        categories.push(uncategorizedCategory);
 
                         // Decorate raw feeds data from database with special
                         // stuff, and register feeds to theirs categories.
@@ -149,7 +144,9 @@ export default function () {
     };
 
     var getCategoryById = function (id) {
-        id = id || 'uncategorized';
+        if (!id || id === 'uncategorized') {
+            return uncategorizedCategory;
+        }
         return _.findWhere(categories, { id: id });
     };
 
