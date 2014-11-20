@@ -99,7 +99,7 @@ describe('feeds model', function () {
     });
 
     it('can add feed to new category', function (done) {
-        feeds.init()
+        reload()
         .then(function () {
             return feeds.addCategory({
                 name: 'Cat 1'
@@ -119,7 +119,7 @@ describe('feeds model', function () {
     });
 
     it('will throw if you want to add feed without specifying URL', function (done) {
-        feeds.init()
+        reload()
         .then(function () {
             return feeds.uncategorized.addFeed({
                 name: 'Feed'
@@ -226,7 +226,7 @@ describe('feeds model', function () {
     });
 
     it('sorts alphabetically categories and feeds', function (done) {
-        feeds.init()
+        reload()
         .then(function () {
             return feeds.uncategorized.addFeed({
                 url: 'http://2.com',
@@ -254,6 +254,31 @@ describe('feeds model', function () {
             expect(feeds.uncategorized.feeds[1].name).toBe('F2');
             expect(feeds.categories[0].name).toBe('C1');
             expect(feeds.categories[1].name).toBe('C2');
+            done();
+        });
+    });
+
+    it('can store favicon for feed', function (done) {
+        reload()
+        .then(function () {
+            return feeds.uncategorized.addFeed({
+                url: 'http://example.com'
+            });
+        })
+        .then(function () {
+            var feed = feeds.all[0];
+            var faviconData = new Buffer([123]);
+            var faviconFileType = 'png';
+            return feed.storeFavicon(faviconData, faviconFileType);
+        })
+        .then(reload)
+        .then(function () {
+            var pathUtil = require('path');
+            var feed = feeds.all[0];
+            var path = pathUtil.resolve(tmpdir, 'feed_favicons', feed.id + '.png');
+            var iconData = jetpack.read(feed.favicon, 'buf');
+            expect(feed.favicon).toBe(path);
+            expect(iconData[0]).toBe(123);
             done();
         });
     });

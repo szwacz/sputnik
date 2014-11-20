@@ -2,9 +2,11 @@ var Nedb = require('nedb');
 var _ = require('underscore');
 var Q = require('q');
 var pathUtil = require('path');
+var jetpack = require('fs-jetpack');
 
 export default function () {
 
+    var userDataStorageDir;
     var categoriesDb;
     var feedsDb;
     var categories;
@@ -28,18 +30,19 @@ export default function () {
         });
     };
 
-    var init = function (pathToDir) {
+    var init = function (_userDataStorageDir_) {
         var deferred = Q.defer();
 
+        userDataStorageDir = jetpack.cwd(_userDataStorageDir_);
         categories = [];
         categories.push = categoriesPush;
         allFeeds = [];
 
         var categoriesPath;
         var feedsPath;
-        if (pathToDir) {
-            categoriesPath = pathUtil.resolve(pathToDir, 'feed_categories.db');
-            feedsPath = pathUtil.resolve(pathToDir, 'feeds.db');
+        if (userDataStorageDir) {
+            categoriesPath = userDataStorageDir.path('feed_categories.db');
+            feedsPath = userDataStorageDir.path('feeds.db');
         }
 
         categoriesDb = new Nedb({ filename: categoriesPath, autoload: true });
@@ -96,7 +99,12 @@ export default function () {
                 return feedData.name || feedData.originalName || '';
             },
             get category() { return getCategoryById(feedData.categoryId); },
-            get favicon() { return feedData.favicon; },
+            get favicon() {
+                if (feedData.faviconType) {
+                    return userDataStorageDir.path('feed_favicons', this.id + '.' + feedData.faviconType);
+                }
+                return null;
+            },
             update: function (data) {
                 return updateFeed(feedData, data);
             },
@@ -119,6 +127,9 @@ export default function () {
             },
             remove: function () {
                 return removeFeed(this);
+            },
+            storeFavicon: function (faviconBytes, fileExtension) {
+                return storeFeedFavicon(this, faviconBytes, fileExtension);
             },
         };
     };
@@ -193,6 +204,19 @@ export default function () {
                 deferred.resolve();
             }
         });
+        return deferred.promise;
+    };
+
+    var storeFeedFavicon = function (feed, faviconBytes, fileExtension) {
+        var deferred = Q.defer();
+        var path = userDataStorageDir.path('feed_favicons', feed.id + '.' + fileExtension);
+        userDataStorageDir.writeAsync(path, faviconBytes)
+        .then(function () {
+            return feed.update({
+                faviconType: fileExtension
+            });
+        })
+        .then(deferred.resolve);
         return deferred.promise;
     };
 
