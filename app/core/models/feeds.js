@@ -38,12 +38,8 @@ export default function () {
         categories.push = categoriesPush;
         allFeeds = [];
 
-        var categoriesPath;
-        var feedsPath;
-        if (userDataStorageDir) {
-            categoriesPath = userDataStorageDir.path('feed_categories.db');
-            feedsPath = userDataStorageDir.path('feeds.db');
-        }
+        var categoriesPath = userDataStorageDir.path('feed_categories.db');
+        var feedsPath = userDataStorageDir.path('feeds.db');
 
         categoriesDb = new Nedb({ filename: categoriesPath, autoload: true });
         feedsDb = new Nedb({ filename: feedsPath, autoload: true });
