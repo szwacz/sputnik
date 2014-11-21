@@ -20,10 +20,7 @@ export default function () {
         allTags = [];
         allTags.sort = tagsSort;
 
-        var path;
-        if (userDataStorageDir) {
-            path = pathUtil.resolve(userDataStorageDir, 'tags.db');
-        }
+        var path = pathUtil.resolve(userDataStorageDir, 'tags.db');
 
         db = new Nedb({ filename: path, autoload: true });
 
