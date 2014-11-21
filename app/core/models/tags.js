@@ -14,15 +14,15 @@ export default function () {
         });
     };
 
-    var init = function (pathToDir) {
+    var init = function (userDataStorageDir) {
         var deferred = Q.defer();
 
         allTags = [];
         allTags.sort = tagsSort;
 
         var path;
-        if (pathToDir) {
-            path = pathUtil.resolve(pathToDir, 'tags.db');
+        if (userDataStorageDir) {
+            path = pathUtil.resolve(userDataStorageDir, 'tags.db');
         }
 
         db = new Nedb({ filename: path, autoload: true });
