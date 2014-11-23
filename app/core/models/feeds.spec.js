@@ -98,6 +98,21 @@ describe('feeds model', function () {
         });
     });
 
+    it('gives feed by id', function (done) {
+        reload()
+        .then(function () {
+            return feeds.uncategorized.addFeed({
+                url: 'http://example.com'
+            });
+        })
+        .then(function () {
+            var id = feeds.all[0].id;
+            var feed = feeds.getFeedById(id);
+            expect(feed.url).toBe('http://example.com');
+            done();
+        });
+    });
+
     it('can add feed to new category', function (done) {
         reload()
         .then(function () {

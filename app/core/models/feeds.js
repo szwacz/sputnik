@@ -157,6 +157,10 @@ export default function () {
         return _.findWhere(categories, { id: id });
     };
 
+    var getFeedById = function (id) {
+        return _.findWhere(allFeeds, { id: id });
+    };
+
     var addFeed = function (data) {
         var deferred = Q.defer();
         if (typeof data.url !== 'string' || data.url === '') {
@@ -261,6 +265,7 @@ export default function () {
         get uncategorized() { return uncategorizedCategory; },
         get all() { return allFeeds; },
         init: init,
+        getFeedById: getFeedById,
         addCategory: addCategory,
     };
 };
