@@ -16,7 +16,6 @@
     "position": "center"
   },
   "dependencies": {
-    "cheerio": "0.12.2",
     "feedparser": "0.16.x",
     "iconv-lite": "0.2.x",
     "moment": "2.8.3",
