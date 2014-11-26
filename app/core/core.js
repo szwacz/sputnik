@@ -4,9 +4,9 @@ import schedule from './services/schedule';
 import feedsService from './services/feeds';
 import articlesService from './services/articles';
 import downloadService from './services/downloader';
-import faviconsService from './services/favicons';
-import feedParser from './services/feed_parser';
-import scout from './services/feed_scout';
+import faviconScout from './helpers/favicon_scout';
+import feedParser from './helpers/feed_parser';
+import scout from './helpers/feed_scout';
 
 var definition = {
     name: 'core'

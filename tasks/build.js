@@ -59,7 +59,7 @@ gulp.task('copy', ['prepare-runtime'], function() {
             'app/node_modules',
             'app/vendor',
             'app/visual',
-            'app/spec_assets',
+            'app/core/helpers/spec_assets',
             '*.html'
         ]
     });
@@ -93,9 +93,9 @@ gulp.task('finalize', ['prepare-runtime'], function() {
             break;
     }
     destForCodeDir.write('package.json', manifest, { jsonIndent: 4 });
-    
+
     projectDir.copy('os/icon.png', destForCodeDir.path('icon.png'));
-    
+
     // Stuff specyfic for certains OS
     switch (utils.os()) {
         case 'windows':
