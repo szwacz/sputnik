@@ -1,3 +1,4 @@
+import config from './config';
 import appCtrl from './controllers/app_ctrl';
 import analytics from './services/analytics';
 import schedule from './services/schedule';
@@ -16,6 +17,7 @@ export default definition;
 
 angular.module(definition.name, [])
 .controller('AppCtrl', appCtrl)
+.service('config', config)
 .service('analytics', analytics)
 .service('schedule', schedule)
 .service('articlesService', articlesService)
