@@ -92,7 +92,7 @@ export default function (feeds) {
     var query = function (queryObj, startIndex, limit) {
         var deferred = Q.defer();
 
-        var cursor = metadataDb.find(queryObj).sort({ pubDate: 1 });
+        var cursor = metadataDb.find(queryObj).sort({ pubDate: -1 });
         if (typeof startIndex === 'number') {
             cursor.skip(startIndex);
         }
@@ -111,6 +111,12 @@ export default function (feeds) {
                     }
                 });
                 stream.on('end', function () {
+                    // The order of articles from metadata collection has been
+                    // lost when picking full objects from main storage.
+                    // Must sort it again.
+                    articles.sort(function (a, b) {
+                        return b.pubDate - a.pubDate;
+                    });
                     deferred.resolve(articles.map(decorateArticle));
                 });
             }
