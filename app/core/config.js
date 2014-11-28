@@ -34,6 +34,7 @@ export default function() {
 
     return {
         get version() { return gui.App.manifest.version; },
+        get developmentMode() { return gui.App.manifest.developmentMode; },
         get userDataStorageDir() { return userDataStorageDir; },
 
         get websiteUrl() { return appConf.websiteUrl; },
