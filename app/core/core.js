@@ -1,13 +1,11 @@
 import config from './config';
 import appCtrl from './controllers/app_ctrl';
-import analytics from './services/analytics';
-import schedule from './services/schedule';
-import feedsService from './services/feeds';
-import articlesService from './services/articles';
+import analytics from './helpers/analytics';
+import schedule from './helpers/schedule';
 import downloadService from './services/downloader';
 import faviconScout from './helpers/favicon_scout';
 import feedParser from './helpers/feed_parser';
-import scout from './helpers/feed_scout';
+import feedScout from './helpers/feed_scout';
 
 var definition = {
     name: 'core'
@@ -20,12 +18,9 @@ angular.module(definition.name, [])
 .service('config', config)
 .service('analytics', analytics)
 .service('schedule', schedule)
-.service('articlesService', articlesService)
 .service('downloadService', downloadService)
-.service('faviconsService', faviconsService)
-.service('feedsService', feedsService)
 .service('feedParser', feedParser)
-.service('scout', scout)
+.service('scout', feedScout)
 .run(function (schedule) {
     schedule.start();
 });
