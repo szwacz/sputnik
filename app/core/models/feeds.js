@@ -224,11 +224,24 @@ export default function () {
         var deferred = Q.defer();
         categoriesDb.insert(data, function (err, newCategoryRawData) {
             if (!err) {
-                categories.push(decorateCategory(newCategoryRawData));
-                deferred.resolve();
+                var cat = decorateCategory(newCategoryRawData);
+                categories.push(cat);
+                deferred.resolve(cat);
             }
         });
         return deferred.promise;
+    };
+
+    var getOrCreateCategoryByName = function (name) {
+        var cat = _.findWhere(categories, { name: name });
+        if (cat) {
+            var deferred = Q.defer();
+            deferred.resolve(cat);
+            return deferred.promise;
+        }
+        return addCategory({
+            name: name
+        });
     };
 
     var updateCategory = function (catRawData, newData) {
@@ -267,5 +280,6 @@ export default function () {
         init: init,
         getFeedById: getFeedById,
         addCategory: addCategory,
+        getOrCreateCategoryByName: getOrCreateCategoryByName,
     };
 };

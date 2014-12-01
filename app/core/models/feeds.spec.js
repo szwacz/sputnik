@@ -213,6 +213,22 @@ describe('feeds model', function () {
         });
     });
 
+    it("has method getOrCreateCategoryByName", function (done) {
+        reload()
+        .then(function () {
+            return feeds.getOrCreateCategoryByName('Cat');
+        })
+        .then(function (category1) {
+            expect(feeds.categories.length).toBe(1);
+            feeds.getOrCreateCategoryByName('Cat')
+            .then(function (category2) {
+                expect(feeds.categories.length).toBe(1);
+                expect(category1).toBe(category2);
+                done();
+            });
+        });
+    });
+
     it("can delete category with all feeds inside", function (done) {
         reload()
         .then(function () {
