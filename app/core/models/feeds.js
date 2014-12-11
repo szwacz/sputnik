@@ -86,6 +86,7 @@ export default function () {
         return {
             get id() { return feedData._id; },
             get url() { return feedData.url; },
+            get siteUrl() { return feedData.siteUrl; },
             get originalName() {
                 // feedData.originalName - name as red from feed's XML
                 return feedData.originalName;
