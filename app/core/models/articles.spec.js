@@ -97,6 +97,18 @@ describe('articles model', function () {
         });
     });
 
+    xit("treats url as article's guid if guid not present", function (done) {
+        
+    });
+
+    xit("not allows to store article without guid and url", function (done) {
+
+    });
+
+    xit("sets Date.now as fallback if article has no pubDate", function (done) {
+
+    });
+
     it('gives articles always in chronological order, newest first', function (done) {
         reload()
         .then(function () {
