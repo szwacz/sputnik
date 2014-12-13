@@ -47,9 +47,14 @@ export default function (feeds) {
         var deferred = Q.defer();
 
         // Required fields
-        assert(articleData.pubDate);
         assert(articleData.feedId);
         assert(articleData.title);
+
+        // Article might, but not have to have pubDate,
+        // so if it hasn't assume its pub date to be now.
+        if (!articleData.pubDate) {
+            articleData.pubDate = new Date();
+        }
 
         var id;
         if (articleData.guid) {
@@ -57,7 +62,7 @@ export default function (feeds) {
         } else if (articleData.url) {
             id = articleData.url;
         } else {
-            throw new Error('OMG! This article has no url or guid!');
+            throw 'This article has no url or guid';
         }
 
         // Assume for safety this article already has been stored.
