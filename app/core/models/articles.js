@@ -40,6 +40,11 @@ export default function (feeds) {
             get body() { return articleData.body; },
             get tags() { return articleData.tags || []; },
             get enclosures() { return articleData.enclosures || []; },
+            get abandoned() { return articleData.abandoned || false },
+            update: function (newArticleData) {
+                _.extend(articleData, newArticleData);
+                return store(articleData);
+            },
         };
     };
 

@@ -100,6 +100,72 @@ describe('articles model', function () {
         });
     });
 
+    it('when storing same article again it overwrites the old one', function (done) {
+        reload()
+        .then(function () {
+            return articles.store({
+                url: 'http://art1.com',
+                feedId: feed1.id,
+                title: 'Art1',
+            });
+        })
+        .then(function () {
+            return articles.store({
+                url: 'http://art1.com',
+                feedId: feed1.id,
+                title: 'Art1 - updated',
+            });
+        })
+        .then(function () {
+            return articles.query({
+                feedId: feed1.id,
+            });
+        })
+        .then(function (articles) {
+            expect(articles.length).toBe(1);
+            var art = articles[0];
+            expect(art.url).toBe('http://art1.com');
+            expect(art.feed.id).toBe(art1.feedId);
+            expect(art.title).toBe('Art1 - updated');
+            done();
+        });
+    });
+
+    it('can update an article', function (done) {
+        reload()
+        .then(function () {
+            return articles.store({
+                url: 'http://art1.com',
+                feedId: feed1.id,
+                title: 'Art1',
+            });
+        })
+        .then(function () {
+            return articles.query({
+                feedId: feed1.id,
+            });
+        })
+        .then(function (articles) {
+            var art = articles[0];
+            return art.update({
+                title: 'Art1 - updated',
+            });
+        })
+        .then(function () {
+            return articles.query({
+                feedId: feed1.id,
+            });
+        })
+        .then(function (articles) {
+            expect(articles.length).toBe(1);
+            var art = articles[0];
+            expect(art.url).toBe('http://art1.com');
+            expect(art.feed.id).toBe(art1.feedId);
+            expect(art.title).toBe('Art1 - updated');
+            done();
+        });
+    });
+
     it("treats url as article's guid if guid not present", function (done) {
         reload()
         .then(function () {
