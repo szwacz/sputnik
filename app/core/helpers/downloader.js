@@ -58,16 +58,41 @@ export default function ($http, feedParser, feeds, articles) {
                     });
                 })
                 .then(deferred.resolve);
+            })
+            .catch(function () {
+                deferred.resolve();
             });
-        });
+        })
+        .error(deferred.resolve);
 
         return deferred.promise;
     };
 
     var download = function (feeds) {
+        var deferred = Q.defer();
         isWorking = true;
+
+        var countDone = 0;
         var promises = feeds.map(fetch);
-        return Q.all(promises);
+        promises.forEach(function (promise) {
+            promise.then(function () {
+                countDone += 1;
+
+                deferred.notify(countDone / promises.length);
+
+                if (countDone === promises.length) {
+                    deferred.resolve();
+                    isWorking = false;
+                }
+            });
+        });
+
+        setTimeout(function () {
+            // Send notify with zero as a starter (for convenience).
+            deferred.notify(0);
+        }, 0);
+
+        return deferred.promise;
     }
 
     return  {
