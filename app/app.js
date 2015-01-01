@@ -7,12 +7,6 @@ import importExportModule from './import_export/import_export';
 import settingsModule from './settings/settings';
 import aboutModule from './about/about';
 
-import dataManager from './core/data_migrator/data_migrator';
-
-var checkIfLatestDataModel = function () {
-    // TODO
-};
-
 var initApp = function () {
     angular.module('sputnik', [
         coreModule.name,
@@ -42,6 +36,5 @@ var initApp = function () {
 };
 
 $(function () {
-    checkIfLatestDataModel()
-    .then(initApp);
+    initApp();
 });
