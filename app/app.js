@@ -11,7 +11,6 @@ angular.module('sputnik', [
     readModule.name,
     addFeedModule.name,
     organizerModule.name,
-    tagsModule.name,
     importExportModule.name,
     settingsModule.name,
     aboutModule.name,
@@ -28,3 +27,5 @@ angular.module('sputnik', [
     .when('/settings', settingsModule.view)
     .when('/about/:subview', aboutModule.view);
 });
+
+angular.bootstrap(document.documentElement, ['sputnik']);
