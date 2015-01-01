@@ -1,5 +1,4 @@
 import config from './config';
-import appCtrl from './controllers/app_ctrl';
 import analytics from './helpers/analytics';
 import schedule from './helpers/schedule';
 import downloader from './helpers/downloader';
@@ -14,7 +13,6 @@ var definition = {
 export default definition;
 
 angular.module(definition.name, [])
-.controller('AppCtrl', appCtrl)
 .service('config', config)
 .service('analytics', analytics)
 .service('schedule', schedule)
