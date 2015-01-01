@@ -6,13 +6,14 @@ var gui = require('nw.gui');
 export default function() {
 
     var userDataStorageDir = pathUtil.resolve(gui.App.dataPath, 'userdata_v2');
+    var configPath = userDataStorageDir + '/config.json';
 
     var appConf = gui.App.manifest.config;
-    var userConf = jetpack.read(userDataStorageDir + '/config.json', 'json', { safe: true }) || {};
+    var userConf = jetpack.read(configPath, 'json', { safe: true }) || {};
 
     var setUserConfProperty = function (key, value) {
         userConf[key] = value;
-        jetpack.write(userConf, { safe: true });
+        jetpack.write(configPath, userConf, { safe: true });
     }
 
     // Default values
@@ -27,9 +28,6 @@ export default function() {
     }
     if (userConf.keepArticlesForMonths === undefined) {
         setUserConfProperty('keepArticlesForMonths', 12);
-    }
-    if (userConf.keepTaggedArticlesForever === undefined) {
-        setUserConfProperty('keepTaggedArticlesForever', true);
     }
 
     return {
@@ -49,19 +47,10 @@ export default function() {
             setUserConfProperty('articlesPerPage', value);
         },
 
-        get lastFeedsDownload() { return userConf.lastFeedsDownload; },
-        set lastFeedsDownload(value) {
-            setUserConfProperty('lastFeedsDownload', value);
-        },
-
         get keepArticlesForMonths() { return userConf.keepArticlesForMonths; },
         set keepArticlesForMonths(value) {
             setUserConfProperty('keepArticlesForMonths', value);
         },
 
-        get keepTaggedArticlesForever() { return userConf.keepTaggedArticlesForever; },
-        set keepTaggedArticlesForever(value) {
-            setUserConfProperty('keepTaggedArticlesForever', value);
-        },
     };
 };
