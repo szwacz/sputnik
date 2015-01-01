@@ -5,6 +5,11 @@ import downloader from './helpers/downloader';
 import faviconScout from './helpers/favicon_scout';
 import feedParser from './helpers/feed_parser';
 import feedScout from './helpers/feed_scout';
+import feeds from './models/feeds';
+import articles from './models/articles';
+import opml from './models/opml';
+
+var Q = require('q');
 
 var definition = {
     name: 'core'
@@ -19,6 +24,17 @@ angular.module(definition.name, [])
 .service('downloader', downloader)
 .service('feedParser', feedParser)
 .service('scout', feedScout)
-.run(function (schedule) {
-    schedule.start();
+.service('feeds', feeds)
+.service('articles', articles)
+.service('opml', opml)
+.run(function (config, feeds, articles, schedule) {
+
+    Q.all([
+        feeds.init(config.userDataStorageDir),
+        articles.init(config.userDataStorageDir),
+    ])
+    .then(function () {
+        schedule.start();
+    });
+
 });
