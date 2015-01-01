@@ -94,7 +94,6 @@ describe('articles model', function () {
             expect(art.pubDate.getTime()).toEqual(art1.pubDate.getTime());
             expect(art.title).toBe(art1.title);
             expect(art.body).toBe(art1.body);
-            expect(art.tags).toEqual([]);
             expect(art.enclosures).toEqual([]);
             done();
         });

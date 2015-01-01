@@ -38,7 +38,6 @@ export default function (feeds) {
             get feed() { return feeds.getFeedById(articleData.feedId); },
             get title() { return articleData.title; },
             get body() { return articleData.body; },
-            get tags() { return articleData.tags || []; },
             get enclosures() { return articleData.enclosures || []; },
             get abandoned() { return articleData.abandoned || false },
             update: function (newArticleData) {
@@ -85,7 +84,6 @@ export default function (feeds) {
                     url: art.url,
                     pubDate: art.pubDate,
                     feedId: art.feedId,
-                    tags: art.tags,
                 };
 
                 metadataDb.update({ _id: id }, meta, { upsert: true }, function (err) {
