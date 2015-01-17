@@ -20,7 +20,6 @@ angular.module('sputnik', [
 ])
 .config(function ($routeProvider) {
     $routeProvider
-    .when('/', readModule.view)
     .when('/importExport', importExportModule.view)
     .when('/add', addFeedModule.view)
     .when('/organize', organizerModule.view)

@@ -1,20 +1,14 @@
-import readCtrl from './controllers/read_ctrl';
-import articlesListDirective from './directives/articles_list';
-import pickTagMenuDirective from './directives/pick_tag_menu';
-import dropdownDirective from './directives/dropdown';
+import readCtrl from './read.ctrl';
+import readSidebarCtrl from './sidebar/sidebar.ctrl';
+import readArticlesCtrl from './articles/articles.ctrl';
 
 var definition = {
-    name: 'read',
-    view: {
-        controller: 'ReadCtrl',
-        templateUrl: 'read/views/read.html'
-    }
+    name: 'read'
 };
 
 export default definition;
 
 angular.module(definition.name, [])
 .controller('ReadCtrl', readCtrl)
-.directive('articlesList', articlesListDirective)
-.directive('pickTagMenu', pickTagMenuDirective)
-.directive('dropdown', dropdownDirective);
+.controller('ReadSidebarCtrl', readSidebarCtrl)
+.controller('ReadArticlesCtrl', readArticlesCtrl);
