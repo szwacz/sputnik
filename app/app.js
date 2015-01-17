@@ -20,11 +20,7 @@ angular.module('sputnik', [
 ])
 .config(function ($routeProvider) {
     $routeProvider
-    .when('/importExport', importExportModule.view)
-    .when('/add', addFeedModule.view)
-    .when('/organize', organizerModule.view)
-    .when('/settings', settingsModule.view)
-    .when('/about/:subview', aboutModule.view);
+    .when('/add-feed', addFeedModule.view);
 });
 
 angular.bootstrap(document.documentElement, ['sputnik']);

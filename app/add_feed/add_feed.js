@@ -1,10 +1,10 @@
-import addFeedCtrl from './controllers/add_feed_ctrl';
+import addFeedCtrl from './add_feed.ctrl';
 
 var definition = {
     name: 'addFeed',
     view: {
         controller: 'AddFeedCtrl',
-        templateUrl: 'add_feed/views/add_feed.html'
+        templateUrl: 'add_feed/add_feed.html'
     }
 };
 

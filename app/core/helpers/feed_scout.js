@@ -44,16 +44,14 @@ export default function ($http, feedParser) {
                         .then(function () {
                             deferred.resolve(foundFeedUrl);
                         }, function (err) {
-                            err.code = 'noFeed';
-                            deferred.reject(err);
+                            deferred.reject({ code: 'noFeed' });
                         });
                     })
                     .error(function (data, status) {
                         deferred.reject({ code: status.toString() });
                     });
                 } else {
-                    err.code = 'noFeed';
-                    deferred.reject(err);
+                    deferred.reject({ code: 'noFeed' });
                 }
             });
         })
