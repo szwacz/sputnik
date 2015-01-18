@@ -2,35 +2,42 @@
 
     <h1>Add feed</h1>
 
+    <button type="button" ng-click="close()">Close</button>
+
     <p>Type or copy-paste here link to website you want to subscribe to.</p>
     <p>It could be URL to entire site, or direct link to RSS file.</p>
 
     <input type="text" ng-model="url" ng-change="onUrlChange()"
         placeholder="Put link here!" autofocus>
 
-    <div ng-show="state == 'scouting'">Checking...</div>
+    <div ng-show="state === 'scouting'">Checking...</div>
 
-    <div ng-show="state == 'noFeed'">
+    <div ng-show="state === 'noFeed'">
         Sorry. I couldn't figure out any RSS feed on this address.<br>
         Try to find link to RSS feed on that site by yourself and paste it here.
     </div>
-    <div ng-show="state == 'networkFail'">
+    <div ng-show="state === 'networkFail'">
         This address doesn't exist, or there is problem with internet connection.
         <button ng-click="scoutFeedUrl()">Try Again</button>
     </div>
 
     <div>
         <label>Add this feed to category:</label>
-        <select></select>
+        <select ng-model="pickedCategory"
+            ng-disabled="newCategoryName !== ''"
+            ng-options="cat.name for cat in categories">
+            <option value="">-- choose category --</option>
+        </select>
     </div>
     <div>
         <label>Or create new category for it:</label>
-        <input type="text">
+        <input type="text" ng-model="newCategoryName"
+            ng-disabled="pickedCategory !== null">
     </div>
 
     <div>
-        <button type="button" ng-disabled="state != 'ok'"
-            ng-click="done()">Done!</button>
+        <button type="button" ng-disabled="state !== 'ok'"
+            ng-click="addFeed()">Done!</button>
     </div>
 
 </div>

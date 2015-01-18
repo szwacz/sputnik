@@ -8,6 +8,7 @@ import feedScout from './helpers/feed_scout';
 import feeds from './models/feeds';
 import articles from './models/articles';
 import opml from './models/opml';
+import appCtrl from './app.ctrl'
 
 var Q = require('q');
 
@@ -27,6 +28,7 @@ angular.module(definition.name, [])
 .service('feeds', feeds)
 .service('articles', articles)
 .service('opml', opml)
+.controller('AppCtrl', appCtrl)
 .run(function (config, feeds, articles, schedule) {
 
     Q.all([
