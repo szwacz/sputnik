@@ -1,5 +1,16 @@
 <div ng-controller="ReadSidebarCtrl">
     <div>
-        <a href="#/add-feed">Add Feed</button>
+        <a href="#/add-feed">Add Feed</a>
+    </div>
+    <div>
+        <div ng-repeat="cat in categories">
+            <h1 ng-click="showCategory(cat)">{{cat.name}}</h1>
+            <div ng-repeat="feed in cat.feeds" ng-click="showFeed(feed)">
+                {{feed.url}}
+            </div>
+        </div>
+        <div ng-repeat="feed in uncategorized.feeds" ng-click="showFeed(feed)">
+            {{feed.url}}
+        </div>
     </div>
 </div>

@@ -4,7 +4,7 @@ var Q = require('q');
 var pathUtil = require('path');
 var jetpack = require('fs-jetpack');
 
-export default function () {
+export default function ($rootScope) {
 
     var userDataStorageDir;
     var categoriesDb;
@@ -38,6 +38,15 @@ export default function () {
         categories.push = categoriesPush;
         allFeeds = [];
 
+        // Add special category which contains all actually
+        // uncategorized feeds. This category is not saved
+        // in database.
+        uncategorizedCategory = decorateCategory({
+            _id: 'uncategorized'
+        });
+        uncategorizedCategory.update = _.noop;
+        uncategorizedCategory.remove = _.noop;
+
         var categoriesPath = userDataStorageDir.path('feed_categories.db');
         var feedsPath = userDataStorageDir.path('feeds.db');
 
@@ -56,15 +65,6 @@ export default function () {
                             categories.push(decorateCategory(rawCat));
                         });
 
-                        // Add special category which contains all actually
-                        // uncategorized feeds. This category is not saved
-                        // in database.
-                        uncategorizedCategory = decorateCategory({
-                            _id: 'uncategorized'
-                        });
-                        uncategorizedCategory.update = _.noop;
-                        uncategorizedCategory.remove = _.noop;
-
                         // Decorate raw feeds data from database with special
                         // stuff, and register feeds to theirs categories.
                         rawFeeds.forEach(function (rawFeed) {
@@ -74,6 +74,8 @@ export default function () {
                         });
 
                         deferred.resolve();
+
+                        $rootScope.$broadcast('feeds:listUpdated');
                     }
                 });
             }
