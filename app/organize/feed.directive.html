@@ -1,0 +1,17 @@
+<div>
+    <img ng-src="{{feed.faviconUrl}}"/>
+    <h2 ng-show="state !== 'changeName'"
+        ng-click="changeName()">{{feed.url}}</h2>
+    <input type="text" ng-show="state === 'changeName'"
+        ng-model="newName" ng-blur="saveName()">
+
+    <button type="button" ng-show="state !== 'deleteWarning'"
+        ng-click="state = 'deleteWarning'">Delete</button>
+    <div ng-show="state === 'deleteWarning'">
+        <button type="button"
+            ng-click="delete()">Yes</button>
+        Delete this feed?
+        <button type="button"
+            ng-click="state = 'none'">No</button>
+    </div>
+</div>
