@@ -74,8 +74,7 @@ export default function ($rootScope) {
                         });
 
                         deferred.resolve();
-
-                        $rootScope.$broadcast('feeds:listUpdated');
+                        $rootScope.$broadcast('feeds:initiated');
                     }
                 });
             }
@@ -179,6 +178,7 @@ export default function ($rootScope) {
                     var cat = getCategoryById(newFeedRawData.categoryId);
                     cat.feeds.push(feed);
                     deferred.resolve();
+                    $rootScope.$broadcast('feeds:feedAdded');
                 }
             });
         }
@@ -191,6 +191,7 @@ export default function ($rootScope) {
         feedsDb.update({ _id: feedRawData._id }, feedRawData, {}, function (err) {
             if (!err) {
                 deferred.resolve();
+                $rootScope.$broadcast('feeds:feedUpdated');
             }
         });
         return deferred.promise;
@@ -205,6 +206,7 @@ export default function ($rootScope) {
                 index = feed.category.feeds.indexOf(feed);
                 feed.category.feeds.splice(index, 1);
                 deferred.resolve();
+                $rootScope.$broadcast('feeds:feedRemoved');
             }
         });
         return deferred.promise;
@@ -230,6 +232,7 @@ export default function ($rootScope) {
                 var cat = decorateCategory(newCategoryRawData);
                 categories.push(cat);
                 deferred.resolve(cat);
+                $rootScope.$broadcast('feeds:categoryAdded');
             }
         });
         return deferred.promise;
@@ -253,6 +256,7 @@ export default function ($rootScope) {
         categoriesDb.update({ _id: catRawData._id }, catRawData, function (err) {
             if (!err) {
                 deferred.resolve();
+                $rootScope.$broadcast('feeds:categoryUpdated');
             }
         });
         return deferred.promise;
@@ -270,6 +274,7 @@ export default function ($rootScope) {
                     var index = categories.indexOf(cat);
                     categories.splice(index, 1);
                     deferred.resolve();
+                    $rootScope.$broadcast('feeds:categoryRemoved');
                 }
             });
         });

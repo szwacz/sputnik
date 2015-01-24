@@ -7,12 +7,14 @@ describe('feeds model', function () {
 
     var tmpdir = os.tmpdir() + '/sputnik_unit_tests';
     var feeds;
+    var $rootScope;
 
     beforeEach(module('sputnik', function($provide) {
         $provide.service('feeds', feedsModel);
     }));
 
-    beforeEach(inject(function (_feeds_) {
+    beforeEach(inject(function (_$rootScope_, _feeds_) {
+        $rootScope = _$rootScope_;
         feeds = _feeds_;
     }));
 
@@ -23,6 +25,20 @@ describe('feeds model', function () {
     var reload = function () {
         return feeds.init(tmpdir);
     };
+
+    it('emits event when initiated', function (done) {
+        var initEventFired;
+
+        $rootScope.$on('feeds:initiated', function () {
+            initEventFired = true;
+        });
+
+        reload()
+        .then(function () {
+            expect(initEventFired).toBeTruthy();
+            done();
+        });
+    });
 
     it('has special category representing uncategorized feeds', function (done) {
         reload()
@@ -66,6 +82,45 @@ describe('feeds model', function () {
         });
     });
 
+    it('after add, update, remove category emits event', function (done) {
+        var addedEventFired;
+        var updateEventFired;
+        var deleteEventFired;
+
+        $rootScope.$on('feeds:categoryAdded', function () {
+            addedEventFired = true;
+        });
+        $rootScope.$on('feeds:categoryUpdated', function () {
+            updateEventFired = true;
+        });
+        $rootScope.$on('feeds:categoryRemoved', function () {
+            deleteEventFired = true;
+        });
+
+        reload()
+        .then(function () {
+            return feeds.addCategory({
+                name: 'Cat 1'
+            });
+        })
+        .then(function () {
+            var cat = feeds.categories[0];
+            return cat.update({
+                name: 'Cool Cat 1'
+            });
+        })
+        .then(function () {
+            var cat = feeds.categories[0];
+            return cat.remove();
+        })
+        .then(function () {
+            expect(addedEventFired).toBeTruthy();
+            expect(updateEventFired).toBeTruthy();
+            expect(deleteEventFired).toBeTruthy();
+            done();
+        });
+    });
+
     it('can add, update, remove feed', function (done) {
         reload()
         .then(function () {
@@ -94,6 +149,45 @@ describe('feeds model', function () {
         .then(function () {
             expect(feeds.all.length).toBe(0);
             expect(feeds.uncategorized.feeds.length).toBe(0);
+            done();
+        });
+    });
+
+    it('after add, update, remove feed emits event', function (done) {
+        var addedEventFired;
+        var updateEventFired;
+        var deleteEventFired;
+
+        $rootScope.$on('feeds:feedAdded', function () {
+            addedEventFired = true;
+        });
+        $rootScope.$on('feeds:feedUpdated', function () {
+            updateEventFired = true;
+        });
+        $rootScope.$on('feeds:feedRemoved', function () {
+            deleteEventFired = true;
+        });
+
+        reload()
+        .then(function () {
+            return feeds.uncategorized.addFeed({
+                url: 'http://example.com'
+            });
+        })
+        .then(function () {
+            var feed = feeds.all[0];
+            return feed.update({
+                originalName: 'Feed 1'
+            });
+        })
+        .then(function () {
+            var feed = feeds.all[0];
+            return feed.remove();
+        })
+        .then(function () {
+            expect(addedEventFired).toBeTruthy();
+            expect(updateEventFired).toBeTruthy();
+            expect(deleteEventFired).toBeTruthy();
             done();
         });
     });
