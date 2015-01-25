@@ -1,10 +1,10 @@
-import settingsCtrl from './controllers/settings_ctrl';
+import settingsCtrl from './settings.ctrl';
 
 var definition = {
     name: 'settings',
     view: {
         controller: 'SettingsCtrl',
-        templateUrl: 'settings/views/settings.html'
+        templateUrl: 'settings/settings.html'
     }
 };
 

@@ -23,9 +23,6 @@ export default function() {
         // just for very basic analytics stuff.
         setUserConfProperty('guid', crypto.randomBytes(16).toString('hex'));
     }
-    if (userConf.articlesPerPage === undefined) {
-        setUserConfProperty('articlesPerPage', 30);
-    }
     if (userConf.keepArticlesForMonths === undefined) {
         setUserConfProperty('keepArticlesForMonths', 12);
     }
@@ -40,11 +37,6 @@ export default function() {
         get checkUpdatesUrl() { return appConf.checkUpdatesUrl; },
 
         get guid() { return userConf.guid;},
-
-        get articlesPerPage() { return userConf.articlesPerPage; },
-        set articlesPerPage(value) {
-            setUserConfProperty('articlesPerPage', value);
-        },
 
         get keepArticlesForMonths() { return userConf.keepArticlesForMonths; },
         set keepArticlesForMonths(value) {
