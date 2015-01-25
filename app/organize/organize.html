@@ -4,6 +4,13 @@
 
     <button type="button" ng-click="addCategory()">Add Category</button>
 
+    <button type="button" ng-click="importFeeds()">Import Feeds from OPML file</button>
+    <input id="import-file-input" type="file" style="display: none;">
+
+    <button type="button" ng-click="exportFeeds()">Export My Feeds to OPML file</button>
+    <input id="export-file-input" type="file" style="display: none;"
+        nwsaveas="sputnik-feeds.opml.xml">
+
     <organize-category ng-repeat="category in categories"></organize-category>
 
     <organize-uncategorized></organize-uncategorized>

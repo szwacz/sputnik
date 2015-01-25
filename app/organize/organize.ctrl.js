@@ -1,4 +1,6 @@
-export default function ($scope, feeds) {
+var jetpack = require('fs-jetpack');
+
+export default function ($scope, feeds, opml) {
 
     $scope.categories = feeds.categories;
     $scope.uncategorized = feeds.uncategorized;
@@ -42,4 +44,24 @@ export default function ($scope, feeds) {
         });
     };
 
+    $scope.exportFeeds = function () {
+        $('#export-file-input').trigger('click');
+    };
+    $('#export-file-input').change(function () {
+        var filePath = this.value;
+        jetpack.fileAsync(filePath, {
+            content: opml.export()
+        });
+    });
+
+    $scope.importFeeds = function () {
+        $('#import-file-input').trigger('click');
+    };
+    $('#import-file-input').change(function () {
+        var filePath = this.value;
+        jetpack.readAsync(filePath)
+        .then(function (fileContent) {
+            opml.import(fileContent);
+        });
+    });
 }
