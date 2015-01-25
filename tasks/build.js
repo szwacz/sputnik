@@ -58,7 +58,7 @@ gulp.task('copy', ['prepare-runtime'], function() {
         only: [
             'app/node_modules',
             'app/vendor',
-            'app/visual',
+            'app/assets',
             'app/core/helpers/spec_assets',
             '*.html'
         ]
