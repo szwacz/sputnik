@@ -9,30 +9,22 @@ export default function ($timeout) {
             scope.state = 'none';
 
             scope.changeName = function () {
-                scope.newName = scope.category.name;
+                scope.newName = scope.feed.name;
                 scope.state = 'changeName';
                 $timeout(function () {
                     element.find('.js-name-input').focus();
                 }, 0);
             };
 
-            scope.discardNameChange = function () {
-                scope.state = 'none';
-            };
-
             scope.saveName = function () {
-                if (scope.newName != '') {
-                    scope.feed
-                    .update({
-                        name: scope.newName
-                    })
-                    .then(function () {
-                        scope.state = 'none';
-                        scope.$apply();
-                    });
-                } else {
-                    scope.discardNameChange();
-                }
+                scope.feed
+                .update({
+                    name: scope.newName
+                })
+                .then(function () {
+                    scope.state = 'none';
+                    scope.$apply();
+                });
             };
 
             scope.delete = function () {

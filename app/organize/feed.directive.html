@@ -4,10 +4,9 @@
 
     <strong ng-show="state !== 'changeName'"
         ng-click="changeName()">{{feed.name || '[no name specified]'}}</strong>
-    <span ng-show="state === 'changeName'">
-        <input type="text" class="js-name-input" ng-model="newName">
-        <button type="button" ng-click="saveName()">Save</button>
-    </span>
+    <input type="text" class="js-name-input"
+        ng-show="state === 'changeName'"
+        ng-model="newName" ng-blur="saveName()">
 
     <button type="button" ng-show="state !== 'deleteWarning'"
         ng-click="state = 'deleteWarning'">Delete</button>

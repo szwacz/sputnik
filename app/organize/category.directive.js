@@ -16,10 +16,6 @@ export default function ($timeout) {
                 }, 0);
             };
 
-            scope.discardNameChange = function () {
-                scope.state = 'none';
-            };
-
             scope.saveName = function () {
                 if (scope.newName != '') {
                     scope.category
@@ -31,7 +27,7 @@ export default function ($timeout) {
                         scope.$apply();
                     });
                 } else {
-                    scope.discardNameChange();
+                    scope.state = 'none';
                 }
             };
 
