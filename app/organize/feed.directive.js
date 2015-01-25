@@ -1,11 +1,9 @@
-export default function () {
+export default function ($timeout) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: 'organize/feed.directive.html',
-        scope: {
-            feed: '='
-        },
+        scope: true,
         link: function (scope, element) {
 
             scope.state = 'none';
@@ -13,6 +11,13 @@ export default function () {
             scope.changeName = function () {
                 scope.newName = scope.category.name;
                 scope.state = 'changeName';
+                $timeout(function () {
+                    element.find('.js-name-input').focus();
+                }, 0);
+            };
+
+            scope.discardNameChange = function () {
+                scope.state = 'none';
             };
 
             scope.saveName = function () {
@@ -25,6 +30,8 @@ export default function () {
                         scope.state = 'none';
                         scope.$apply();
                     });
+                } else {
+                    scope.discardNameChange();
                 }
             };
 
@@ -35,7 +42,6 @@ export default function () {
                     scope.$emit('feedRemoved');
                 });
             };
-
 
         }
     };

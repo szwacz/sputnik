@@ -4,10 +4,8 @@
 
     <button type="button" ng-click="addCategory()">Add Category</button>
 
-    <organize-category ng-repeat="cat in categories" category="cat"></organize-category>
+    <organize-category ng-repeat="category in categories"></organize-category>
 
-    <h2>Uncategorized</h2>
-
-    <organize-feed ng-repeat="feed in uncategorized.feeds" feed="feed"></organize-feed>
+    <organize-uncategorized></organize-uncategorized>
 
 </div>

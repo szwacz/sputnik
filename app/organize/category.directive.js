@@ -1,11 +1,9 @@
-export default function () {
+export default function ($timeout) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: 'organize/category.directive.html',
-        scope: {
-            category: '='
-        },
+        scope: true,
         link: function (scope, element) {
 
             scope.state = 'none';
@@ -13,6 +11,13 @@ export default function () {
             scope.changeName = function () {
                 scope.newName = scope.category.name;
                 scope.state = 'changeName';
+                $timeout(function () {
+                    element.find('.js-name-input').focus();
+                }, 0);
+            };
+
+            scope.discardNameChange = function () {
+                scope.state = 'none';
             };
 
             scope.saveName = function () {
@@ -25,16 +30,19 @@ export default function () {
                         scope.state = 'none';
                         scope.$apply();
                     });
+                } else {
+                    scope.discardNameChange();
                 }
             };
 
             scope.delete = function () {
-                scope.category
-                .remove()
-                .then(function () {
-                    scope.$emit('categoryRemoved');
-                });
+                scope.category.remove();
             };
+
+            scope.initDragNDropBetweenCategories(
+                element.find('.js-feeds').get(0),
+                scope.category
+            );
 
         }
     };

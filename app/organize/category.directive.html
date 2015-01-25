@@ -1,8 +1,10 @@
 <div>
-    <h2 ng-show="state !== 'changeName'"
-        ng-click="changeName()">{{category.name}}</h2>
-    <input type="text" ng-show="state === 'changeName'"
-        ng-model="newName" ng-blur="saveName()">
+    <strong ng-show="state !== 'changeName'"
+        ng-click="changeName()">{{category.name}}</strong>
+    <span ng-show="state === 'changeName'">
+        <input type="text" class="js-name-input" ng-model="newName">
+        <button type="button" ng-click="saveName()">Save</button>
+    </span>
 
     <button type="button" ng-show="state !== 'deleteWarning'"
         ng-click="state = 'deleteWarning'">Delete</button>
@@ -14,7 +16,10 @@
             ng-click="state = 'none'">No</button>
     </div>
 
-    <div ng-repeat="feed in category.feeds">
-        <organize-feed feed="feed"></organize-feed>
+    <div class="js-feeds" style="min-height: 50px; background: yellow;">
+        <organize-feed ng-repeat="feed in category.feeds"></organize-feed>
     </div>
+
+    <span ng-repeat="feed in category.feeds">{{feed.id}}</span>
+
 </div>
