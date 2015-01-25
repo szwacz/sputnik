@@ -1,1 +1,1 @@
-Special feeds to testing different things (hosted on http://sputnik.szwacz.com).
+Special feeds to test different things (those files are mirrored to http://sputnik.szwacz.com).
