@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head>
+    <title>Test Feeds</title>
+  </head>
+  <body>
+    <outline text="Escaped Markup" type="rss" xmlUrl="http://sputnik.szwacz.com/test-feeds/escaped-markup.xml"/>
+    <outline text="Invalid HTML" type="rss" xmlUrl="http://sputnik.szwacz.com/test-feeds/invalid-html.xml"/>
+    <outline text="Media" type="rss" xmlUrl="http://sputnik.szwacz.com/test-feeds/media.xml"/>
+    <outline text="Security" type="rss" xmlUrl="http://sputnik.szwacz.com/test-feeds/security.xml"/>
+    <outline text="General Typography" type="rss" xmlUrl="http://sputnik.szwacz.com/test-feeds/typography.xml"/>
+  </body>
+</opml>

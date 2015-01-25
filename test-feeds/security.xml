@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+<title><![CDATA[<script>alert('PWND!')</script>Security]]></title>
+<link href="http://sputnik.szwacz.com" />
+
+<entry>
+<title type="html"><![CDATA[<script>alert('PWND!')</script>XSS?]]></title>
+<updated>2014-08-23T02:53:00+00:00</updated>
+<content type="html"><![CDATA[
+
+<script>alert('PWND!')</script>XSS?
+
+]]></content>
+</entry>
+
+</feed>

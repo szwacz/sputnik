@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+<title>Invalid HTML</title>
+
+<entry>
+<title>Case 1</title>
+<updated>2014-08-23T02:53:00+00:00</updated>
+<content type="html"><![CDATA[
+
+<p
+This is invalid tag.
+</p>
+
+<p>Not finished opening tag.</p>
+
+]]></content>
+</entry>
+
+<entry>
+<title>Case 2</title>
+<updated>2014-08-24T02:53:00+00:00</updated>
+<content type="html"><![CDATA[
+
+<img src="nothing.jpg" alt="Something " something">
+
+<p>Not escaped quote inside an attribute.</p>
+
+]]></content>
+</entry>
+
+</feed>

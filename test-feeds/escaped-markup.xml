@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+
+<title>Escaped Markup</title>
+<link>http://sputnik.szwacz.com/test-feeds/escaped-markup</link>
+
+<item>
+<pubDate>Fri, 07 Jun 2014 01:35:00 +0000</pubDate>
+<title>&#8220;Here you have&#8221; multitude of escaped HTML markup</title>
+<link>http://sputnik.szwacz.com/test-feeds/escaped-markup/1</link>
+<description>
+
+There is no CDATA block used here, so all HTML tags have to be escaped.&lt;br /&gt;
+&lt;br /&gt;
+&lt;a href="#"&gt;This should be a link&lt;/a&gt;&lt;br /&gt;
+&lt;i&gt;And here we have emphasized text.&lt;/i&gt;&lt;br /&gt;
+
+</description>
+</item>
+
+</channel>
+</rss>
