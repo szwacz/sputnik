@@ -36,12 +36,28 @@ export default function ($timeout) {
             };
 
             scope.delete = function () {
-                scope.feed
-                .remove()
-                .then(function () {
-                    scope.$emit('feedRemoved');
+                scope.feed.remove();
+            };
+
+            var initDragNDrop = function () {
+                var isHandle = false;
+                element.attr('draggable', 'true');
+                element.on('mousedown', function (event) {
+                    if ($(event.target).is('.js-handle')) {
+                        isHandle = true;
+                    } else {
+                        isHandle = false;
+                    }
+                });
+                element.on('dragstart', function (event) {
+                    if (!isHandle) {
+                        return false;
+                    }
+                    event.originalEvent.dataTransfer.setData("feedId", scope.feed.id);
                 });
             };
+
+            initDragNDrop();
 
         }
     };

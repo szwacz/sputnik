@@ -7,7 +7,7 @@ export default function () {
         link: function (scope, element) {
 
             scope.initDragNDropBetweenCategories(
-                element.find('.js-feeds').get(0),
+                element.find('.js-feeds'),
                 scope.uncategorized
             );
 

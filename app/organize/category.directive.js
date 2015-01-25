@@ -40,7 +40,7 @@ export default function ($timeout) {
             };
 
             scope.initDragNDropBetweenCategories(
-                element.find('.js-feeds').get(0),
+                element.find('.js-feeds'),
                 scope.category
             );
 

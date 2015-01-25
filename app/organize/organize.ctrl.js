@@ -26,14 +26,18 @@ export default function ($scope, feeds) {
     };
 
     $scope.initDragNDropBetweenCategories = function (element, category) {
-        Sortable.create(element, {
-            group: "moveFeedsBetweenCategories",
-            handle: ".js-move",
-            sort: false,
-            onAdd: function (event) {
-                var id = event.item.getAttribute('data-id');
-                var feed = feeds.getFeedById(id);
+        element.on('dragover', function (event) {
+            var id = event.originalEvent.dataTransfer.getData('feedId');
+            if (id) {
+                event.preventDefault();
+            }
+        });
+        element.on('drop', function (event) {
+            var id = event.originalEvent.dataTransfer.getData('feedId');
+            var feed = feeds.getFeedById(id);
+            if (feed) {
                 feed.setCategory(category);
+                event.preventDefault();
             }
         });
     };
