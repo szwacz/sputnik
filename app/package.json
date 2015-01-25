@@ -34,7 +34,6 @@
   },
   "config": {
     "websiteUrl": "http://sputnik.szwacz.com",
-    "websiteUrlUpdate": "http://sputnik.szwacz.com/update/",
     "analyticsUrl": "http://sputnik.szwacz.com/analytics/hit.php",
     "checkUpdatesUrl": "http://sputnik.szwacz.com/check-updates/updates.json"
   }

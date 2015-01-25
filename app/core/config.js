@@ -36,7 +36,6 @@ export default function() {
         get userDataStorageDir() { return userDataStorageDir; },
 
         get websiteUrl() { return appConf.websiteUrl; },
-        get websiteUrlUpdate() { return appConf.websiteUrlUpdate; },
         get analyticsUrl() { return appConf.analyticsUrl; },
         get checkUpdatesUrl() { return appConf.checkUpdatesUrl; },
 

@@ -19,7 +19,8 @@ angular.module('sputnik', [
 .config(function ($routeProvider) {
     $routeProvider
     .when('/add-feed', addFeedModule.view)
-    .when('/organize', organizeModule.view);
+    .when('/organize', organizeModule.view)
+    .when('/about', aboutModule.view);
 });
 
 angular.bootstrap(document.documentElement, ['sputnik']);
