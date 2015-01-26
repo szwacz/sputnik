@@ -1,11 +1,12 @@
 var urlUtil = require('url');
 var Q = require('q');
+var cheerio = require('cheerio');
 
 export default function ($http) {
 
     var findFaviconInHtml = function (siteUrl, body) {
-        var dom = $(body);
-        var href = dom.find('link[rel$="icon"]').attr('href');
+        var dom = cheerio.load(body);
+        var href = dom('link[rel$="icon"]').attr('href');
         if (href && !href.match(/^http/)) {
             // Is relative URL, so make it absolute.
             href = urlUtil.resolve(siteUrl, href);
@@ -34,7 +35,7 @@ export default function ($http) {
 
         $http.get(siteUrl)
         .success(function (data) {
-            var faviconUrl = findFaviconInHtml(data);
+            var faviconUrl = findFaviconInHtml(siteUrl, data);
             if (faviconUrl) {
                 $http.get(faviconUrl, { responseType: 'arraybuffer' })
                 .success(function (data) {

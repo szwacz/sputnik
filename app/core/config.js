@@ -8,6 +8,8 @@ export default function() {
     var userDataStorageDir = pathUtil.resolve(gui.App.dataPath, 'userdata_v2');
     var configPath = userDataStorageDir + '/config.json';
 
+    console.log('Storing data in: ' + userDataStorageDir);
+
     var appConf = gui.App.manifest.config;
     var userConf = jetpack.read(configPath, 'json', { safe: true }) || {};
 
