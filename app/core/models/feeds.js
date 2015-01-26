@@ -178,7 +178,7 @@ export default function ($rootScope) {
                     var cat = getCategoryById(newFeedRawData.categoryId);
                     cat.feeds.push(feed);
                     deferred.resolve();
-                    $rootScope.$broadcast('feeds:feedAdded');
+                    $rootScope.$broadcast('feeds:feedAdded', feed);
                 }
             });
         }

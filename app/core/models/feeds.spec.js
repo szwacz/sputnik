@@ -158,7 +158,8 @@ describe('feeds model', function () {
         var updateEventFired;
         var deleteEventFired;
 
-        $rootScope.$on('feeds:feedAdded', function () {
+        $rootScope.$on('feeds:feedAdded', function (event, feed) {
+            expect(feed.url).toBe('http://example.com');
             addedEventFired = true;
         });
         $rootScope.$on('feeds:feedUpdated', function () {
