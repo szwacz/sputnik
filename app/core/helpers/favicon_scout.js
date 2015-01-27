@@ -6,7 +6,10 @@ export default function ($http) {
 
     var findFaviconInHtml = function (siteUrl, body) {
         var dom = cheerio.load(body);
-        var href = dom('link[rel$="icon"]').attr('href');
+        // Pick last, because if many favicons declared the last one
+        // has highest possiblity to be the biggest one. For now too
+        // lazy to write "sizes" attribute parser.
+        var href = dom('link[rel="icon"], link[rel="shortcut icon"], link[rel="Shortcut Icon"]').last().attr('href');
         if (href && !href.match(/^http/)) {
             // Is relative URL, so make it absolute.
             href = urlUtil.resolve(siteUrl, href);
