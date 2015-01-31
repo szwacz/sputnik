@@ -6,14 +6,9 @@
         <a href="#/settings">Settings</a>
     </div>
     <div>
-        <div ng-repeat="cat in categories">
-            <h1 ng-click="showCategory(cat)">{{cat.name}}</h1>
-            <div ng-repeat="feed in cat.feeds" ng-click="showFeed(feed)">
-                {{feed.url}}
-            </div>
-        </div>
-        <div ng-repeat="feed in uncategorized.feeds" ng-click="showFeed(feed)">
-            {{feed.url}}
+        <read-sidebar-category ng-repeat="category in categories"></read-sidebar-category>
+        <div>
+            <read-sidebar-feed ng-repeat="feed in uncategorized.feeds"></read-sidebar-feed>
         </div>
     </div>
 </div>
