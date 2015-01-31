@@ -6,7 +6,21 @@ export default function () {
         scope: true,
         link: function (scope, element) {
 
-            scope.unreadArticlesCount = 0;
+            // Table to keep count data for particular feeds.
+            var countUnreadTable = {};
+
+            var recountUnread = function () {
+                scope.unreadArticlesCount = Object.keys(countUnreadTable)
+                .reduce(function (currCount, feedId) {
+                    return currCount + countUnreadTable[feedId];
+                }, 0);
+                scope.$apply();
+            };
+
+            scope.$on('feedUnreadArticlesRecounted', function (event, countStatus) {
+                countUnreadTable[countStatus.feedId] = countStatus.count;
+                recountUnread();
+            });
 
         }
     };

@@ -23,4 +23,20 @@ export default function ($scope, feeds) {
         console.log('Show feed:', feed.id);
     };
 
+    // Table to keep count data for particular feeds.
+    var countUnreadTable = {};
+
+    var recountUnread = function () {
+        $scope.allUnreadArticlesCount = Object.keys(countUnreadTable)
+        .reduce(function (currCount, feedId) {
+            return currCount + countUnreadTable[feedId];
+        }, 0);
+        refreshScope();
+    };
+
+    $scope.$on('feedUnreadArticlesRecounted', function (event, countStatus) {
+        countUnreadTable[countStatus.feedId] = countStatus.count;
+        recountUnread();
+    });
+
 }

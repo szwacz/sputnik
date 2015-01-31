@@ -6,6 +6,7 @@
         <a href="#/settings">Settings</a>
     </div>
     <div>
+        <h1>All {{allUnreadArticlesCount}}</h1>
         <read-sidebar-category ng-repeat="category in categories"></read-sidebar-category>
         <div>
             <read-sidebar-feed ng-repeat="feed in uncategorized.feeds"></read-sidebar-feed>
