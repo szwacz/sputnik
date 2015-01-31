@@ -185,7 +185,7 @@ describe('articles model', function () {
         });
     });
 
-    it("not allows to store article without guid and url", function (done) {
+    it("doesn't allow to store article without guid and url", function (done) {
         reload()
         .then(function () {
             try {
@@ -254,6 +254,34 @@ describe('articles model', function () {
         .then(function (articles) {
             expect(articles.length).toBe(1);
             expect(articles[0].guid).toBe(art2.guid);
+            done();
+        });
+    });
+
+    it('can mark article as unread or already read', function (done) {
+        reload()
+        .then(function () {
+            return storeAllForFeed1();
+        })
+        .then(function () {
+            return articles.countUnread(feed1.id);
+        })
+        .then(function (count) {
+            expect(count).toBe(3);
+            return articles.query({
+                feedId: feed1.id,
+            });
+        })
+        .then(function (articles) {
+            return articles[0].update({
+                markedAsRead: true
+            });
+        })
+        .then(function () {
+            return articles.countUnread(feed1.id);
+        })
+        .then(function (count) {
+            expect(count).toBe(2);
             done();
         });
     });

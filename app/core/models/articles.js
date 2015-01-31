@@ -40,6 +40,7 @@ export default function (feeds) {
             get body() { return articleData.body; },
             get enclosures() { return articleData.enclosures || []; },
             get abandoned() { return articleData.abandoned || false },
+            get markedAsRead() { return articleData.markedAsRead },
             update: function (newArticleData) {
                 _.extend(articleData, newArticleData);
                 return store(articleData);
@@ -79,11 +80,16 @@ export default function (feeds) {
             mainDb.set(id, art).then(function () {
                 // Allright, main article saved, now update metadata.
 
+                if (art.markedAsRead === undefined) {
+                    art.markedAsRead = false;
+                }
+
                 var meta = {
                     _id: id,
                     url: art.url,
                     pubDate: art.pubDate,
                     feedId: art.feedId,
+                    markedAsRead: art.markedAsRead,
                 };
 
                 metadataDb.update({ _id: id }, meta, { upsert: true }, function (err) {
@@ -133,9 +139,23 @@ export default function (feeds) {
         return deferred.promise;
     };
 
+    var countUnread = function (feedId) {
+        var deferred = Q.defer();
+
+        metadataDb.count({
+            feedId: feedId,
+            markedAsRead: { $ne: true }
+        }, function (err, count) {
+            deferred.resolve(count);
+        });
+
+        return deferred.promise;
+    };
+
     return {
         init: init,
         store: store,
         query: query,
+        countUnread: countUnread,
     };
 };
