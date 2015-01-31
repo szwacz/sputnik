@@ -9,6 +9,7 @@ describe('articles model', function () {
 
     var tmpdir = os.tmpdir() + '/sputnik_unit_tests';
     var articles;
+    var $rootScope;
 
     beforeEach(module('sputnik', function($provide) {
         $provide.service('articles', articlesModel);
@@ -21,7 +22,8 @@ describe('articles model', function () {
         });
     }));
 
-    beforeEach(inject(function (_articles_) {
+    beforeEach(inject(function (_$rootScope_, _articles_) {
+        $rootScope = _$rootScope_;
         articles = _articles_;
     }));
 
@@ -284,6 +286,50 @@ describe('articles model', function () {
             expect(count).toBe(2);
             done();
         });
+    });
+
+    describe('events', function () {
+
+        it('emits event when article stored or updated', function (done) {
+            var createdEventFired;
+            var updatedEventFired;
+
+            $rootScope.$on('articles:articleCreated', function (event, articleId, feedId) {
+                createdEventFired = true;
+                expect(articleId).toBeDefined();
+                expect(feedId).toBe(feed1.id);
+            });
+            $rootScope.$on('articles:articleUpdated', function (event, articleId, feedId) {
+                updatedEventFired = true;
+                expect(articleId).toBeDefined();
+                expect(feedId).toBe(feed1.id);
+            });
+
+            reload()
+            .then(function () {
+                return articles.store({
+                    url: 'http://art1.com',
+                    feedId: feed1.id,
+                    title: 'Art1',
+                });
+            })
+            .then(function () {
+                return articles.query({
+                    feedId: feed1.id,
+                });
+            })
+            .then(function (articles) {
+                return articles[0].update({
+                    title: 'Art1 - updated',
+                });
+            })
+            .then(function () {
+                expect(createdEventFired).toBeTruthy();
+                expect(updatedEventFired).toBeTruthy();
+                done();
+            });
+        });
+
     });
 
 });

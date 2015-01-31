@@ -5,7 +5,7 @@ var Q = require('q');
 var pathUtil = require('path');
 var assert = require('assert');
 
-export default function (feeds) {
+export default function ($rootScope, feeds) {
 
     var mainDb;
     var metadataDb; // Used as index for fast querying
@@ -72,8 +72,15 @@ export default function (feeds) {
 
         // Assume for safety this article already has been stored.
         mainDb.get(id).then(function (art) {
+            var eventName;
+
             // But maybe it is not stored yet.
-            art = art || {};
+            if (art) {
+                eventName = 'articles:articleUpdated';
+            } else {
+                art = {};
+                eventName = 'articles:articleCreated';
+            }
 
             _.extend(art, articleData);
 
@@ -94,6 +101,7 @@ export default function (feeds) {
 
                 metadataDb.update({ _id: id }, meta, { upsert: true }, function (err) {
                     if (!err) {
+                        $rootScope.$broadcast(eventName, id, art.feedId)
                         deferred.resolve();
                     }
                 });
