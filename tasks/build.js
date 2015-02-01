@@ -60,7 +60,8 @@ gulp.task('copy', ['prepare-runtime'], function() {
             'app/vendor',
             'app/assets',
             'app/core/helpers/spec_assets',
-            '*.html'
+            '*.html',
+            '*.png'
         ]
     });
 });

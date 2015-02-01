@@ -1,11 +1,12 @@
-<div ng-controller="ReadSidebarCtrl">
-    <div>
-        <a href="#/add-feed">Add Feed</a>
-        <a href="#/organize">Organize Feeds</a>
-        <a href="#/about">About</a>
-        <a href="#/settings">Settings</a>
+<div ng-controller="ReadSidebarCtrl" class="sidebar">
+    <div class="sidebar-topbar">
+        <a href="#/add-feed" class="sidebar-topbar__button  sidebar-topbar__button--add">Add Feed</a>
+        <a href="#/organize" class="sidebar-topbar__button  sidebar-topbar__button--organize">Organize Feeds</a>
+        <span class="sidebar-topbar__separator"></span>
+        <a href="#/settings" class="sidebar-topbar__button  sidebar-topbar__button--settings">Settings</a>
+        <a href="#/about" class="sidebar-topbar__button  sidebar-topbar__button--about">About</a>
     </div>
-    <div>
+    <div class="sidebar-feeds-tree">
         <h1>All {{allUnreadArticlesCount}}</h1>
         <read-sidebar-category ng-repeat="category in categories"></read-sidebar-category>
         <div>

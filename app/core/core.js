@@ -8,7 +8,8 @@ import feedScout from './helpers/feed_scout';
 import feeds from './models/feeds';
 import articles from './models/articles';
 import opml from './models/opml';
-import appCtrl from './app.ctrl'
+import appCtrl from './app.ctrl';
+import include from './directives/include.directive'
 
 var Q = require('q');
 
@@ -29,6 +30,7 @@ angular.module(definition.name, [])
 .service('feeds', feeds)
 .service('articles', articles)
 .service('opml', opml)
+.directive('include', include)
 .controller('AppCtrl', appCtrl)
 .run(function (config, feeds, articles, schedule) {
 
