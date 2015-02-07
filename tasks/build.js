@@ -52,20 +52,6 @@ gulp.task('prepare-runtime', ['clean'] , function() {
     });
 });
 
-gulp.task('copy', ['prepare-runtime'], function() {
-    return projectDir.copyAsync('app', destForCodeDir.path(), {
-        overwrite: true,
-        only: [
-            'app/node_modules',
-            'app/vendor',
-            'app/assets',
-            'app/core/helpers/spec_assets',
-            '*.html',
-            '*.png'
-        ]
-    });
-});
-
 // Add and customize OS-specyfic and target-specyfic stuff.
 gulp.task('finalize', ['prepare-runtime'], function() {
     var manifest = srcDir.read('package.json', 'json');
@@ -118,6 +104,22 @@ gulp.task('finalize', ['prepare-runtime'], function() {
     }
 });
 
+var copyTask = function() {
+    return projectDir.copyAsync('app', destForCodeDir.path(), {
+        overwrite: true,
+        only: [
+            'app/node_modules',
+            'app/vendor',
+            'app/assets',
+            'app/core/helpers/spec_assets',
+            '*.html',
+            '*.png'
+        ]
+    });
+};
+gulp.task('copy', ['prepare-runtime'], copyTask);
+gulp.task('copy-watch', copyTask);
+
 var transpileTask = function() {
     return gulp.src(paths.jsCode, {
         read: false // Don't read the files. ES6 transpiler will do it.
@@ -150,7 +152,8 @@ gulp.task('less', ['prepare-runtime'], lessTask);
 gulp.task('less-watch', lessTask);
 
 gulp.task('watch', function () {
-    gulp.watch('app/stylesheets/**', ['less-watch']);
+    gulp.watch('app/**/*.html', ['copy-watch']);
+    gulp.watch('app/**/*.less', ['less-watch']);
     gulp.watch(paths.jsCode, ['transpile-watch']);
 });
 

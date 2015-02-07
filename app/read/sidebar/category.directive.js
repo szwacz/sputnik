@@ -17,6 +17,10 @@ export default function () {
                 scope.$apply();
             };
 
+            scope.amISelected = function () {
+                return scope.pickedReadRange === scope.category;
+            };
+
             scope.$on('feedUnreadArticlesRecounted', function (event, countStatus) {
                 countUnreadTable[countStatus.feedId] = countStatus.count;
                 recountUnread();

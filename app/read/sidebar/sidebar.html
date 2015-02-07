@@ -7,7 +7,12 @@
         <a href="#/about" class="sidebar-topbar__button  sidebar-topbar__button--about">About</a>
     </div>
     <div class="sidebar-feeds-tree">
-        <h1>All {{allUnreadArticlesCount}}</h1>
+        <h1 class="sidebar-feeds-tree__category-header  sidebar-feeds-tree__category-header--all"
+            ng-class="{ 'sidebar-feeds-tree__category--selected': isAllSelected() }"
+            ng-click="setReadRange(allCategory)">
+            <span>{{allCategory.name}}</span>
+            <span class="sidebar-feeds-tree__count">{{allUnreadArticlesCount}}</span>
+        </h1>
         <read-sidebar-category ng-repeat="category in categories"></read-sidebar-category>
         <div>
             <read-sidebar-feed ng-repeat="feed in uncategorized.feeds"></read-sidebar-feed>

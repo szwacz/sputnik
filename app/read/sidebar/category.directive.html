@@ -1,4 +1,9 @@
 <div>
-    <h1 ng-click="showCategory(category)">{{category.name}} {{unreadArticlesCount}}</h1>
+    <h1 class="sidebar-feeds-tree__category-header"
+        ng-class="{ 'sidebar-feeds-tree__category--selected': amISelected() }"
+        ng-click="setReadRange(category)">
+        <span>{{category.name}}</span>
+        <span class="sidebar-feeds-tree__count">{{unreadArticlesCount}}</span>
+    </h1>
     <read-sidebar-feed ng-repeat="feed in category.feeds"></read-sidebar-feed>
 </div>

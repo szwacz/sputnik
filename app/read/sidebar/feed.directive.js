@@ -32,6 +32,10 @@ export default function (articles) {
                 recountTimeout = setTimeout(recountUnread, 100);
             };
 
+            scope.amISelected = function () {
+                return scope.pickedReadRange === scope.feed;
+            };
+
             scope.$on('articles:articleCreated', recountUnreadMaybe);
             scope.$on('articles:articleUpdated', recountUnreadMaybe);
 

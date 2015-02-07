@@ -1,5 +1,6 @@
-<div>
+<div ng-class="{ 'sidebar-feeds-tree__feed--selected': amISelected() }"
+    ng-click="setReadRange(feed)">
     <img ng-src="{{feed.favicon}}"/>
-    {{feed.name}}
-    {{unreadArticlesCount}}
+    <span class="sidebar-feeds-tree__feed-header">{{feed.name}}</span>
+    <span class="sidebar-feeds-tree__count">{{unreadArticlesCount}}</span>
 </div>

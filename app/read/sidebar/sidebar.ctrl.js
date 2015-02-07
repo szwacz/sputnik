@@ -15,14 +15,6 @@ export default function ($scope, feeds) {
     $scope.$on('feeds:feedUpdated', refreshScope);
     $scope.$on('feeds:feedRemoved', refreshScope);
 
-    $scope.showCategory = function (category) {
-        console.log('Show category:', category.id);
-    };
-
-    $scope.showFeed = function (feed) {
-        console.log('Show feed:', feed.id);
-    };
-
     // Table to keep count data for particular feeds.
     var countUnreadTable = {};
 
@@ -34,9 +26,21 @@ export default function ($scope, feeds) {
         refreshScope();
     };
 
+    $scope.allCategory = {
+        name: 'All',
+        feeds: feeds.all
+    };
+
+    $scope.isAllSelected = function () {
+        return $scope.pickedReadRange === $scope.allCategory;
+    };
+
     $scope.$on('feedUnreadArticlesRecounted', function (event, countStatus) {
         countUnreadTable[countStatus.feedId] = countStatus.count;
         recountUnread();
     });
+
+    // On init always select all.
+    $scope.setReadRange($scope.allCategory);
 
 }
