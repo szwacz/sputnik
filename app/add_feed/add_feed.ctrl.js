@@ -77,7 +77,7 @@ export default function ($scope, $timeout, $q, scout, feeds) {
             });
         })
         .then(function () {
-            $scope.$apply($scope.close);
+            $scope.close();
         });
     };
 

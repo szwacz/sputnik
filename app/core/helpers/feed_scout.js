@@ -26,24 +26,33 @@ export default function ($http, feedParser) {
             url = 'http://' + url;
         }
 
+        console.log('[FeedScout] Fetching ' + url);
+
         // download given url
         $http.get(url)
         .success(function (data) {
             // see if it is feed xml or something else
             feedParser.parse(new Buffer(data))
             .then(function () {
+                console.log('[FeedScout] URL is RSS! (' + url + ')');
                 deferred.resolve(url);
             }, function (err) {
                 // if not, treat it as html and try to find rss tag inside
                 var foundFeedUrl = findFeedUrlInHtml(data, url);
+                console.log('[FeedScout] RSS link found in HTML: ' + foundFeedUrl);
+                console.log('[FeedScout] Fetching that URL...');
                 if (foundFeedUrl) {
                     // download found url, and check if it is appropriate format
                     $http.get(foundFeedUrl)
                     .success(function (data) {
                         feedParser.parse(new Buffer(data))
                         .then(function () {
+                            console.log('[FeedScout] URL is RSS! (' + foundFeedUrl + ')');
                             deferred.resolve(foundFeedUrl);
                         }, function (err) {
+                            console.log('[FeedScout] URL is NOT valid RSS (' + foundFeedUrl + ')');
+                            console.log('[FeedScout] Data received:');
+                            console.log(data);
                             deferred.reject({ code: 'noFeed' });
                         });
                     })
