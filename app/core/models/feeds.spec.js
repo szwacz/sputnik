@@ -40,6 +40,18 @@ describe('feeds model', function () {
         });
     });
 
+    it('exposes method ensureInitiated (code will execute after initialization ended)', function (done) {
+        var ensureCodeExecuted = false;
+        feeds.ensureInitiated().then(function () {
+            ensureCodeExecuted = true;
+        });
+        reload()
+        .then(function () {
+            expect(ensureCodeExecuted).toBeTruthy();
+            done();
+        });
+    });
+
     it('has special category representing uncategorized feeds', function (done) {
         reload()
         .then(function () {

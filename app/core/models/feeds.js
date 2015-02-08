@@ -6,6 +6,7 @@ var jetpack = require('fs-jetpack');
 
 export default function ($rootScope) {
 
+    var initializationDeferred = Q.defer();
     var userDataStorageDir;
     var categoriesDb;
     var feedsDb;
@@ -31,7 +32,12 @@ export default function ($rootScope) {
     };
 
     var init = function (_userDataStorageDir_) {
-        var deferred = Q.defer();
+
+        if (initializationDeferred.promise.isFulfilled()) {
+            // Init called again on already initiated instance. Start all over again.
+            // Note: Case used in specs
+            initializationDeferred = Q.defer();
+        }
 
         userDataStorageDir = jetpack.cwd(_userDataStorageDir_);
         categories = [];
@@ -73,14 +79,18 @@ export default function ($rootScope) {
                             feed.category.feeds.push(feed);
                         });
 
-                        deferred.resolve();
+                        initializationDeferred.resolve();
                         $rootScope.$broadcast('feeds:initiated');
                     }
                 });
             }
         });
 
-        return deferred.promise;
+        return initializationDeferred.promise;
+    };
+
+    var ensureInitiated = function () {
+        return initializationDeferred.promise;
     };
 
     var decorateFeed = function (feedData) {
@@ -286,6 +296,7 @@ export default function ($rootScope) {
         get uncategorized() { return uncategorizedCategory; },
         get all() { return allFeeds; },
         init: init,
+        ensureInitiated: ensureInitiated,
         getFeedById: getFeedById,
         addCategory: addCategory,
         getOrCreateCategoryByName: getOrCreateCategoryByName,
