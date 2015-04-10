@@ -38,9 +38,13 @@
 
     <script>
 
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 250;
+
         // Catch all uncought node.js errors and report them to the console.
         process.on('uncaughtException', function(err) {
-            console.log(err);
+            console.log('Uncaught exception:');
+            console.log(err.message);
+            console.log(err.stack);
         });
 
         // This is automatic spec loader.

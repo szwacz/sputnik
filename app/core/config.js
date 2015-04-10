@@ -11,11 +11,11 @@ export default function() {
     console.log('Storing data in: ' + userDataStorageDir);
 
     var appConf = gui.App.manifest.config;
-    var userConf = jetpack.read(configPath, 'json', { safe: true }) || {};
+    var userConf = jetpack.read(configPath, 'json') || {};
 
     var setUserConfProperty = function (key, value) {
         userConf[key] = value;
-        jetpack.write(configPath, userConf, { safe: true });
+        jetpack.write(configPath, userConf, { atomic: true });
     }
 
     // Default values

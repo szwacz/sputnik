@@ -28,7 +28,7 @@ describe('articles model', function () {
     }));
 
     afterEach(function() {
-        jetpack.dir(tmpdir, { exists: false });
+        jetpack.remove(tmpdir);
     });
 
     var reload = function () {

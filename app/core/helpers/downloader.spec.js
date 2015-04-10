@@ -49,7 +49,7 @@ describe('downloader', function () {
     });
 
     afterEach(function() {
-        jetpack.dir(tmpdir, { exists: false });
+        jetpack.remove(tmpdir);
     });
 
     it("fills feed's data after xml loaded", function (done) {
