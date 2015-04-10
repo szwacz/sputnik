@@ -2,12 +2,10 @@
 
 var gulp = require('gulp');
 var less = require('gulp-less');
-var through = require('through2');
-var transpiler = require('es6-module-transpiler');
-var Container = transpiler.Container;
-var FileResolver = transpiler.FileResolver;
-var AmdFormatter = require('es6-module-transpiler-amd-formatter');
+var esperanto = require('esperanto');
+var map = require('vinyl-map');
 var projectDir = require('fs-jetpack');
+
 var utils = require('./utils');
 
 // -------------------------------------
@@ -21,13 +19,14 @@ var destDir = projectDir.cwd('./build/');
 var destForCodeDir = destDir;
 if (utils.os() === 'osx') {
     // ...but on OSX deep into folder in bundle structure.
-    destForCodeDir = destDir.cwd('./node-webkit.app/Contents/Resources/app.nw');
+    destForCodeDir = destDir.cwd('./nwjs.app/Contents/Resources/app.nw');
 }
 
 var paths = {
     jsCode: [
         'app/**/*.js',
         '!app/node_modules/**',
+        '!app/bower_components/**',
         '!app/vendor/**'
     ]
 }
@@ -40,20 +39,52 @@ gulp.task('clean', function(callback) {
     return destDir.dirAsync('.', { empty: true });
 });
 
-gulp.task('prepare-runtime', ['clean'] , function() {
+
+gulp.task('prepare-runtime', ['clean'] , function () {
     var runtimeForThisOs = './nw/' + utils.os();
     return projectDir.copyAsync(runtimeForThisOs, destDir.path(), {
-        overwrite: true,
-        allBut: [
-            'version',
-            'nwsnapshot*',
-            'credits.html'
-        ]
+        overwrite: true
     });
 });
 
+
+var copyTask = function () {
+    return projectDir.copyAsync('app', destForCodeDir.path(), {
+        overwrite: true,
+        matching: [
+            './node_modules/**',
+            './vendor/**',
+            '*.html'
+        ]
+    });
+};
+gulp.task('copy', ['prepare-runtime'], copyTask);
+gulp.task('copy-watch', copyTask);
+
+
+var transpileTask = function () {
+    return gulp.src(paths.jsCode)
+    .pipe(map(function(code, filename) {
+        var transpiled = esperanto.toAmd(code.toString(), { strict: true });
+        return transpiled.code;
+    }))
+    .pipe(gulp.dest(destForCodeDir.path()));
+};
+gulp.task('transpile', ['prepare-runtime'], transpileTask);
+gulp.task('transpile-watch', transpileTask);
+
+
+var lessTask = function () {
+    return gulp.src('app/stylesheets/main.less')
+    .pipe(less())
+    .pipe(gulp.dest(destForCodeDir.path('stylesheets')));
+};
+gulp.task('less', ['prepare-runtime'], lessTask);
+gulp.task('less-watch', lessTask);
+
+
 // Add and customize OS-specyfic and target-specyfic stuff.
-gulp.task('finalize', ['prepare-runtime'], function() {
+gulp.task('finalize', ['prepare-runtime'], function () {
     var manifest = srcDir.read('package.json', 'json');
     switch (utils.getBuildTarget()) {
         case 'release':
@@ -61,7 +92,7 @@ gulp.task('finalize', ['prepare-runtime'], function() {
             manifest.window.toolbar = false;
             break;
         case 'test':
-            // Add "-test" suffix to name, so node-webkit will write all
+            // Add "-test" suffix to name, so NW.js will write all
             // data like cookies and locaStorage into separate place.
             manifest.name += '-test';
             // Change the main entry to spec runner.
@@ -71,7 +102,7 @@ gulp.task('finalize', ['prepare-runtime'], function() {
             manifest.developmentMode = true;
             break;
         case 'development':
-            // Add "-dev" suffix to name, so node-webkit will write all
+            // Add "-dev" suffix to name, so NW.js will write all
             // data like cookies and locaStorage into separate place.
             manifest.name += '-dev';
             // Set extra flag so we know this is development mode, and we can
@@ -97,64 +128,19 @@ gulp.task('finalize', ['prepare-runtime'], function() {
                 prettyName: manifest.prettyName,
                 version: manifest.version
             });
-            destDir.write('node-webkit.app/Contents/Info.plist', info);
+            destDir.write('nwjs.app/Contents/Info.plist', info);
             // icon
-            projectDir.copy('os/osx/icon.icns', destDir.path('node-webkit.app/Contents/Resources/icon.icns'));
+            projectDir.copy('os/osx/icon.icns', destDir.path('nwjs.app/Contents/Resources/icon.icns'));
             break;
     }
 });
 
-var copyTask = function() {
-    return projectDir.copyAsync('app', destForCodeDir.path(), {
-        overwrite: true,
-        only: [
-            'app/node_modules',
-            'app/vendor',
-            'app/assets',
-            'app/core/helpers/spec_assets',
-            '*.html',
-            '*.png'
-        ]
-    });
-};
-gulp.task('copy', ['prepare-runtime'], copyTask);
-gulp.task('copy-watch', copyTask);
-
-var transpileTask = function() {
-    return gulp.src(paths.jsCode, {
-        read: false // Don't read the files. ES6 transpiler will do it.
-    })
-    .pipe(through.obj(function (file, enc, callback) {
-        var relPath = file.path.substring(file.base.length).replace(/\\/g, '/');
-        var container = new Container({
-            resolvers: [new FileResolver([file.base])],
-            formatter: new AmdFormatter()
-        });
-        try {
-            container.getModule(relPath);
-            container.write(destForCodeDir.path(relPath));
-            callback();
-        } catch (err) {
-            // Show to the user precise file where transpilation error occured.
-            callback(relPath + " " + err.message);
-        }
-    }));
-};
-gulp.task('transpile', ['prepare-runtime'], transpileTask);
-gulp.task('transpile-watch', transpileTask);
-
-var lessTask = function () {
-    return gulp.src('app/stylesheets/main.less')
-    .pipe(less())
-    .pipe(gulp.dest(destForCodeDir.path('stylesheets')));
-};
-gulp.task('less', ['prepare-runtime'], lessTask);
-gulp.task('less-watch', lessTask);
 
 gulp.task('watch', function () {
-    gulp.watch('app/**/*.html', ['copy-watch']);
-    gulp.watch('app/**/*.less', ['less-watch']);
     gulp.watch(paths.jsCode, ['transpile-watch']);
+    gulp.watch('*.less', ['less-watch']);
+    gulp.watch('*.html', ['copy-watch']);
 });
 
-gulp.task('build', ['copy', 'finalize', 'transpile', 'less']);
+
+gulp.task('build', ['transpile', 'less', 'copy', 'finalize']);

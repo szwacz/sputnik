@@ -6,17 +6,27 @@
 
     <link rel="stylesheet" type="text/css" href="vendor/jasmine/jasmine.css">
 
+    <script src="vendor/nwbp/dev-helpers.js"></script>
+    <script>
+        (function () {
+            var gui = require('nw.gui');
+            var win = gui.Window.get();
+
+            // Set focus on window. Just in case we don't have it.
+            win.focus();
+        }());
+    </script>
+
     <script src="vendor/jasmine/jasmine.js"></script>
     <script src="vendor/jasmine/jasmine-html.js"></script>
-    <!--
-        Note: boot.js file was sligltly modified to work with AMD modules.
-        The default behaviour of starting with window.onload was changed
-        to start when function window.startJasmine is called.
-    -->
     <script src="vendor/jasmine/boot.js"></script>
+    <script>
+        // Overwrite defaul behaviour of boot.js
+        // We can't start with onload, need to wait until all specs are loaded.
+        var startJasmine = window.onload;
+        window.onload = null;
+    </script>
     <script src="vendor/require.js"></script>
-
-    <script src="vendor/nwbp/dev-helpers.js"></script>
 
     <script src="vendor/jquery.js"></script>
     <script src="node_modules/angular/angular.js"></script>
@@ -28,21 +38,18 @@
 
     <script>
 
-        // Default timeout for asynchronous specs
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 500;
-
         // Catch all uncought node.js errors and report them to the console.
         process.on('uncaughtException', function(err) {
             console.log(err);
         });
 
         // This is automatic spec loader.
-        // All files with extension ".spec.js", will be loaded and executed as specs,
-        // so you don't have to declare them here in any way.
+        // All files with extension ".spec.js", will be loaded and executed
+        // as specs, so you don't have to declare them here in any way.
         var fs = require('fs');
         var specPaths = [];
 
-        // Directory names where specs will not be searched.
+        // Directory names to omit during specs searching.
         var blacklisted = ['node_modules'];
 
         var parseDir = function (path) {
@@ -65,8 +72,8 @@
 
         requirejs.config({ baseUrl: '.' });
         requirejs(specPaths, function () {
-            // Start the tests after all modules has been loaded.
-            window.startJasmine();
+            // All modules has been loaded, we can start now.
+            startJasmine();
         });
 
     </script>

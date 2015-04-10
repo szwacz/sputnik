@@ -13,30 +13,20 @@ var cleanTmp = function () {
     tmpDir.remove('.');
 };
 
-var updateMetadataFile = function (key, value) {
-    var releasesDir = projectDir.dir('./releases');
-    var manifest = projectDir.read('app/package.json', 'json');
-    var metadata = releasesDir.read('release.json', 'json') || {};
-    metadata.version = manifest.version;
-    metadata.release_date = new Date();
-    metadata[key] = value;
-    releasesDir.write('release.json', metadata, { jsonIndent: 2 });
-};
-
 // -------------------------------------
 // OSX
 // -------------------------------------
 
 releaseForOs.osx = function (callback) {
     var appdmg = require('appdmg');
-    
+
     var releasesDir = projectDir.dir('./releases');
     var manifest = projectDir.read('app/package.json', 'json');
     var dmgName = manifest.name + '_' + manifest.version + '.dmg';
-    
+
     // Change app bundle name to desired
-    projectDir.rename("build/node-webkit.app", manifest.prettyName + ".app");
-    
+    projectDir.rename("build/nwjs.app", manifest.prettyName + ".app");
+
     // Prepare appdmg config
     var dmgManifest = projectDir.read('os/osx/appdmg.json');
     dmgManifest = utils.replace(dmgManifest, {
@@ -46,16 +36,23 @@ releaseForOs.osx = function (callback) {
         dmgBackground: projectDir.path("os/osx/dmg-background.png")
     });
     tmpDir.write('appdmg.json', dmgManifest);
-    
-    // Delete dmg with this name if already exists
-    releasesDir.file(dmgName, { exists: false });
-    
+
+    // Delete DMG file with this name if already exists
+    releasesDir.remove(dmgName);
+
     gulpUtil.log('Packaging to DMG image...');
-    
-    appdmg(tmpDir.path('appdmg.json'), releasesDir.path(dmgName), function (err, path) {
-        gulpUtil.log('DMG image', path, 'ready!');
+
+    var readyDmg = releasesDir.path(dmgName);
+    appdmg({
+        source: tmpDir.path('appdmg.json'),
+        target: readyDmg
+    })
+    .on('error', function (err) {
+        console.error(err);
+    })
+    .on('finish', function () {
+        gulpUtil.log('DMG image ready!', readyDmg);
         cleanTmp();
-        updateMetadataFile('latest_osx_package', dmgName);
         callback();
     });
 };
@@ -70,12 +67,12 @@ releaseForOs.linux = function (callback) {
     var packName = manifest.name + '_' + manifest.version;
     var pack = tmpDir.dir(packName);
     var debFileName = packName + '_amd64.deb';
-    
+
     gulpUtil.log('Creating DEB package...');
-    
+
     // The whole app will be installed into /opt directory
     projectDir.copy('build', pack.path('opt', manifest.name));
-    
+
     // Create .desktop file from the template
     var desktop = projectDir.read('os/linux/app.desktop');
     desktop = utils.replace(desktop, {
@@ -86,10 +83,10 @@ releaseForOs.linux = function (callback) {
         author: manifest.author
     });
     pack.write('usr/share/applications/' + manifest.name + '.desktop', desktop);
-    
+
     // Counting size of the app in KB
     var appSize = Math.round(projectDir.inspectTree('build').size / 1024);
-    
+
     // Preparing debian control file
     var control = projectDir.read('os/linux/DEBIAN/control');
     control = utils.replace(control, {
@@ -100,7 +97,7 @@ releaseForOs.linux = function (callback) {
         size: appSize
     });
     pack.write('DEBIAN/control', control);
-    
+
     // Build the package...
     childProcess.exec('fakeroot dpkg-deb -Zxz --build ' + pack.path() + ' ' + releasesDir.path(debFileName),
         function (error, stdout, stderr) {
@@ -112,7 +109,6 @@ releaseForOs.linux = function (callback) {
                 gulpUtil.log('Package', debFileName, 'ready!');
             }
             cleanTmp();
-            updateMetadataFile('latest_linux_package', debFileName);
             callback();
         });
 };
@@ -130,7 +126,7 @@ releaseForOs.windows = function (callback) {
         "name": manifest.name,
         "prettyName": manifest.prettyName,
         "version": manifest.version,
-        // The paths expect the .nsi file is in "nw-boilerplate/tmp" folder. 
+        // The paths expect the .nsi file is in "nw-boilerplate/tmp" folder.
         "src": "..\\build",
         "dest": "..\\releases\\" + filename,
         "icon": "..\\os\\windows\\icon.ico",
@@ -138,9 +134,9 @@ releaseForOs.windows = function (callback) {
         "banner": "..\\os\\windows\\setup-banner.bmp"
     });
     projectDir.write('./tmp/installer.nsi', installScript);
-    
+
     gulpUtil.log('Building installer with NSIS...');
-    
+
     // Note: NSIS have to be added to PATH!
     var nsis = childProcess.spawn('makensis', ['.\\tmp\\installer.nsi']);
     nsis.stdout.pipe(process.stdout);
@@ -148,7 +144,6 @@ releaseForOs.windows = function (callback) {
     nsis.on('close', function () {
         gulpUtil.log('Installer', filename, 'ready!');
         cleanTmp();
-        updateMetadataFile('latest_windows_package', filename);
         callback();
     });
 };
