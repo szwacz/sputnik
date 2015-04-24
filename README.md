@@ -1,6 +1,8 @@
 #Sputnik
 Open source RSS reader built upon [node-webkit](https://github.com/rogerwang/node-webkit).
 
+**Note:** Development of this application has been discontinued. Sorry folks!
+
 ##Where to get it?
 To download latest version visit [Sputnik's website](http://sputnik.szwacz.com).
 
