@@ -1,40 +1,16 @@
 {
-  "name": "Sputnik",
-  "prettyName": "Sputnik",
-  "description": "Simple and practical RSS reader",
-  "version": "1.1.0",
-  "author": "Jakub Szwacz <sputnik@szwacz.com>",
-  "main": "index.html",
-  "window": {
-    "icon": "icon.png",
-    "show": true,
-    "toolbar": true,
-    "width": 1000,
-    "height": 660,
-    "min_width": 800,
-    "min_height": 400,
-    "position": "center"
-  },
+  "name": "sputnik",
+  "productName": "Sputnik",
+  "description": "Simple RSS reader",
+  "version": "2.0.0",
+  "author": "Jakub Szwacz",
+  "copyright": "© 2016, Jakub Szwacz",
+  "main": "background.js",
   "dependencies": {
-    "angular": "^1.3.10",
-    "angular-animate": "^1.3.10",
-    "angular-mocks": "^1.3.10",
-    "angular-route": "^1.3.10",
-    "angular-sanitize": "^1.3.10",
-    "cheerio": "0.18.0",
-    "feedparser": "0.19.2",
-    "iconv-lite": "0.4.5",
-    "moment": "2.8.3",
-    "nedb": "0.11.1",
-    "q": "1.0.1",
-    "scattered-store": "0.1.3",
-    "underscore": "1.7.0",
-    "xml2js": "0.4.4",
-    "xmlbuilder": "2.4.5"
+    "fs-jetpack": "^0.7.0"
   },
-  "config": {
-    "websiteUrl": "http://sputnik.szwacz.com",
-    "analyticsUrl": "http://sputnik.szwacz.com/analytics/hit.php",
-    "checkUpdatesUrl": "http://sputnik.szwacz.com/check-updates/updates.json"
+  "packageNameTemplate": "{{name}}-v{{version}}-{{platform}}-{{arch}}",
+  "osx": {
+    "identifier": "com.szwacz.sputnik"
   }
 }

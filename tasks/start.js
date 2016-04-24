@@ -1,30 +1,15 @@
 'use strict';
 
-var gulp = require('gulp');
 var childProcess = require('child_process');
-var utils = require('./utils');
+var electron = require('electron-prebuilt');
+var gulp = require('gulp');
 
-// Starts the app in /build folder and runs gulp watch for the time, when app is running.
-gulp.task('start', ['watch', 'build'], function () {
-    var app;
-
-    switch (utils.os()) {
-        case 'osx':
-            app = childProcess.spawn('./build/nwjs.app/Contents/MacOS/nwjs');
-            break;
-        case 'linux':
-            app = childProcess.spawn('./build/nw');
-            break;
-        case 'windows':
-            app = childProcess.spawn('build/nw.exe');
-            break;
-    }
-
-    app.stdout.pipe(process.stdout);
-    app.stderr.pipe(process.stderr);
-
-    app.on('close', function (code) {
-        // Kill this gulp (watch) process when application closes.
+gulp.task('start', ['build', 'watch'], function () {
+    childProcess.spawn(electron, ['./build'], {
+        stdio: 'inherit'
+    })
+    .on('close', function () {
+        // User closed the app. Kill the host process.
         process.exit();
     });
 });
