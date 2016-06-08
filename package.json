@@ -19,7 +19,7 @@
       "downloadUrls": {
         "osx": "http://dl.nwjs.io/v{{version}}/nwjs-v{{version}}-osx-x64.zip",
         "linux": "http://dl.nwjs.io/v{{version}}/nwjs-v{{version}}-linux-x64.tar.gz",
-        "windows": "http://dl.nwjs.io/v{{version}}/nwjs-{{version}}-win-ia32.zip"
+        "windows": "http://dl.nwjs.io/v{{version}}/nwjs-v{{version}}-win-ia32.zip"
       }
     }
   },
